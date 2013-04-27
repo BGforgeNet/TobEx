@@ -1,3 +1,7 @@
+v28
+---------
+- WeiDU: updated Chinese translations
+
 Beta 0026
 ---------
 -Class/structure updates
