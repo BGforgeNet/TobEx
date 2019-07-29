@@ -1,0 +1,5 @@
+language: cpp
+os: windows
+
+script:
+  - MSBuild.exe TobEx.sln
