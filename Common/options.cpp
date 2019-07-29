@@ -23,7 +23,7 @@ int CGameOptionsEx::GetOption(LPCTSTR szOption) {
 	return (m_hmOptions.find(szOption) == m_hmOptions.end()) ? 0 : m_hmOptions[szOption];  
 }
 
-stdext::hash_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> CGameOptionsEx::GetMap() {
+stdext::unordered_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> CGameOptionsEx::GetMap() {
 	return m_hmOptions;
 }
 
