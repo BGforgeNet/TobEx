@@ -12,10 +12,10 @@ public:
 	~CGameOptionsEx();
 	void SetOption(LPCTSTR szOption, LPCTSTR szSection, LPCTSTR szKey, LPCTSTR szDefault = 0);
 	int GetOption(LPCTSTR szOption);
-	stdext::unordered_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> GetMap();
+	std::unordered_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> GetMap();
 
 protected:
-	stdext::unordered_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> m_hmOptions;
+	std::unordered_map<LPCTSTR, int, stdext::hash_compare<LPCTSTR, hash_cmp_str>> m_hmOptions;
 };
 
 int GetCoreIniValue(LPCTSTR szSection, LPCTSTR szKey, LPCTSTR szDefault = 0);
