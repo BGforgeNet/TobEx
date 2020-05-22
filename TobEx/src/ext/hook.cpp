@@ -88,7 +88,7 @@ void InitHooks() {
 		DetourMemberFunction(Tramp_CNetwork_PrintNetworkError, DETOUR_CNetwork::DETOUR_PrintNetworkError);
 
 	//Effect
-	DetourMemberFunction(Tramp_CEffect_DecodeEffect, DETOUR_CEffect::DETOUR_DecodeEffect);
+	DetourMemberStaticFunction(Tramp_CEffect_DecodeEffect, DETOUR_CEffect::DETOUR_DecodeEffect);
 	DetourMemberFunction(Tramp_CEffect_ApplyTiming, DETOUR_CEffect::DETOUR_ApplyTiming);
 	DetourMemberFunction(Tramp_CEffect_CheckNotSaved, DETOUR_CEffect::DETOUR_CheckNotSaved);
 	DetourMemberFunction(Tramp_CDerivedStats_OpAdd, DETOUR_CDerivedStats::DETOUR_OpAdd);
