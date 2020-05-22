@@ -7,7 +7,7 @@
 #include <map>
 
 #include "utils.h"
-#include "MathPresso.h"
+#include "mathpresso.h"
 #include "console.h"
 #include "log.h"
 

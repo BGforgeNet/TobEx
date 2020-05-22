@@ -35,10 +35,10 @@ void CBlockVariables::SetStr(unsigned int index, IECString value) {
 }
 
 //CRuleTablesEx
-static MathPresso::mreal_t mpAnd(MathPresso::mreal_t x, MathPresso::mreal_t y) { return (int)x && (int)y; }
-static MathPresso::mreal_t mpOr(MathPresso::mreal_t x, MathPresso::mreal_t y) { return (int)x || (int)y; }
-static MathPresso::mreal_t mpBAnd(MathPresso::mreal_t x, MathPresso::mreal_t y) { return (int)x & (int)y; }
-static MathPresso::mreal_t mpBOr(MathPresso::mreal_t x, MathPresso::mreal_t y) { return (int)x | (int)y; }
+static double mpAnd(double x, double y) { return (int)x && (int)y; }
+static double mpOr(double x, double y) { return (int)x || (int)y; }
+static double mpBAnd(double x, double y) { return (int)x & (int)y; }
+static double mpBOr(double x, double y) { return (int)x | (int)y; }
 
 CRuleTablesEx* pRuleEx = NULL;
 int g_nCDerivedStatsTemplateSize = 0;
@@ -269,10 +269,10 @@ void CRuleTablesEx::Init(CRuleTables& rule) {
 		}
 	}
 
-	m_mpContext.addFunction("and", mpAnd, MathPresso::MFUNC_F_ARG2);
-	m_mpContext.addFunction("or", mpOr, MathPresso::MFUNC_F_ARG2);
-	m_mpContext.addFunction("band", mpBAnd, MathPresso::MFUNC_F_ARG2);
-	m_mpContext.addFunction("bor", mpBOr, MathPresso::MFUNC_F_ARG2);
+	m_mpContext.addFunction("and", mpAnd, mathpresso::kFunctionArg2);
+	m_mpContext.addFunction("or", mpOr, mathpresso::kFunctionArg2);
+	m_mpContext.addFunction("band", mpBAnd, mathpresso::kFunctionArg2);
+	m_mpContext.addFunction("bor", mpBOr, mathpresso::kFunctionArg2);
 
 	if (pGameOptionsEx->GetOption("Engine_ExternDifficulty")) {
 		m_DiffMod.LoadTable(ResRef("DIFFMOD"));

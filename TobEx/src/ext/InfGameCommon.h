@@ -68,7 +68,7 @@ public:
 	CRuleTable m_HPClass;
 	CRuleTable m_HPBarbarian;
 	CRuleTable m_StealSlots;
-	MathPresso::Context m_mpContext;
+	mathpresso::Context m_mpContext;
 	CBlockVariables m_TriggerVars;
 	std::map<ENUM, CBlockVariables*> m_MapActionVars; //stores action block variables for each ENUM as required
 	CRuleTable m_DiffMod;

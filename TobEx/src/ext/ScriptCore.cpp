@@ -159,15 +159,15 @@ BOOL DETOUR_CScriptBlock::DETOUR_Evaluate(CTriggerList& triggers, CGameSprite& s
 
 			if (tCopy.i == ARGTYPE_INT) {
 				int nValue = 0;
-				MathPresso::Expression mpExp;
-				MathPresso::mresult_t mpResult = mpExp.create(pRuleEx->m_mpContext, (LPCTSTR)sExpression);
-				if (mpResult == MathPresso::MRESULT_OK) {
+				mathpresso::Expression mpExp;
+				int err = mpExp.compile(pRuleEx->m_mpContext, (LPCTSTR)sExpression, mathpresso::kNoOptions);
+				if (!err) {
 					nValue = mpExp.evaluate(NULL);
 				} else {
 					LPCTSTR lpsz = "Trigger Eval(): bad expression \"%s\" (error %d)\r\n";
 					L.timestamp();
-					L.appendf(lpsz, (LPCTSTR)sExpression, (int)mpResult);
-					console.writef(lpsz, (LPCTSTR)sExpression, (int)mpResult);
+					L.appendf(lpsz, (LPCTSTR)sExpression, err);
+					console.writef(lpsz, (LPCTSTR)sExpression, err);
 				}
 
 				bOverrideInt[nLoc] = TRUE;
