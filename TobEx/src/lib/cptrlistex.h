@@ -36,17 +36,17 @@ public:
 	int GetCount() const;
 	BOOL IsEmpty() const;
 	void*& GetHead();
-	void* GetHead() const;
+	const void* GetHead() const;
 	void*& GetTail();
-	void* GetTail() const;
+	const void* GetTail() const;
 	POSITION GetHeadPosition() const;
 	POSITION GetTailPosition() const;
 	void*& GetNext(POSITION& rPosition);
-	void* GetNext(POSITION& rPosition) const;
+	const void* GetNext(POSITION& rPosition) const;
 	void*& GetPrev(POSITION& rPosition);
-	void* GetPrev(POSITION& rPosition) const;
+	const void* GetPrev(POSITION& rPosition) const;
 	void*& GetAt(POSITION position);
-	void* GetAt(POSITION position) const;
+	const void* GetAt(POSITION position) const;
 	void SetAt(POSITION pos, void* newElement);
 
 protected:
