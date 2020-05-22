@@ -14,15 +14,18 @@
     <ProjectGuid>{008D1FC8-0CB0-41B0-8946-0CE28066C354}</ProjectGuid>
     <RootNamespace>TobEx</RootNamespace>
     <Keyword>MFCDLLProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings" />
@@ -40,6 +43,12 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)WeiDU\TobEx\TobEx_redist\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -52,6 +61,7 @@
       <StructMemberAlignment>1Byte</StructMemberAlignment>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -59,8 +69,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>detours.lib; asmjit.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)detours\lib.X86;$(SolutionDir)MFC42\LIB;$(SolutionDir)AsmJit</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib; asmjit.lib;mathpresso.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)detours\lib.X86;$(SolutionDir)MFC42\LIB;$(SolutionDir)AsmJit;$(SolutionDir)MathPresso\lib.X86</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
@@ -84,6 +94,7 @@
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -91,8 +102,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>detours.lib; asmjit.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)detours\lib.X86;$(SolutionDir)MFC42\LIB;$(SolutionDir)AsmJit</AdditionalLibraryDirectories>
+      <AdditionalDependencies>detours.lib; asmjit.lib;mathpresso.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)detours\lib.X86;$(SolutionDir)MFC42\LIB;$(SolutionDir)AsmJit;$(SolutionDir)MathPresso\lib.X86</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <MinimumRequiredVersion>5.0</MinimumRequiredVersion>
@@ -103,15 +114,6 @@
     <ClCompile Include="..\Common\log.cpp" />
     <ClCompile Include="..\Common\options.cpp" />
     <ClCompile Include="..\Common\patch.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_AST.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_Context.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_DOT.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_JIT.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_Optimizer.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_Parser.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_Tokenizer.cpp" />
-    <ClCompile Include="..\MathPresso\MathPresso_Util.cpp" />
     <ClCompile Include="src\ext\Animation1000.cpp" />
     <ClCompile Include="src\ext\Animation1200.cpp" />
     <ClCompile Include="src\ext\Animation1300.cpp" />
@@ -221,7 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\console.h" />
-    <ClInclude Include="..\Common\detours.h" />
     <ClInclude Include="..\Common\detoursext.h" />
     <ClInclude Include="..\Common\fileare.h" />
     <ClInclude Include="..\Common\filebam.h" />
@@ -243,15 +244,6 @@
     <ClInclude Include="..\Common\patch.h" />
     <ClInclude Include="..\Common\utils.h" />
     <ClInclude Include="..\Common\win32def.h" />
-    <ClInclude Include="..\MathPresso\MathPresso.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_AST_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_Context_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_DOT_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_JIT_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_Optimizer_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_Parser_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_Tokenizer_p.h" />
-    <ClInclude Include="..\MathPresso\MathPresso_Util_p.h" />
     <ClInclude Include="src\ext\Animation1000.h" />
     <ClInclude Include="src\ext\Animation1200.h" />
     <ClInclude Include="src\ext\Animation1300.h" />
