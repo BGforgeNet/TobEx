@@ -51,17 +51,17 @@ CPtrList& IECPtrList::ToCPtrList()						{ return reinterpret_cast<CPtrList&>(*th
 int IECPtrList::GetCount() const						{ return (*this).ToCPtrList().GetCount(); }
 BOOL IECPtrList::IsEmpty() const						{ return (*this).ToCPtrList().IsEmpty(); }
 void*& IECPtrList::GetHead()							{ return (*this).ToCPtrList().GetHead(); }
-void* IECPtrList::GetHead() const						{ return (*this).ToCPtrList().GetHead(); }
+void* IECPtrList::GetHead() const						{ return (void*)((*this).ToCPtrList().GetHead()); }
 void*& IECPtrList::GetTail()							{ return (*this).ToCPtrList().GetTail(); }
-void* IECPtrList::GetTail() const						{ return (*this).ToCPtrList().GetTail(); }
+void* IECPtrList::GetTail() const						{ return (void*)((*this).ToCPtrList().GetTail()); }
 POSITION IECPtrList::GetHeadPosition() const			{ return (*this).ToCPtrList().GetHeadPosition(); }
 POSITION IECPtrList::GetTailPosition() const			{ return (*this).ToCPtrList().GetTailPosition(); }
 void*& IECPtrList::GetNext(POSITION& rPosition)			{ return (*this).ToCPtrList().GetNext(rPosition); }
-void* IECPtrList::GetNext(POSITION& rPosition) const	{ return (*this).ToCPtrList().GetNext(rPosition); }
+void* IECPtrList::GetNext(POSITION& rPosition) const	{ return (void*)((*this).ToCPtrList().GetNext(rPosition)); }
 void*& IECPtrList::GetPrev(POSITION& rPosition)			{ return (*this).ToCPtrList().GetPrev(rPosition); }
-void* IECPtrList::GetPrev(POSITION& rPosition) const	{ return (*this).ToCPtrList().GetPrev(rPosition); }
+void* IECPtrList::GetPrev(POSITION& rPosition) const	{ return (void*)((*this).ToCPtrList().GetPrev(rPosition)); }
 void*& IECPtrList::GetAt(POSITION position)				{ return (*this).ToCPtrList().GetAt(position); }
-void* IECPtrList::GetAt(POSITION position) const		{ return (*this).ToCPtrList().GetAt(position); }
+void* IECPtrList::GetAt(POSITION position) const		{ return (void*)((*this).ToCPtrList().GetAt(position)); }
 void IECPtrList::SetAt(POSITION pos, void* newElement)	{ return (*this).ToCPtrList().SetAt(pos, newElement); }
 
 IMPLEMENT_DYNAMIC(IECPtrList, CObject)
