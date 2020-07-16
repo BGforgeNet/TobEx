@@ -9,8 +9,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Install vcexpress2010
-        run: choco install vcexpress2010
+      - name: Install vcexpress
+        run: choco install vcexpress2010 visualcplusplusexpress2008
 
       - name: Setup MSBuild.exe
         uses: warrenbuckley/Setup-MSBuild@v1
