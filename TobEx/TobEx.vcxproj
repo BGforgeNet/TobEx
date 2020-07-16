@@ -59,10 +59,9 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>detours.lib; asmjit.lib</AdditionalDependencies>
+      <AdditionalDependencies>detours.lib; asmjit.lib; nafxcwd.lib; libcmtd.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>.\detours\lib.X86;.\MFC42\LIB;.\AsmJit</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>
-      </IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>nafxcwd.lib; libcmtd.lib</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -91,11 +90,12 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>detours.lib; asmjit.lib</AdditionalDependencies>
+      <AdditionalDependencies>detours.lib; asmjit.lib; nafxcw.lib; libcmt.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>.\detours\lib.X86;.\MFC42\LIB;.\AsmJit</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
       <MinimumRequiredVersion>5.0</MinimumRequiredVersion>
+      <IgnoreSpecificDefaultLibraries>nafxcw.lib; libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
