@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -23,14 +23,12 @@
 // DLL (instead of binding to the DLL at link time), this file is
 // required.
 
-#pragma once
-
-// Startup code must be unmanaged to avoid loader lock issues.
-#pragma managed(push, off)
-
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 // The following symbol used to force inclusion of this module for _AFXEXT
 #if defined(_X86_)
@@ -43,7 +41,7 @@ extern "C" { int __afxForceEXTDLL; }
 // RawDllMain that saves current app class list and factory list
 
 extern "C" BOOL WINAPI ExtRawDllMain(HINSTANCE, DWORD dwReason, LPVOID);
-extern "C" BOOL (WINAPI* const _pRawDllMain)(HINSTANCE, DWORD, LPVOID) = &ExtRawDllMain;
+extern "C" BOOL (WINAPI* _pRawDllMain)(HINSTANCE, DWORD, LPVOID) = &ExtRawDllMain;
 
 extern "C"
 BOOL WINAPI ExtRawDllMain(HINSTANCE, DWORD dwReason, LPVOID)
@@ -63,7 +61,8 @@ BOOL WINAPI ExtRawDllMain(HINSTANCE, DWORD dwReason, LPVOID)
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
-
-#pragma managed(pop)

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,8 +10,6 @@
 
 // afxv_w32.h - target version/configuration control for Win32
 
-#pragma once
-
 #ifdef _WINDOWS_
 	#error WINDOWS.H already included.  MFC apps must not #include <windows.h>
 #endif
@@ -19,53 +17,6 @@
 // STRICT is the only supported option (NOSTRICT is no longer supported)
 #ifndef STRICT
 #define STRICT 1
-#endif
-
-#ifndef WINVER
-#ifdef _WIN32_WINNT
-#define WINVER _WIN32_WINNT
-#else
-#ifndef _M_IA64
-#pragma message(" WINVER not defined. Defaulting to 0x0600 (Windows Vista)")
-#define WINVER 0x0600
-#else
-#pragma message(" WINVER not defined. Defaulting to 0x0502 (Windows 2003 Server)")
-#define WINVER 0x0502
-#endif
-#endif
-#else
-#if WINVER < 0x0400
-#error MFC requires WINVER to be #defined to 0x0400 or greater
-#endif
-#endif
-
-#ifndef _WIN32_IE
-#define _WIN32_IE 0x0700
-#else
-#if _WIN32_IE < 0x0400
-#error MFC requires _WIN32_IE to be #defined to 0x0400 or greater
-#endif
-#endif
-
-#ifndef _WIN32_WINDOWS
-#define _WIN32_WINDOWS 0x0410
-#else
-#if _WIN32_WINDOWS < 0x0400
-#error MFC requires _WIN32_WINDOWS to be #defined to 0x0400 or greater
-#endif
-#endif
-
-#ifndef _WIN32_WINNT
-#ifdef WINVER
-#define _WIN32_WINNT WINVER
-#else
-#pragma message("_WIN32_WINNT not defined. Defaulting to 0x0600 (Windows Vista)")
-#define _WIN32_WINNT 0x0600
-#endif
-#else
-#if _WIN32_WINNT < 0x0400
-#error MFC requires _WIN32_WINNT to be #defined to 0x0400 or greater
-#endif
 #endif
 
 // certain parts of WINDOWS.H are necessary
@@ -134,12 +85,17 @@
 #endif
 
 #ifdef VC_EXTRALEAN
+#define WIN32_EXTRA_LEAN
 #define NOSERVICE
 #define NOMCX
 #define NOIME
 #define NOSOUND
 #define NOCOMM
+#define NOKANJI
 #define NORPC
+#define NOPROXYSTUB
+#define NOIMAGE
+#define NOTAPE
 
 #ifndef NO_ANSIUNI_ONLY
 #ifdef _UNICODE
@@ -156,26 +112,15 @@
 // To resume any of these warning: #pragma warning(default: 4xxx)
 // which should be placed after the AFX include files
 
-#pragma warning(push)
-#pragma warning(disable: 4311 4312)
+#ifndef ALL_WARNINGS
 #pragma warning(disable: 4201)  // winnt.h uses nameless structs
-
-// Don't include winsock.h
-#pragma push_macro("_WINSOCKAPI_")
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_
 #endif
 
+#define _WIN32_WINDOWS 0x0500
 #include <windows.h>
 
-#pragma pop_macro("_WINSOCKAPI_")
-
-#pragma warning(pop)
-
-// Mouse message MFC is interested in
-#ifndef AFX_WM_MOUSELAST
-#define AFX_WM_MOUSELAST 0x0209
-#endif
+#undef WM_MOUSELAST
+#define WM_MOUSELAST 0x0209
 
 #include <zmouse.h>
 
@@ -185,9 +130,9 @@ typedef struct HKEY__ *HKEY;
 #ifndef _INC_COMMCTRL
 	#include <commctrl.h>
 
-	// Note: We must avoid using TB_ADDBUTTONW and TB_INSERTBUTTONW
-	//       in the Unicode build or else MFCXXU.DLL will not be
-	//       compatible with pre-IE4 versions of COMCTL32.DLL.
+	// Note: We must avoid using TB_ADDBUTTONW and TB_INSERTBUTTONW in the Unicode
+	//  build or else MFC42U.DLL will not be compatible with pre-IE4 versions of
+	//  COMCTL32.DLL.
 	#ifdef TB_ADDBUTTONSA
 		#undef TB_ADDBUTTONS
 		#define TB_ADDBUTTONS TB_ADDBUTTONSA
@@ -215,10 +160,6 @@ typedef struct HKEY__ *HKEY;
 #endif
 #endif
 
-#ifdef _WIN64
-#define _AFX_NO_CTL3D_SUPPORT
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 // Now for the Windows API specific parts
 
@@ -228,10 +169,8 @@ typedef struct HKEY__ *HKEY;
 // Win32 uses macros with parameters for this, which breaks C++ code.
 #ifdef GetWindowTask
 #undef GetWindowTask
-#ifdef _WIN32
 AFX_INLINE HTASK GetWindowTask(HWND hWnd)
-	{ return (HTASK)(DWORD_PTR)::GetWindowThreadProcessId(hWnd, NULL); }
-#endif
+	{ return (HTASK)::GetWindowThreadProcessId(hWnd, NULL); }
 #endif
 
 // Win32 uses macros with parameters for this, which breaks C++ code.
@@ -241,7 +180,7 @@ AFX_INLINE HWND GetNextWindow(HWND hWnd, UINT nDirection)
 	{ return ::GetWindow(hWnd, nDirection); }
 #endif
 
-// Avoid mapping CToolBar::DrawState to DrawState[A/W]
+// Avoid Win95 mapping CToolBar::DrawState to DrawState[A/W]
 #ifdef DrawState
 #undef DrawState
 AFX_INLINE BOOL WINAPI DrawState(HDC hdc, HBRUSH hbr, DRAWSTATEPROC lpOutputFunc,
@@ -255,19 +194,15 @@ AFX_INLINE BOOL WINAPI DrawState(HDC hdc, HBRUSH hbr, DRAWSTATEPROC lpOutputFunc
 #endif
 #endif
 
-// Avoid mapping CStatusBar::DrawStatusText to DrawStatusText[A/W]
+// Avoid Win95 mapping CStatusBar::DrawStatusText to DrawStatusText[A/W]
 #ifdef DrawStatusText
 #undef DrawStatusText
-AFX_INLINE void WINAPI AfxDrawStatusTextA(HDC hDC, LPRECT lprc, LPCTSTR szText,
-	UINT uFlags);
-AFX_INLINE void WINAPI AfxDrawStatusTextW(HDC hDC, LPRECT lprc, LPCTSTR szText,
-	UINT uFlags);
 AFX_INLINE void WINAPI DrawStatusText(HDC hDC, LPRECT lprc, LPCTSTR szText,
-	UINT uFlags) 
+	UINT uFlags)
 #ifdef UNICODE
-	{ ::AfxDrawStatusTextW(hDC, lprc, szText, uFlags); }
+	{ ::DrawStatusTextW(hDC, lprc, szText, uFlags); }
 #else
-	{ ::AfxDrawStatusTextA(hDC, lprc, szText, uFlags); }
+	{ ::DrawStatusTextA(hDC, lprc, szText, uFlags); }
 #endif
 #endif
 

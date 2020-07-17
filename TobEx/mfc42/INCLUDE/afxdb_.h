@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -13,17 +13,12 @@
 #ifndef __AFXDB__H__
 #define __AFXDB__H__
 
-#pragma once
-
-#include <sqltypes.h>
-
 //////////////////////////////////////////////////////////////////////////////
 // Recordset Field exchange for ODBC & DAO classes (RFX_ and DFX_)
 
 #define AFX_RFX_SHORT_PSEUDO_NULL (0x7EE4)
 #define AFX_RFX_INT_PSEUDO_NULL (0x7EE4)
 #define AFX_RFX_LONG_PSEUDO_NULL (0x4a4d4120L)
-#define AFX_RFX_BIGINT_PSEUDO_NULL (0x4a4d4120L)
 #define AFX_RFX_BYTE_PSEUDO_NULL 255
 #define AFX_RFX_SINGLE_PSEUDO_NULL (-9.123e19f)
 #define AFX_RFX_DOUBLE_PSEUDO_NULL (-9.123e19)
@@ -48,11 +43,6 @@
 #define AFX_RFX_TIMESTAMP   15
 #define AFX_RFX_OLEDATE     16
 #define AFX_RFX_LPTSTR      17
-#define AFX_RFX_LPWSTR      18
-#define AFX_RFX_LPASTR      19
-#define AFX_RFX_WTEXT       20
-#define AFX_RFX_ATEXT       21
-#define AFX_RFX_BIGINT      22
 
 //////////////////////////////////////////////////////////////////////////////
 // CLongBinary - a Long (generally > 32k in length) Binary object
@@ -67,7 +57,7 @@ public:
 
 // Attributes
 	HGLOBAL m_hData;
-	SQLULEN m_dwDataLength;
+	DWORD m_dwDataLength;
 
 // Implementation
 public:

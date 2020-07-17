@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -22,7 +22,7 @@
 #endif
 
 #ifndef WINVER
-#define WINVER 0x0500   // default to Windows 2000
+#define WINVER 0x0400   // default to Windows Version 4.0
 #endif
 
 #include <winresrc.h>

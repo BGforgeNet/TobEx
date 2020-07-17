@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,14 +10,12 @@
 
 // Inlines for AFXCMN.H
 
-#pragma once
-
 #ifdef _AFXCMN_INLINE
 
 _AFXCMN_INLINE CDragListBox::CDragListBox()
 	{ m_nLast = -1;}
 _AFXCMN_INLINE int CDragListBox::ItemFromPt(CPoint pt, BOOL bAutoScroll) const
-	{ASSERT(::IsWindow(m_hWnd)); return ::AfxLBItemFromPt(m_hWnd, pt, bAutoScroll); }
+	{ASSERT(::IsWindow(m_hWnd)); return ::LBItemFromPt(m_hWnd, pt, bAutoScroll); }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -81,37 +79,23 @@ _AFXCMN_INLINE void CToolBarCtrl::SetToolTips(CToolTipCtrl* pTip)
 _AFXCMN_INLINE void CToolBarCtrl::SetOwner(CWnd* pWnd)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TB_SETPARENT, (WPARAM)pWnd->GetSafeHwnd(), 0L); }
 _AFXCMN_INLINE void CToolBarCtrl::SetRows(int nRows, BOOL bLarger, LPRECT lpRect)
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TB_SETROWS, MAKEWPARAM(nRows, bLarger), (LPARAM)lpRect); }
+	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TB_SETROWS, MAKELPARAM(nRows, bLarger), (LPARAM)lpRect); }
 _AFXCMN_INLINE int CToolBarCtrl::GetRows() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TB_GETROWS, 0, 0L); }
 _AFXCMN_INLINE BOOL CToolBarCtrl::SetCmdID(int nIndex, UINT nID)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TB_SETCMDID, nIndex, nID); }
 _AFXCMN_INLINE UINT CToolBarCtrl::GetBitmapFlags() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, TB_GETBITMAPFLAGS, 0, 0L); }
-_AFXCMN_INLINE int CToolBarCtrl::GetBitmap(int nID) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TB_GETBITMAP, nID, 0L); }
-_AFXCMN_INLINE BOOL CToolBarCtrl::ReplaceBitmap(_In_ LPTBREPLACEBITMAP pReplaceBitmap)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TB_REPLACEBITMAP, 0, (LPARAM)pReplaceBitmap); }
-_AFXCMN_INLINE BOOL CToolBarCtrl::ChangeBitmap(int idButton, int iBitmap)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TB_CHANGEBITMAP, idButton, (LPARAM)MAKELPARAM(iBitmap, 0)); }
 _AFXCMN_INLINE int CToolBarCtrl::HitTest(LPPOINT ppt) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TB_HITTEST, 0, (LPARAM)ppt); }
 _AFXCMN_INLINE DWORD CToolBarCtrl::GetExtendedStyle() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TB_GETEXTENDEDSTYLE, 0, 0L); }
 _AFXCMN_INLINE DWORD CToolBarCtrl::SetExtendedStyle(DWORD dwExStyle)
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TB_SETEXTENDEDSTYLE, 0, dwExStyle); }
-_AFXCMN_INLINE void CToolBarCtrl::GetPadding(int& nHorzPadding, int& nVertPadding) const
-	{ ASSERT(::IsWindow(m_hWnd)); DWORD dwPadding = (DWORD)::SendMessage(m_hWnd, TB_GETPADDING, 0, 0L); nHorzPadding = (int)LOWORD(dwPadding); nVertPadding = (int)HIWORD(dwPadding); }
-_AFXCMN_INLINE DWORD CToolBarCtrl::SetPadding(int nHorzPadding, int nVertPadding)
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TB_SETPADDING, 0, (LPARAM)MAKELPARAM(nHorzPadding, nVertPadding)); }
 _AFXCMN_INLINE COLORREF CToolBarCtrl::GetInsertMarkColor() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, TB_GETINSERTMARKCOLOR, 0, 0); }
 _AFXCMN_INLINE COLORREF CToolBarCtrl::SetInsertMarkColor(COLORREF clrNew)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, TB_SETINSERTMARKCOLOR, 0, (LPARAM) clrNew); }
-_AFXCMN_INLINE BOOL CToolBarCtrl::GetColorScheme(COLORSCHEME* lpcs) const
-	{ ASSERT(::IsWindow(m_hWnd)); lpcs->dwSize = ULONG(sizeof(COLORSCHEME)); return (BOOL)(::SendMessage(m_hWnd, TB_GETCOLORSCHEME, 0, (LPARAM)lpcs) != 0); }
-_AFXCMN_INLINE void CToolBarCtrl::SetColorScheme(const COLORSCHEME* lpcs)
-	{ ASSERT(::IsWindow(m_hWnd)); ((COLORSCHEME*)lpcs)->dwSize = sizeof(COLORSCHEME); ::SendMessage(m_hWnd, TB_SETCOLORSCHEME, 0, (LPARAM)lpcs); }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -136,16 +120,12 @@ _AFXCMN_INLINE BOOL CStatusBarCtrl::GetRect(int nPane, LPRECT lpRect) const
 
 _AFXCMN_INLINE CListCtrl::CListCtrl()
 	{ }
-_AFXCMN_INLINE CToolTipCtrl* CListCtrl::GetToolTips() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (CToolTipCtrl*)CWnd::FromHandle((HWND)::SendMessage(m_hWnd, LVM_GETTOOLTIPS, 0, 0L)); }
-_AFXCMN_INLINE CToolTipCtrl* CListCtrl::SetToolTips(CToolTipCtrl* pTip)
-	{ ASSERT(::IsWindow(m_hWnd)); return (CToolTipCtrl*)CWnd::FromHandle((HWND)::SendMessage(m_hWnd, LVM_SETTOOLTIPS, 0, (LPARAM) pTip->GetSafeHwnd())); }
 _AFXCMN_INLINE COLORREF CListCtrl::GetBkColor() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, LVM_GETBKCOLOR, 0, 0L); }
 _AFXCMN_INLINE BOOL CListCtrl::SetBkColor(COLORREF cr)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, LVM_SETBKCOLOR, 0, cr); }
-_AFXCMN_INLINE CImageList* CListCtrl::GetImageList(int nImageList) const
-	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, LVM_GETIMAGELIST, nImageList, 0L)); }
+_AFXCMN_INLINE CImageList* CListCtrl::GetImageList(int nImageListType) const
+	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, LVM_GETIMAGELIST, nImageListType, 0L)); }
 _AFXCMN_INLINE CImageList* CListCtrl::SetImageList(CImageList* pImageList, int nImageList)
 	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, LVM_SETIMAGELIST, nImageList, (LPARAM)pImageList->GetSafeHandle())); }
 _AFXCMN_INLINE int CListCtrl::GetItemCount() const
@@ -154,7 +134,7 @@ _AFXCMN_INLINE BOOL CListCtrl::GetItem(LVITEM* pItem) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, LVM_GETITEM, 0, (LPARAM)pItem); }
 _AFXCMN_INLINE BOOL CListCtrl::SetItem(const LVITEM* pItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, LVM_SETITEM, 0, (LPARAM)pItem); }
-_AFXCMN_INLINE BOOL CListCtrl::SetItemData(int nItem, DWORD_PTR dwData)
+_AFXCMN_INLINE BOOL CListCtrl::SetItemData(int nItem, DWORD dwData)
 	{ ASSERT(::IsWindow(m_hWnd)); return SetItem(nItem, 0, LVIF_PARAM, NULL, 0, 0, 0, (LPARAM)dwData); }
 _AFXCMN_INLINE int CListCtrl::InsertItem(const LVITEM* pItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_INSERTITEM, 0, (LPARAM)pItem); }
@@ -173,14 +153,14 @@ _AFXCMN_INLINE BOOL CListCtrl::SetCallbackMask(UINT nMask)
 _AFXCMN_INLINE int CListCtrl::GetNextItem(int nItem, int nFlags) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_GETNEXTITEM, nItem, MAKELPARAM(nFlags, 0)); }
 _AFXCMN_INLINE POSITION CListCtrl::GetFirstSelectedItemPosition() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (POSITION)(DWORD_PTR)(1+GetNextItem(-1, LVIS_SELECTED)); }
+	{ ASSERT(::IsWindow(m_hWnd)); return (POSITION) (1+GetNextItem(-1, LVIS_SELECTED)); }
 _AFXCMN_INLINE int CListCtrl::GetNextSelectedItem(POSITION& pos) const
-	{ ASSERT(::IsWindow(m_hWnd)); DWORD_PTR nOldPos = (DWORD_PTR)pos-1; pos = (POSITION)(DWORD_PTR)(1+GetNextItem((UINT)nOldPos, LVIS_SELECTED)); return (UINT)nOldPos; }
+	{ ASSERT(::IsWindow(m_hWnd)); int nOldPos = (int)pos-1; pos = (POSITION) (1+GetNextItem(nOldPos, LVIS_SELECTED)); return nOldPos; }
 _AFXCMN_INLINE int CListCtrl::FindItem(LVFINDINFO* pFindInfo, int nStart) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_FINDITEM, nStart, (LPARAM)pFindInfo); }
 _AFXCMN_INLINE int CListCtrl::HitTest(LVHITTESTINFO* pHitTestInfo) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_HITTEST, 0, (LPARAM)pHitTestInfo); }
-_AFXCMN_INLINE BOOL CListCtrl::SetItemPosition(int nItem, POINT pt)  // LVM_SETITEMPOSITION is not supported, only LVM_SETITEMPOSITION32 is.
+_AFXCMN_INLINE BOOL CListCtrl::SetItemPosition(int nItem, POINT pt)
 	{ ASSERT(::IsWindow(m_hWnd)); ASSERT((GetStyle() & LVS_OWNERDATA)==0); return (BOOL) ::SendMessage(m_hWnd, LVM_SETITEMPOSITION32, nItem, (LPARAM)&pt); }
 _AFXCMN_INLINE BOOL CListCtrl::GetItemPosition(int nItem, LPPOINT lpPoint) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, LVM_GETITEMPOSITION, nItem, (LPARAM)lpPoint); }
@@ -234,26 +214,10 @@ _AFXCMN_INLINE UINT CListCtrl::GetItemState(int nItem, UINT nMask) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, LVM_GETITEMSTATE, nItem, nMask); }
 _AFXCMN_INLINE void CListCtrl::SetItemCount(int nItems)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, LVM_SETITEMCOUNT, nItems, 0); }
-_AFXCMN_INLINE BOOL CListCtrl::SortItems(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
+_AFXCMN_INLINE BOOL CListCtrl::SortItems(PFNLVCOMPARE pfnCompare, DWORD dwData)
 	{ ASSERT(::IsWindow(m_hWnd)); ASSERT((GetStyle() & LVS_OWNERDATA)==0); return (BOOL) ::SendMessage(m_hWnd, LVM_SORTITEMS, dwData, (LPARAM)pfnCompare); }
-_AFXCMN_INLINE BOOL CListCtrl::SortItemsEx(PFNLVCOMPARE pfnCompare, DWORD_PTR dwData)
-	{ ASSERT(::IsWindow(m_hWnd)); ASSERT((GetStyle() & LVS_OWNERDATA)==0); return (BOOL) ::SendMessage(m_hWnd, LVM_SORTITEMSEX, dwData, (LPARAM)pfnCompare); }
 _AFXCMN_INLINE UINT CListCtrl::GetSelectedCount() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, LVM_GETSELECTEDCOUNT, 0, 0L); }
-_AFXCMN_INLINE BOOL CListCtrl::GetItemSpacing(BOOL fSmall, int* pnHorzSpacing, int* pnVertSpacing) const
-{ 
-	ASSERT(::IsWindow(m_hWnd)); 
-	ASSERT(pnHorzSpacing != NULL);
-	ASSERT(pnVertSpacing != NULL);
-        if (pnHorzSpacing == NULL || pnVertSpacing == NULL)
-        {
-            return FALSE;
-        }
-	DWORD dwSpacing = (DWORD)::SendMessage(m_hWnd, LVM_GETITEMSPACING, (WPARAM)fSmall, 0L); 
-	*pnHorzSpacing = (int)LOWORD(dwSpacing); 
-	*pnVertSpacing = (int)HIWORD(dwSpacing); 
-        return TRUE;
-}
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -280,12 +244,10 @@ _AFXCMN_INLINE UINT CTreeCtrl::GetIndent() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (UINT)::SendMessage(m_hWnd, TVM_GETINDENT, 0, 0); }
 _AFXCMN_INLINE void CTreeCtrl::SetIndent(UINT nIndent)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TVM_SETINDENT, nIndent, 0); }
-_AFXCMN_INLINE CImageList* CTreeCtrl::GetImageList(int nImageList) const
-	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST)::SendMessage(m_hWnd, TVM_GETIMAGELIST, (WPARAM)nImageList, 0)); }
-_AFXCMN_INLINE CImageList* CTreeCtrl::SetImageList(CImageList* pImageList, int nImageList)
-	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST)::SendMessage(m_hWnd, TVM_SETIMAGELIST, (WPARAM)nImageList, (LPARAM)pImageList->GetSafeHandle())); }
-_AFXCMN_INLINE UINT CTreeCtrl::SetScrollTime(UINT uScrollTime)
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, TVM_SETSCROLLTIME, (WPARAM) uScrollTime, 0); }
+_AFXCMN_INLINE CImageList* CTreeCtrl::GetImageList(UINT nImageList) const
+	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST)::SendMessage(m_hWnd, TVM_GETIMAGELIST, (UINT)nImageList, 0)); }
+_AFXCMN_INLINE CImageList* CTreeCtrl::SetImageList(CImageList* pImageList, int nImageListType)
+	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST)::SendMessage(m_hWnd, TVM_SETIMAGELIST, (UINT)nImageListType, (LPARAM)pImageList->GetSafeHandle())); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetNextItem(HTREEITEM hItem, UINT nCode) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, nCode, (LPARAM)hItem); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetChildItem(HTREEITEM hItem) const
@@ -302,12 +264,8 @@ _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetNextVisibleItem(HTREEITEM hItem) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, TVGN_NEXTVISIBLE, (LPARAM)hItem); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetPrevVisibleItem(HTREEITEM hItem) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, TVGN_PREVIOUSVISIBLE, (LPARAM)hItem); }
-_AFXCMN_INLINE HTREEITEM CTreeCtrl::GetLastVisibleItem() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, TVGN_LASTVISIBLE, 0); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetSelectedItem() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, TVGN_CARET, 0); }
-_AFXCMN_INLINE UINT CTreeCtrl::GetScrollTime() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, TVM_GETSCROLLTIME, 0, 0); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetDropHilightItem() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM)::SendMessage(m_hWnd, TVM_GETNEXTITEM, TVGN_DROPHILITE, 0); }
 _AFXCMN_INLINE HTREEITEM CTreeCtrl::GetRootItem() const
@@ -330,7 +288,7 @@ _AFXCMN_INLINE BOOL CTreeCtrl::SetItemImage(HTREEITEM hItem, int nImage, int nSe
 	{ ASSERT(::IsWindow(m_hWnd)); return SetItem(hItem, TVIF_IMAGE|TVIF_SELECTEDIMAGE, NULL, nImage, nSelectedImage, 0, 0, NULL); }
 _AFXCMN_INLINE BOOL CTreeCtrl::SetItemState(HTREEITEM hItem, UINT nState, UINT nStateMask)
 	{ ASSERT(::IsWindow(m_hWnd)); return SetItem(hItem, TVIF_STATE, NULL, 0, 0, nState, nStateMask, NULL); }
-_AFXCMN_INLINE BOOL CTreeCtrl::SetItemData(HTREEITEM hItem, DWORD_PTR dwData)
+_AFXCMN_INLINE BOOL CTreeCtrl::SetItemData(HTREEITEM hItem, DWORD dwData)
 	{ ASSERT(::IsWindow(m_hWnd)); return SetItem(hItem, TVIF_PARAM, NULL, 0, 0, 0, 0, (LPARAM)dwData); }
 _AFXCMN_INLINE CEdit* CTreeCtrl::EditLabel(HTREEITEM hItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return (CEdit*)CWnd::FromHandle((HWND)::SendMessage(m_hWnd, TVM_EDITLABEL, 0, (LPARAM)hItem)); }
@@ -368,39 +326,6 @@ _AFXCMN_INLINE COLORREF CTreeCtrl::GetInsertMarkColor() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, TVM_GETINSERTMARKCOLOR, 0, 0L); }
 _AFXCMN_INLINE COLORREF CTreeCtrl::SetInsertMarkColor(COLORREF clrNew)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, TVM_SETINSERTMARKCOLOR, 0, (LPARAM)clrNew); }
-_AFXCMN_INLINE BOOL CTreeCtrl::EndEditLabelNow(BOOL fCancelWithoutSave)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TVM_ENDEDITLABELNOW, (WPARAM)fCancelWithoutSave, 0); }
-
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE COLORREF CTreeCtrl::GetLineColor() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF)::SendMessage(m_hWnd, TVM_GETLINECOLOR, 0, 0L); }
-_AFXCMN_INLINE COLORREF CTreeCtrl::SetLineColor(COLORREF clrNew /*= CLR_DEFAULT*/)
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF)::SendMessage(m_hWnd, TVM_SETLINECOLOR, 0, (LPARAM)clrNew); }
-#endif
-
-#if (_WIN32_WINNT >= 0x0501) && defined(UNICODE)
-_AFXCMN_INLINE UINT CTreeCtrl::MapItemToAccId(HTREEITEM hItem) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, TVM_MAPHTREEITEMTOACCID, (WPARAM)hItem, 0); }
-_AFXCMN_INLINE HTREEITEM CTreeCtrl::MapAccIdToItem(UINT uAccId) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (HTREEITEM) ::SendMessage(m_hWnd, TVM_MAPACCIDTOHTREEITEM, (WPARAM)uAccId, 0); }
-#endif
-
-#if (_WIN32_WINNT >= 0x0600) && defined(UNICODE)
-_AFXCMN_INLINE UINT CTreeCtrl::GetSelectedCount()
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, TVM_GETSELECTEDCOUNT, 0, 0); }
-_AFXCMN_INLINE void CTreeCtrl::ShowInfoTip(HTREEITEM hItem)
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TVM_SHOWINFOTIP, 0, (LPARAM)hItem); }
-_AFXCMN_INLINE BOOL CTreeCtrl::SetItemStateEx(HTREEITEM hItem, UINT uStateEx)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)SetItemEx(hItem, TVIF_STATEEX, 0, 0, 0, 0, 0, 0, uStateEx, 0, 0); }
-_AFXCMN_INLINE BOOL CTreeCtrl::SetItemExpandedImageIndex(HTREEITEM hItem, int nIndex)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)SetItemEx(hItem, TVIF_EXPANDEDIMAGE, 0, 0, 0, 0, 0, 0, TVIF_EXPANDEDIMAGE, 0, nIndex); }
-_AFXCMN_INLINE DWORD CTreeCtrl::GetExtendedStyle() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TVM_GETEXTENDEDSTYLE, (WPARAM)0, 0); }
-_AFXCMN_INLINE DWORD CTreeCtrl::SetExtendedStyle(DWORD dwExMask, DWORD dwExStyles)
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TVM_SETEXTENDEDSTYLE, (WPARAM)dwExMask, (LPARAM)dwExStyles); }
-_AFXCMN_INLINE BOOL CTreeCtrl::SetAutoscrollInfo(UINT uPixelsPerSec, UINT uUpdateTime)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TVM_SETAUTOSCROLLINFO, (WPARAM)uPixelsPerSec, (LPARAM)uUpdateTime); }
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -409,8 +334,7 @@ _AFXCMN_INLINE CHotKeyCtrl::CHotKeyCtrl()
 _AFXCMN_INLINE void CHotKeyCtrl::SetHotKey(WORD wVirtualKeyCode, WORD wModifiers)
 	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, HKM_SETHOTKEY, MAKEWORD(wVirtualKeyCode, wModifiers), 0L); }
 _AFXCMN_INLINE DWORD CHotKeyCtrl::GetHotKey() const
-//IA64: Assume retval of HKM_GETHOTKEY is still 32-bit
-	{ ASSERT(::IsWindow(m_hWnd)); return DWORD(::SendMessage(m_hWnd, HKM_GETHOTKEY, 0, 0L)); }
+	{ ASSERT(::IsWindow(m_hWnd)); return ::SendMessage(m_hWnd, HKM_GETHOTKEY, 0, 0L); }
 _AFXCMN_INLINE void CHotKeyCtrl::SetRules(WORD wInvalidComb, WORD wModifiers)
 	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, HKM_SETRULES, wInvalidComb, MAKELPARAM(wModifiers, 0)); }
 
@@ -428,7 +352,7 @@ _AFXCMN_INLINE int CToolTipCtrl::GetToolCount() const
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE CSpinButtonCtrl::CSpinButtonCtrl()
- 	{ }
+	{ }
 _AFXCMN_INLINE UINT CSpinButtonCtrl::GetAccel(int nAccel, UDACCEL* pAccel) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) LOWORD(::SendMessage(m_hWnd, UDM_GETACCEL, nAccel, (LPARAM)pAccel)); }
 _AFXCMN_INLINE UINT CSpinButtonCtrl::GetBase() const
@@ -447,7 +371,7 @@ _AFXCMN_INLINE CWnd* CSpinButtonCtrl::SetBuddy(CWnd* pWndBuddy)
 	{ ASSERT(::IsWindow(m_hWnd)); return CWnd::FromHandle((HWND) ::SendMessage(m_hWnd, UDM_SETBUDDY, (WPARAM)pWndBuddy->GetSafeHwnd(), 0L)); }
 _AFXCMN_INLINE int CSpinButtonCtrl::SetPos(int nPos)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) (short) LOWORD(::SendMessage(m_hWnd, UDM_SETPOS, 0, MAKELPARAM(nPos, 0))); }
-_AFXCMN_INLINE void CSpinButtonCtrl::SetRange(short nLower, short nUpper)
+_AFXCMN_INLINE void CSpinButtonCtrl::SetRange(int nLower, int nUpper)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, UDM_SETRANGE, 0, MAKELPARAM(nUpper, nLower)); }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -480,6 +404,8 @@ _AFXCMN_INLINE int CSliderCtrl::GetPos() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TBM_GETPOS, 0, 0l); }
 _AFXCMN_INLINE void CSliderCtrl::SetPos(int nPos)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TBM_SETPOS, TRUE, nPos); }
+_AFXCMN_INLINE void CSliderCtrl::VerifyPos()
+	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TBM_SETPOS, FALSE, 0L); }
 _AFXCMN_INLINE void CSliderCtrl::ClearTics(BOOL bRedraw)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TBM_CLEARTICS, bRedraw, 0l); }
 _AFXCMN_INLINE UINT CSliderCtrl::GetNumTics() const
@@ -504,22 +430,16 @@ _AFXCMN_INLINE void CSliderCtrl::SetToolTips(CToolTipCtrl* pTip)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TBM_SETTOOLTIPS, (WPARAM)pTip->GetSafeHwnd(), 0L); }
 _AFXCMN_INLINE int CSliderCtrl::SetTipSide(int nLocation)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, TBM_SETTIPSIDE, nLocation, 0L); }
-_AFXCMN_INLINE void CSliderCtrl::SetThumbLength(int nLength)
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TBM_SETTHUMBLENGTH, (WPARAM)nLength, 0L); }
-_AFXCMN_INLINE int CSliderCtrl::GetThumbLength() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TBM_GETTHUMBLENGTH, 0, 0L); }
 
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE CProgressCtrl::CProgressCtrl()
 	{ }
-_AFXCMN_INLINE COLORREF CProgressCtrl::SetBkColor(COLORREF clrNew)
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, PBM_SETBKCOLOR, 0, (LPARAM) clrNew); }
 _AFXCMN_INLINE void CProgressCtrl::SetRange(short nLower, short nUpper)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, PBM_SETRANGE, 0, MAKELPARAM(nLower, nUpper)); }
 _AFXCMN_INLINE void CProgressCtrl::SetRange32(int nLower, int nUpper)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, PBM_SETRANGE32, (WPARAM) nLower, (LPARAM) nUpper); }
-_AFXCMN_INLINE int CProgressCtrl::GetPos() const
+_AFXCMN_INLINE int CProgressCtrl::GetPos()
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_GETPOS, 0, 0); }
 _AFXCMN_INLINE int CProgressCtrl::OffsetPos(int nPos)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_DELTAPOS, nPos, 0L); }
@@ -544,8 +464,55 @@ _AFXCMN_INLINE BOOL CHeaderCtrl::SetItem(int nPos, HDITEM* pHeaderItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, HDM_SETITEM, nPos, (LPARAM)pHeaderItem); }
 _AFXCMN_INLINE BOOL CHeaderCtrl::Layout(HDLAYOUT* pHeaderLayout)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, HDM_LAYOUT, 0, (LPARAM)pHeaderLayout); }
-_AFXCMN_INLINE int CHeaderCtrl::HitTest(_Inout_ LPHDHITTESTINFO pHeaderHitTestInfo)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, HDM_HITTEST, 0, (LPARAM)pHeaderHitTestInfo); }
+
+/////////////////////////////////////////////////////////////////////////////
+
+_AFXCMN_INLINE CImageList::operator HIMAGELIST() const
+	{ return m_hImageList;}
+_AFXCMN_INLINE HIMAGELIST CImageList::GetSafeHandle() const
+	{ return (this == NULL) ? NULL : m_hImageList; }
+_AFXCMN_INLINE int CImageList::GetImageCount() const
+	{ ASSERT(m_hImageList != NULL); return ImageList_GetImageCount(m_hImageList); }
+_AFXCMN_INLINE int CImageList::Add(CBitmap* pbmImage, CBitmap* pbmMask)
+	{ ASSERT(m_hImageList != NULL); return ImageList_Add(m_hImageList, (HBITMAP)pbmImage->GetSafeHandle(), (HBITMAP)pbmMask->GetSafeHandle()); }
+_AFXCMN_INLINE int CImageList::Add(CBitmap* pbmImage, COLORREF crMask)
+	{ ASSERT(m_hImageList != NULL); return ImageList_AddMasked(m_hImageList, (HBITMAP)pbmImage->GetSafeHandle(), crMask); }
+_AFXCMN_INLINE BOOL CImageList::Remove(int nImage)
+	{ ASSERT(m_hImageList != NULL); return ImageList_Remove(m_hImageList, nImage); }
+_AFXCMN_INLINE BOOL CImageList::Replace(int nImage, CBitmap* pbmImage, CBitmap* pbmMask)
+	{ ASSERT(m_hImageList != NULL); return ImageList_Replace(m_hImageList, nImage, (HBITMAP)pbmImage->GetSafeHandle(), (HBITMAP)pbmMask->GetSafeHandle()); }
+_AFXCMN_INLINE int CImageList::Add(HICON hIcon)
+	{ ASSERT(m_hImageList != NULL); return ImageList_AddIcon(m_hImageList, hIcon); }
+_AFXCMN_INLINE int CImageList::Replace(int nImage, HICON hIcon)
+	{ ASSERT(m_hImageList != NULL); return ImageList_ReplaceIcon(m_hImageList, nImage, hIcon); }
+_AFXCMN_INLINE HICON CImageList::ExtractIcon(int nImage)
+	{ ASSERT(m_hImageList != NULL); return ImageList_ExtractIcon(NULL, m_hImageList, nImage); }
+_AFXCMN_INLINE BOOL CImageList::Draw(CDC* pDC, int nImage, POINT pt, UINT nStyle)
+	{ ASSERT(m_hImageList != NULL); ASSERT(pDC != NULL); return ImageList_Draw(m_hImageList, nImage, pDC->GetSafeHdc(), pt.x, pt.y, nStyle); }
+_AFXCMN_INLINE COLORREF CImageList::SetBkColor(COLORREF cr)
+	{ ASSERT(m_hImageList != NULL); return ImageList_SetBkColor(m_hImageList, cr); }
+_AFXCMN_INLINE COLORREF CImageList::GetBkColor() const
+	{ ASSERT(m_hImageList != NULL); return ImageList_GetBkColor(m_hImageList); }
+_AFXCMN_INLINE BOOL CImageList::SetOverlayImage(int nImage, int nOverlay)
+	{ ASSERT(m_hImageList != NULL); return ImageList_SetOverlayImage(m_hImageList, nImage, nOverlay); }
+_AFXCMN_INLINE BOOL CImageList::GetImageInfo(int nImage, IMAGEINFO* pImageInfo) const
+	{ ASSERT(m_hImageList != NULL); return ImageList_GetImageInfo(m_hImageList, nImage, pImageInfo); }
+_AFXCMN_INLINE BOOL CImageList::BeginDrag(int nImage, CPoint ptHotSpot)
+	{ ASSERT(m_hImageList != NULL); return ImageList_BeginDrag(m_hImageList, nImage, ptHotSpot.x, ptHotSpot.y); }
+_AFXCMN_INLINE void PASCAL CImageList::EndDrag()
+	{ ImageList_EndDrag(); }
+_AFXCMN_INLINE BOOL PASCAL CImageList::DragMove(CPoint pt)
+	{ return ImageList_DragMove(pt.x, pt.y); }
+_AFXCMN_INLINE BOOL CImageList::SetDragCursorImage(int nDrag, CPoint ptHotSpot)
+	{ ASSERT(m_hImageList != NULL); return ImageList_SetDragCursorImage(m_hImageList, nDrag, ptHotSpot.x, ptHotSpot.y); }
+_AFXCMN_INLINE BOOL PASCAL CImageList::DragShowNolock(BOOL bShow)
+	{return ImageList_DragShowNolock(bShow);}
+_AFXCMN_INLINE CImageList* PASCAL CImageList::GetDragImage(LPPOINT lpPoint, LPPOINT lpPointHotSpot)
+	{return CImageList::FromHandle(ImageList_GetDragImage(lpPoint, lpPointHotSpot));}
+_AFXCMN_INLINE BOOL PASCAL CImageList::DragEnter(CWnd* pWndLock, CPoint point)
+	{ return ImageList_DragEnter(pWndLock->GetSafeHwnd(), point.x, point.y); }
+_AFXCMN_INLINE BOOL PASCAL CImageList::DragLeave(CWnd* pWndLock)
+	{ return ImageList_DragLeave(pWndLock->GetSafeHwnd()); }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -565,11 +532,11 @@ _AFXCMN_INLINE BOOL CTabCtrl::SetItemExtra(int nBytes)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, TCM_SETITEMEXTRA, (WPARAM) nBytes, 0); }
 _AFXCMN_INLINE void CTabCtrl::SetCurFocus(int nItem)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TCM_SETCURFOCUS, (WPARAM) nItem, 0); }
-_AFXCMN_INLINE LONG CTabCtrl::InsertItem(int nItem, TCITEM* pTabCtrlItem)
-	{ ASSERT(::IsWindow(m_hWnd)); return (LONG)::SendMessage(m_hWnd, TCM_INSERTITEM, nItem, (LPARAM)pTabCtrlItem); }
-_AFXCMN_INLINE LONG CTabCtrl::InsertItem(int nItem, LPCTSTR lpszItem)
+_AFXCMN_INLINE BOOL CTabCtrl::InsertItem(int nItem, TCITEM* pTabCtrlItem)
+	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, TCM_INSERTITEM, nItem, (LPARAM)pTabCtrlItem); }
+_AFXCMN_INLINE BOOL CTabCtrl::InsertItem(int nItem, LPCTSTR lpszItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return CTabCtrl::InsertItem(TCIF_TEXT, nItem, lpszItem, 0, 0); }
-_AFXCMN_INLINE LONG CTabCtrl::InsertItem(int nItem, LPCTSTR lpszItem, int nImage)
+_AFXCMN_INLINE BOOL CTabCtrl::InsertItem(int nItem, LPCTSTR lpszItem, int nImage)
 	{ ASSERT(::IsWindow(m_hWnd)); return CTabCtrl::InsertItem(TCIF_TEXT|TCIF_IMAGE, nItem, lpszItem, nImage, 0); }
 _AFXCMN_INLINE BOOL CTabCtrl::DeleteItem(int nItem)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, TCM_DELETEITEM, nItem, 0L); }
@@ -586,8 +553,7 @@ _AFXCMN_INLINE int CTabCtrl::HitTest(TCHITTESTINFO* pHitTestInfo) const
 _AFXCMN_INLINE void CTabCtrl::AdjustRect(BOOL bLarger, LPRECT lpRect)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TCM_ADJUSTRECT, bLarger, (LPARAM)lpRect); }
 _AFXCMN_INLINE CSize CTabCtrl::SetItemSize(CSize size)
-//IA64: Assume size is still packed into a DWORD
-	{ ASSERT(::IsWindow(m_hWnd)); return (CSize)DWORD(::SendMessage(m_hWnd, TCM_SETITEMSIZE, 0, MAKELPARAM(size.cx,size.cy))); }
+	{ ASSERT(::IsWindow(m_hWnd)); return (CSize)::SendMessage(m_hWnd, TCM_SETITEMSIZE, 0, MAKELPARAM(size.cx,size.cy)); }
 _AFXCMN_INLINE void CTabCtrl::RemoveImage(int nImage)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TCM_REMOVEIMAGE, nImage, 0L); }
 _AFXCMN_INLINE void CTabCtrl::SetPadding(CSize size)
@@ -606,7 +572,7 @@ _AFXCMN_INLINE void CTabCtrl::DeselectAll(BOOL fExcludeFocus)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, TCM_DESELECTALL, fExcludeFocus, 0); }
 _AFXCMN_INLINE BOOL CTabCtrl::HighlightItem(int idItem, BOOL fHighlight /*= TRUE*/)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, TCM_HIGHLIGHTITEM, idItem, MAKELPARAM(fHighlight, 0)); }
-_AFXCMN_INLINE DWORD CTabCtrl::GetExtendedStyle() const
+_AFXCMN_INLINE DWORD CTabCtrl::GetExtendedStyle()
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TCM_GETEXTENDEDSTYLE, 0, 0); }
 _AFXCMN_INLINE DWORD CTabCtrl::SetExtendedStyle(DWORD dwNewStyle, DWORD dwExMask /*= 0*/)
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, TCM_SETEXTENDEDSTYLE, dwExMask, dwNewStyle); }
@@ -616,11 +582,9 @@ _AFXCMN_INLINE DWORD CTabCtrl::SetExtendedStyle(DWORD dwNewStyle, DWORD dwExMask
 _AFXCMN_INLINE CAnimateCtrl::CAnimateCtrl()
 	{ }
 _AFXCMN_INLINE BOOL CAnimateCtrl::Open(LPCTSTR lpszName)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_OPEN,
-		(WPARAM) ::AfxFindResourceHandle(lpszName, _T("AVI")), (LPARAM)lpszName); }
+	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_OPEN, 0, (LPARAM)lpszName); }
 _AFXCMN_INLINE BOOL CAnimateCtrl::Open(UINT nID)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_OPEN,
-		(WPARAM) ::AfxFindResourceHandle(MAKEINTRESOURCE(nID), _T("AVI")), (LPARAM) nID); }
+	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_OPEN, 0, nID); }
 _AFXCMN_INLINE BOOL CAnimateCtrl::Play(UINT nFrom, UINT nTo, UINT nRep)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_PLAY, nRep, MAKELPARAM(nFrom, nTo)); }
 _AFXCMN_INLINE BOOL CAnimateCtrl::Stop()
@@ -629,10 +593,6 @@ _AFXCMN_INLINE BOOL CAnimateCtrl::Close()
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_OPEN, 0, 0L); }
 _AFXCMN_INLINE BOOL CAnimateCtrl::Seek(UINT nTo)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_PLAY, 0, MAKELPARAM(nTo, nTo)); }
-#if (_WIN32_WINNT >= 0x600) && defined(UNICODE)
-_AFXCMN_INLINE BOOL CAnimateCtrl::IsPlaying() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, ACM_ISPLAYING, 0, 0L); }
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -641,44 +601,24 @@ _AFXCMN_INLINE CRichEditCtrl::CRichEditCtrl()
 	{ }
 _AFXCMN_INLINE BOOL CRichEditCtrl::CanUndo() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, EM_CANUNDO, 0, 0); }
-_AFXCMN_INLINE BOOL CRichEditCtrl::CanRedo() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, EM_CANREDO, 0, 0); }
-_AFXCMN_INLINE UNDONAMEID CRichEditCtrl::GetUndoName() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UNDONAMEID) ::SendMessage(m_hWnd, EM_GETUNDONAME, 0, 0); }
-_AFXCMN_INLINE UNDONAMEID CRichEditCtrl::GetRedoName() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UNDONAMEID) ::SendMessage(m_hWnd, EM_GETREDONAME, 0, 0); }
 _AFXCMN_INLINE int CRichEditCtrl::GetLineCount() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, EM_GETLINECOUNT, 0, 0); }
 _AFXCMN_INLINE BOOL CRichEditCtrl::GetModify() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, EM_GETMODIFY, 0, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::SetModify(BOOL bModified /* = TRUE */)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_SETMODIFY, bModified, 0);}
-_AFXCMN_INLINE BOOL CRichEditCtrl::SetTextMode(UINT fMode)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, EM_SETTEXTMODE, (WPARAM) fMode, 0); }
-_AFXCMN_INLINE UINT CRichEditCtrl::GetTextMode() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, EM_GETTEXTMODE, 0, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::GetRect(LPRECT lpRect) const
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_GETRECT, 0, (LPARAM)lpRect); }
 _AFXCMN_INLINE CPoint CRichEditCtrl::GetCharPos(long lChar) const
 	{ ASSERT(::IsWindow(m_hWnd)); CPoint pt; ::SendMessage(m_hWnd, EM_POSFROMCHAR, (WPARAM)&pt, (LPARAM)lChar); return pt;}
-_AFXCMN_INLINE UINT CRichEditCtrl::GetOptions() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, EM_GETOPTIONS, 0, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::SetOptions(WORD wOp, DWORD dwFlags)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_SETOPTIONS, (WPARAM)wOp, (LPARAM)dwFlags); }
-_AFXCMN_INLINE BOOL CRichEditCtrl::SetAutoURLDetect(BOOL bEnable /* = TRUE */)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, EM_AUTOURLDETECT, (WPARAM) bEnable, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::EmptyUndoBuffer()
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_EMPTYUNDOBUFFER, 0, 0); }
-_AFXCMN_INLINE UINT CRichEditCtrl::SetUndoLimit(UINT nLimit)
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, EM_SETUNDOLIMIT, (WPARAM) nLimit, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::ReplaceSel(LPCTSTR lpszNewText, BOOL bCanUndo)
 	{ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText); }
 _AFXCMN_INLINE void CRichEditCtrl::SetRect(LPCRECT lpRect)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_SETRECT, 0, (LPARAM)lpRect); }
-_AFXCMN_INLINE void CRichEditCtrl::StopGroupTyping()
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_STOPGROUPTYPING, 0, 0); }
-_AFXCMN_INLINE BOOL CRichEditCtrl::Redo()
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, EM_REDO, 0, 0); }
 _AFXCMN_INLINE BOOL CRichEditCtrl::Undo()
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, EM_UNDO, 0, 0); }
 _AFXCMN_INLINE void CRichEditCtrl::Clear()
@@ -697,22 +637,15 @@ _AFXCMN_INLINE BOOL CRichEditCtrl::DisplayBand(LPRECT pDisplayRect)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, EM_DISPLAYBAND, 0, (LPARAM)pDisplayRect); }
 _AFXCMN_INLINE void CRichEditCtrl::GetSel(CHARRANGE &cr) const
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_EXGETSEL, 0, (LPARAM)&cr); }
-_AFXCMN_INLINE BOOL CRichEditCtrl::GetPunctuation(UINT fType, PUNCTUATION* lpPunc) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, EM_GETPUNCTUATION, (WPARAM) fType, (LPARAM) lpPunc); }
-_AFXCMN_INLINE BOOL CRichEditCtrl::SetPunctuation(UINT fType, PUNCTUATION* lpPunc)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, EM_SETPUNCTUATION, (WPARAM) fType, (LPARAM) lpPunc); }
+
 _AFXCMN_INLINE void CRichEditCtrl::LimitText(long nChars)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_EXLIMITTEXT, 0, nChars); }
+
 _AFXCMN_INLINE long CRichEditCtrl::LineFromChar(long nIndex) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (long)::SendMessage(m_hWnd, EM_EXLINEFROMCHAR, 0, nIndex); }
-_AFXCMN_INLINE CPoint CRichEditCtrl::PosFromChar(UINT nChar) const
-	{ ASSERT(::IsWindow(m_hWnd)); POINTL pt; ::SendMessage(m_hWnd, EM_POSFROMCHAR, (WPARAM)&pt, nChar); return CPoint(pt.x, pt.y); }
-_AFXCMN_INLINE int CRichEditCtrl::CharFromPos(CPoint pt) const
-	{ ASSERT(::IsWindow(m_hWnd)); POINTL ptl = {pt.x, pt.y}; return (int)::SendMessage(m_hWnd, EM_CHARFROMPOS, 0, (LPARAM)&ptl); }
+
 _AFXCMN_INLINE void CRichEditCtrl::SetSel(CHARRANGE &cr)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, EM_EXSETSEL, 0, (LPARAM)&cr); }
-_AFXCMN_INLINE DWORD CRichEditCtrl::FindWordBreak(UINT nCode, DWORD nStart) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD)::SendMessage(m_hWnd, EM_FINDWORDBREAK, (WPARAM) nCode, (LPARAM) nStart); }
 
 _AFXCMN_INLINE long CRichEditCtrl::FindText(DWORD dwFlags, FINDTEXTEX* pFindText) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (long)::SendMessage(m_hWnd, EM_FINDTEXTEX, dwFlags, (LPARAM)pFindText); }
@@ -726,7 +659,7 @@ _AFXCMN_INLINE long CRichEditCtrl::GetEventMask() const
 _AFXCMN_INLINE long CRichEditCtrl::GetLimitText() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (long)::SendMessage(m_hWnd, EM_GETLIMITTEXT, 0, 0L); }
 
-_AFXCMN_INLINE long CRichEditCtrl::GetSelText(_Pre_notnull_ _Post_z_ LPSTR lpBuf) const
+_AFXCMN_INLINE long CRichEditCtrl::GetSelText(LPSTR lpBuf) const
 	{ ASSERT(::IsWindow(m_hWnd)); return (long)::SendMessage(m_hWnd, EM_GETSELTEXT, 0, (LPARAM)lpBuf); }
 
 _AFXCMN_INLINE void CRichEditCtrl::HideSelection(BOOL bHide, BOOL bPerm)
@@ -737,12 +670,6 @@ _AFXCMN_INLINE void CRichEditCtrl::RequestResize()
 
 _AFXCMN_INLINE WORD CRichEditCtrl::GetSelectionType() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (WORD)::SendMessage(m_hWnd, EM_SELECTIONTYPE, 0, 0L); }
-
-_AFXCMN_INLINE UINT CRichEditCtrl::GetWordWrapMode() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, EM_GETWORDWRAPMODE, 0, 0); }
-
-_AFXCMN_INLINE UINT CRichEditCtrl::SetWordWrapMode(UINT uFlags) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (UINT) ::SendMessage(m_hWnd, EM_SETWORDWRAPMODE, (WPARAM) uFlags, 0); }
 
 _AFXCMN_INLINE COLORREF CRichEditCtrl::SetBackgroundColor(BOOL bSysColor, COLORREF cr)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF)::SendMessage(m_hWnd, EM_SETBKGNDCOLOR, bSysColor, cr); }

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,15 +11,16 @@
 #ifndef __AFXMT_H__
 #define __AFXMT_H__
 
-#pragma once
-
 #ifndef __AFX_H__
 	#include <afx.h>
 #endif
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -52,7 +53,7 @@ class CSyncObject : public CObject
 
 // Constructor
 public:
-	explicit CSyncObject(LPCTSTR pstrName);
+	CSyncObject(LPCTSTR pstrName);
 
 // Attributes
 public:
@@ -86,7 +87,7 @@ class CSemaphore : public CSyncObject
 
 // Constructor
 public:
-	/* explicit */ CSemaphore(LONG lInitialCount = 1, LONG lMaxCount = 1,
+	CSemaphore(LONG lInitialCount = 1, LONG lMaxCount = 1,
 		LPCTSTR pstrName=NULL, LPSECURITY_ATTRIBUTES lpsaAttributes = NULL);
 
 // Implementation
@@ -105,7 +106,7 @@ class CMutex : public CSyncObject
 
 // Constructor
 public:
-	/* explicit */ CMutex(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL,
+	CMutex(BOOL bInitiallyOwn = FALSE, LPCTSTR lpszName = NULL,
 		LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 
 // Implementation
@@ -121,12 +122,9 @@ class CEvent : public CSyncObject
 {
 	DECLARE_DYNAMIC(CEvent)
 
-private:
-   using CSyncObject::Unlock;
-
 // Constructor
 public:
-	/* explicit */ CEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE,
+	CEvent(BOOL bInitiallyOwn = FALSE, BOOL bManualReset = FALSE,
 		LPCTSTR lpszNAme = NULL, LPSECURITY_ATTRIBUTES lpsaAttribute = NULL);
 
 // Operations
@@ -148,9 +146,6 @@ class CCriticalSection : public CSyncObject
 {
 	DECLARE_DYNAMIC(CCriticalSection)
 
-private:
-   using CSyncObject::Unlock;
-
 // Constructor
 public:
 	CCriticalSection();
@@ -169,9 +164,6 @@ public:
 // Implementation
 public:
 	virtual ~CCriticalSection();
-
-private:
-	BOOL Init();
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -181,7 +173,7 @@ class CSingleLock
 {
 // Constructors
 public:
-	explicit CSingleLock(CSyncObject* pObject, BOOL bInitialLock = FALSE);
+	CSingleLock(CSyncObject* pObject, BOOL bInitialLock = FALSE);
 
 // Operations
 public:
@@ -249,6 +241,9 @@ protected:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif  // __AFXMT_H__

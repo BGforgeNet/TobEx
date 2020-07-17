@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -15,8 +15,7 @@
 //  may be moved and officially documented.
 
 #ifndef __AFXPRIV2_H__
-// Do not define __AFXPRIV2_H__ here.  It is defined at the bottom,
-// and so this header can't use #pragma once.
+// Do not define __AFXPRIV2_H__ here.  It is defined at the bottom.
 
 #ifndef __AFXPRIV_H__
 	#include <afxpriv.h>
@@ -24,7 +23,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -133,7 +135,7 @@ class COleControlLock
 {
 // Constructors
 public:
-	explicit COleControlLock(REFCLSID clsid);
+	COleControlLock(REFCLSID clsid);
 
 // Attributes
 	CLSID m_clsid;
@@ -189,7 +191,7 @@ public:
 
 void AFXAPI AfxBSTR2CString(CString* pStr, BSTR bstr);
 
-#if !defined(_UNICODE)
+#if !defined(_UNICODE) && !defined(OLE2ANSI)
 BSTR AFXAPI AfxBSTR2ABSTR(BSTR bstrW);
 LPWSTR AFXAPI AfxTaskStringA2W(LPCSTR lpa);
 LPSTR AFXAPI AfxTaskStringW2A(LPCWSTR lpw);
@@ -209,6 +211,9 @@ LPSTR AFXAPI AfxTaskStringW2A(LPCWSTR lpw);
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #if (defined __AFXPRIV2_H__OLE__) && (defined __AFXPRIV2_H__DISP__)

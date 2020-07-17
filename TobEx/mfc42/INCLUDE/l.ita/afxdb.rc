@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -32,19 +32,19 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_SQL_CONNECT_FAIL
-		"Impossibile collegarsi alla fonte dati esterna"
+		"Tentativo di connessione alla fonte dati esterna non riuscito"
 	AFX_IDP_SQL_RECORDSET_FORWARD_ONLY
-		"Il recordset supporta solo il movimento in avanti."
+		"Il set di record supporta solo il movimento in avanti."
 	AFX_IDP_SQL_EMPTY_COLUMN_LIST
-		"Impossibile aprire una tabella. Non c'erano colonne specificate da recuperare. "
+		"Tentativo di aprire una tabella non riuscito. Non c'erano colonne da recuperare dove specificato. "
 	AFX_IDP_SQL_FIELD_SCHEMA_MISMATCH
 		"La ricerca ha fornito tipi di dati inattesi per le colonne."
-	AFX_IDP_SQL_ILLEGAL_MODE "Impossibile aggiornare o eliminare."
-	AFX_IDP_SQL_MULTIPLE_ROWS_AFFECTED "Aggiornate righe multiple."
+	AFX_IDP_SQL_ILLEGAL_MODE "Tentativo di aggiornamento o di cancellazione non riuscito."
+	AFX_IDP_SQL_MULTIPLE_ROWS_AFFECTED "Sono state aggiornate righe multiple."
 	AFX_IDP_SQL_NO_CURRENT_RECORD "Operazione non riuscita, nessun record corrente."
 	AFX_IDP_SQL_NO_ROWS_AFFECTED
-		"Nessuna riga è stata modificata dall'operazione di aggiornamento o di eliminazione."
-	AFX_IDP_SQL_RECORDSET_READONLY "Il recordset è di sola lettura"
+		"Nessuna riga è stata influenzata dall'operazione di aggiornamento o di cancellazione."
+	AFX_IDP_SQL_RECORDSET_READONLY "Il set di record è di sola lettura"
 	AFX_IDP_SQL_SQL_NO_TOTAL
 		"Il driver ODBC non supporta il modello dati MFC LongBinary."
 	AFX_IDP_SQL_ODBC_LOAD_FAILED
@@ -72,13 +72,13 @@ BEGIN
 	AFX_IDP_SQL_ROW_FETCH
 		"Errore nel recupero di record."
 	AFX_IDP_SQL_INCORRECT_ODBC
-		"Impossibile trovare il punto di ingresso ODBC richiesto. Assicurarsi che ODBC sia installato correttamente."
+		"Non è stato trovato un punto di ingresso ODBC richiesto. Assicurarsi che ODBC sia installato correttamente."
 	AFX_IDP_SQL_UPDATE_DELETE_FAILED
 		"Aggiornamento o cancellazione non riusciti."
 	AFX_IDP_SQL_DYNAMIC_CURSOR_NOT_SUPPORTED
 		"Cursore dinamico non supportato dal driver ODBC."
 	AFX_IDP_SQL_FIELD_NOT_FOUND
-		"Nome di campo o indice non corretto."
+		"Nome di campo o indice non valido."
 	AFX_IDP_SQL_BOOKMARKS_NOT_SUPPORTED
 		"Segnalibro non supportato per il driver ODBC."
 	AFX_IDP_SQL_BOOKMARKS_NOT_ENABLED
@@ -94,7 +94,7 @@ BEGIN
 	AFX_IDP_DAO_BADBINDINFO
 		"Errore GetRows di collegamento. Probabilmente causato da un tipo di dati non corrispondente."
 	AFX_IDP_DAO_COLUMNUNAVAILABLE
-		"Errore GetRows. La colonna richiesta non fa parte di questo recordset."
+		"Errore GetRows. La colonna richiesta non fa parte di questo set di record."
 
 	AFX_IDS_DELETED "<Cancellato>"
 END

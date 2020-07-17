@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,8 +11,6 @@
 #ifndef __AFXEXT_H__
 #define __AFXEXT_H__
 
-#pragma once
-
 #ifndef __AFXWIN_H__
 	#include <afxwin.h>
 #endif
@@ -20,11 +18,12 @@
 	#include <afxdlgs.h>
 #endif
 
-#include <uxtheme.h>
-
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -45,7 +44,7 @@
 				class CStatusBar;       // status bar
 				class CToolBar;         // toolbar
 				class CDialogBar;       // dialog as control bar
-				class CReBar;			// ie40 dock bar
+				class CReBar;           // ie40 dock bar
 
 			class CSplitterWnd;         // splitter manager
 
@@ -128,19 +127,20 @@ struct AFX_SIZEPARENTPARAMS;
 #define LM_LENGTHY  0x20    // Set if nLength is a Height instead of a Width
 #define LM_COMMIT   0x40    // Remember MRUWidth
 
+#ifdef _AFXDLL
+class CControlBar : public CWnd
+#else
 class AFX_NOVTABLE CControlBar : public CWnd
+#endif
 {
 	DECLARE_DYNAMIC(CControlBar)
 // Construction
 protected:
 	CControlBar();
 
-
 // Attributes
 public:
 	int GetCount() const;
-	CWnd *m_pInPlaceOwner;
-	void SetInPlaceOwner(CWnd *pWnd);
 
 	// for styles specific to CControlBar
 	DWORD GetBarStyle();
@@ -162,21 +162,11 @@ public:
 	void EnableDocking(DWORD dwDockStyle);
 
 // Overridables
-	// updating
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) = 0;
-
-	// painting
-	virtual void CalcInsideRect(CRect& rect, BOOL bHorz) const;
-	virtual void DoPaint(CDC* pDC);
-	virtual void DrawBorders(CDC* pDC, CRect& rect);
-	virtual void DrawGripper(CDC* pDC, const CRect& rect);
-	virtual void DrawNCGripper(CDC* pDC, const CRect& rect);
-	virtual BOOL DrawThemedGripper(CDC* pDC, const CRect& rect, BOOL fCentered);
-	virtual BOOL DrawNonThemedGripper(CDC* pDC, const CRect& rect);
 
 // Implementation
 public:
-	virtual ~CControlBar() = 0;
+	virtual ~CControlBar();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -199,9 +189,6 @@ public:
 	int m_nCount;
 	void* m_pData;        // m_nCount elements - type depends on derived class
 
-	// support for theming
-	HTHEME m_hReBarTheme;
-
 	// support for delayed hide/show
 	enum StateFlags
 		{ delayHide = 1, delayShow = 2, tempHide = 4, statusSet = 8 };
@@ -218,29 +205,23 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual void PostNcDestroy();
 
+	virtual void DoPaint(CDC* pDC);
+	void DrawBorders(CDC* pDC, CRect& rect);
+	void DrawGripper(CDC* pDC, const CRect& rect);
+
 	// implementation helpers
 	virtual LRESULT WindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam);
+	void CalcInsideRect(CRect& rect, BOOL bHorz) const; // adjusts borders etc
 	BOOL AllocElements(int nElements, int cbElement);
-	virtual BOOL SetStatusText(INT_PTR nHit);
-#ifdef _WIN64
-        /* 
-        Initial releases of 64 bit MFC had SetStatusText(int), same size as
-        32 bit MFC. Since this function is virtual, it could be overridden.
-
-        Future overriders of SetStatusText should do so by overriding the
-        INT_PTR version. But this extra function will allow 64 bit code ported
-        from MFC70 to continue to work correctly.
-        */
 	virtual BOOL SetStatusText(int nHit);
-#endif
-	void ResetTimer(UINT_PTR nEvent, UINT nTime);
+	void ResetTimer(UINT nEvent, UINT nTime);
 	void EraseNonClient();
 
 	void GetBarInfo(CControlBarInfo* pInfo);
 	void SetBarInfo(CControlBarInfo* pInfo, CFrameWnd* pFrameWnd);
 
 	//{{AFX_MSG(CControlBar)
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg int OnCreate(LPCREATESTRUCT lpcs);
 	afx_msg void OnDestroy();
 	afx_msg void OnPaint();
@@ -253,7 +234,6 @@ public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint pt );
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint pt);
 	afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT nMsg);
-	afx_msg LRESULT OnThemeChanged();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -274,10 +254,10 @@ class CStatusBar : public CControlBar
 // Construction
 public:
 	CStatusBar();
-	virtual BOOL Create(CWnd* pParentWnd,
+	BOOL Create(CWnd* pParentWnd,
 		DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_BOTTOM,
 		UINT nID = AFX_IDW_STATUS_BAR);
-	virtual BOOL CreateEx(CWnd* pParentWnd, DWORD dwCtrlStyle = 0,
+	BOOL CreateEx(CWnd* pParentWnd, DWORD dwCtrlStyle = 0,
 		DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_BOTTOM,
 		UINT nID = AFX_IDW_STATUS_BAR);
 	BOOL SetIndicators(const UINT* lpIDArray, int nIDCount);
@@ -331,7 +311,7 @@ protected:
 	virtual BOOL OnChildNotify(UINT message, WPARAM, LPARAM, LRESULT*);
 
 	//{{AFX_MSG(CStatusBar)
-	afx_msg LRESULT OnNcHitTest(CPoint);
+	afx_msg UINT OnNcHitTest(CPoint);
 	afx_msg void OnNcCalcSize(BOOL, NCCALCSIZE_PARAMS*);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
@@ -367,10 +347,10 @@ class CToolBar : public CControlBar
 // Construction
 public:
 	CToolBar();
-	virtual BOOL Create(CWnd* pParentWnd,
+	BOOL Create(CWnd* pParentWnd,
 		DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_TOP,
 		UINT nID = AFX_IDW_TOOLBAR);
-	virtual BOOL CreateEx(CWnd* pParentWnd, DWORD dwCtrlStyle = TBSTYLE_FLAT,
+	BOOL CreateEx(CWnd* pParentWnd, DWORD dwCtrlStyle = TBSTYLE_FLAT,
 		DWORD dwStyle = WS_CHILD | WS_VISIBLE | CBRS_ALIGN_TOP,
 		CRect rcBorders = CRect(0, 0, 0, 0),
 		UINT nID = AFX_IDW_TOOLBAR);
@@ -411,12 +391,11 @@ public:
 	virtual ~CToolBar();
 	virtual CSize CalcFixedLayout(BOOL bStretch, BOOL bHorz);
 	virtual CSize CalcDynamicLayout(int nLength, DWORD nMode);
-	virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
+	virtual int OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler);
 	void SetOwner(CWnd* pOwnerWnd);
 	BOOL AddReplaceBitmap(HBITMAP hbmImageWell);
 	virtual void OnBarStyleChange(DWORD dwOldStyle, DWORD dwNewStyle);
-	virtual HRESULT get_accName(VARIANT varChild, BSTR *pszName);
 
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -444,7 +423,7 @@ protected:
 	void Layout(); // called for for delayed button layout
 
 	//{{AFX_MSG(CToolBar)
-	afx_msg LRESULT OnNcHitTest(CPoint);
+	afx_msg UINT OnNcHitTest(CPoint);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnNcCalcSize(BOOL, NCCALCSIZE_PARAMS*);
@@ -453,7 +432,6 @@ protected:
 	afx_msg LRESULT OnSetButtonSize(WPARAM, LPARAM);
 	afx_msg LRESULT OnSetBitmapSize(WPARAM, LPARAM);
 	afx_msg LRESULT OnPreserveZeroBorderHelper(WPARAM, LPARAM);
-	afx_msg LRESULT OnPreserveSizingPolicyHelper(WPARAM, LPARAM);
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	//}}AFX_MSG
@@ -468,9 +446,9 @@ protected:
 #define TBBS_CHECKBOX   MAKELONG(TBSTYLE_CHECK, 0)  // this is an auto check button
 #define TBBS_GROUP      MAKELONG(TBSTYLE_GROUP, 0)  // marks the start of a group
 #define TBBS_CHECKGROUP (TBBS_GROUP|TBBS_CHECKBOX)  // normal use of TBBS_GROUP
-#define TBBS_DROPDOWN	MAKELONG(TBSTYLE_DROPDOWN, 0) // drop down style
-#define TBBS_AUTOSIZE	MAKELONG(TBSTYLE_AUTOSIZE, 0) // autocalc button width
-#define TBBS_NOPREFIX	MAKELONG(TBSTYLE_NOPREFIX, 0) // no accel prefix for this button
+#define TBBS_DROPDOWN   MAKELONG(TBSTYLE_DROPDOWN, 0) // drop down style
+#define TBBS_AUTOSIZE   MAKELONG(TBSTYLE_AUTOSIZE, 0) // autocalc button width
+#define TBBS_NOPREFIX   MAKELONG(TBSTYLE_NOPREFIX, 0) // no accel prefix for this button
 
 // styles for display states
 #define TBBS_CHECKED    MAKELONG(0, TBSTATE_CHECKED)    // button is checked/down
@@ -479,8 +457,8 @@ protected:
 #define TBBS_INDETERMINATE  MAKELONG(0, TBSTATE_INDETERMINATE)  // third state
 #define TBBS_HIDDEN     MAKELONG(0, TBSTATE_HIDDEN) // button is hidden
 #define TBBS_WRAPPED    MAKELONG(0, TBSTATE_WRAP)   // button is wrapped at this point
-#define TBBS_ELLIPSES	MAKELONG(0, TBSTATE_ELIPSES) 
-#define TBBS_MARKED		MAKELONG(0, TBSTATE_MARKED)
+#define TBBS_ELLIPSES   MAKELONG(0, TBSTATE_ELIPSES)
+#define TBBS_MARKED     MAKELONG(0, TBSTATE_MARKED)
 
 ////////////////////////////////////////////
 // CDialogBar control
@@ -495,9 +473,9 @@ class CDialogBar : public CControlBar
 // Construction
 public:
 	CDialogBar();
-	virtual BOOL Create(CWnd* pParentWnd, LPCTSTR lpszTemplateName,
+	BOOL Create(CWnd* pParentWnd, LPCTSTR lpszTemplateName,
 			UINT nStyle, UINT nID);
-	virtual BOOL Create(CWnd* pParentWnd, UINT nIDTemplate,
+	BOOL Create(CWnd* pParentWnd, UINT nIDTemplate,
 			UINT nStyle, UINT nID);
 
 // Implementation
@@ -530,13 +508,10 @@ class CReBar : public CControlBar
 {
 	DECLARE_DYNAMIC(CReBar)
 
-protected:
-	UINT m_nReBarBandInfoSize;
-
-	// Construction
+// Construction
 public:
 	CReBar();
-	virtual BOOL Create(CWnd* pParentWnd, DWORD dwCtrlStyle = RBS_BANDBORDERS,
+	BOOL Create(CWnd* pParentWnd, DWORD dwCtrlStyle = RBS_BANDBORDERS,
 		DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_TOP,
 		UINT nID = AFX_IDW_REBAR);
 
@@ -545,18 +520,16 @@ public:
 	// for direct access to the underlying common control
 	CReBarCtrl& GetReBarCtrl() const;
 
-	UINT GetReBarBandInfoSize() const;
-
 // Operations
 public:
-	BOOL AddBar(CWnd* pBar, LPCTSTR pszText = NULL, CBitmap* pbmp = NULL, 
+	BOOL AddBar(CWnd* pBar, LPCTSTR pszText = NULL, CBitmap* pbmp = NULL,
 		DWORD dwStyle = RBBS_GRIPPERALWAYS | RBBS_FIXEDBMP);
 	BOOL AddBar(CWnd* pBar, COLORREF clrFore, COLORREF clrBack,
 		LPCTSTR pszText = NULL, DWORD dwStyle = RBBS_GRIPPERALWAYS);
 
 // Implementation
 	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler);
-	virtual INT_PTR OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
+	virtual int OnToolHitTest(CPoint point, TOOLINFO* pTI) const;
 	virtual CSize CalcFixedLayout(BOOL bStretch, BOOL bHorz);
 	virtual CSize CalcDynamicLayout(int nLength, DWORD nMode);
 #ifdef _DEBUG
@@ -594,7 +567,7 @@ class CSplitterWnd : public CWnd
 public:
 	CSplitterWnd();
 	// Create a single view type splitter with multiple splits
-	virtual BOOL Create(CWnd* pParentWnd,
+	BOOL Create(CWnd* pParentWnd,
 				int nMaxRows, int nMaxCols, SIZE sizeMin,
 				CCreateContext* pContext,
 				DWORD dwStyle = WS_CHILD | WS_VISIBLE |
@@ -602,7 +575,7 @@ public:
 				UINT nID = AFX_IDW_PANE_FIRST);
 
 	// Create a multiple view type splitter with static layout
-	virtual BOOL CreateStatic(CWnd* pParentWnd,
+	BOOL CreateStatic(CWnd* pParentWnd,
 				int nRows, int nCols,
 				DWORD dwStyle = WS_CHILD | WS_VISIBLE,
 				UINT nID = AFX_IDW_PANE_FIRST);
@@ -628,8 +601,7 @@ public:
 	// views inside the splitter
 	CWnd* GetPane(int row, int col) const;
 	BOOL IsChildPane(CWnd* pWnd, int* pRow, int* pCol);
-	AFX_DEPRECATED("IsChildPane(CWnd *, int&, int&) has been superseded by IsChildPane(CWnd*, int*, int*)") 
-			BOOL IsChildPane(CWnd* pWnd, int& row, int& col); // obsolete
+	BOOL IsChildPane(CWnd* pWnd, int& row, int& col); // obsolete
 	int IdFromRowCol(int row, int col) const;
 
 	BOOL IsTracking();  // TRUE during split operation
@@ -660,8 +632,7 @@ public:
 	virtual CWnd* GetActivePane(int* pRow = NULL, int* pCol = NULL);
 	virtual void SetActivePane(int row, int col, CWnd* pWnd = NULL);
 protected:
-	AFX_DEPRECATED("GetActivePane(int&, int&) has been superseded by GetActivePane(int*, int*)") 
-			CWnd* GetActivePane(int& row, int& col); // obsolete
+	CWnd* GetActivePane(int& row, int& col); // obsolete
 
 public:
 	// high level command operations - called by default view implementation
@@ -769,39 +740,11 @@ protected:      // must derive your own class
 
 // Implementation
 public:
-    virtual ~CFormView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 	virtual void OnInitialUpdate();
-
-public:
-	virtual HRESULT get_accChild(VARIANT varChild, IDispatch **ppdispChild)
-	{
-		return GetAccessibleChild(varChild, ppdispChild);
-	}
-
-	virtual HRESULT get_accChildCount(long *pcountChildren)
-	{
-		(*pcountChildren) = GetAccessibleChildCount();
-		return S_OK;
-	}
-
-	HRESULT get_accName(VARIANT varChild, BSTR *pszName)
-	{
-		return GetAccessibleName(varChild, pszName);
-	}
-
-	virtual HRESULT accLocation(long *pxLeft, long *pyTop, long *pcxWidth, long *pcyHeight, VARIANT varChild)
-	{
-		return GetAccessibilityLocation(varChild, pxLeft, pyTop, pcxWidth, pcyHeight);
-	}
-
-	virtual HRESULT accHitTest(long xLeft, long yTop, VARIANT *pvarChild)
-	{
-		return GetAccessibilityHitTest(xLeft, yTop, pvarChild);
-	}
 
 protected:
 	LPCTSTR m_lpszTemplateName;
@@ -820,9 +763,7 @@ protected:
 #ifndef _AFX_NO_OCC_SUPPORT
 	// data and functions necessary for OLE control containment
 	_AFX_OCC_DIALOG_INFO* m_pOccDialogInfo;
-	_AFX_OCC_DIALOG_INFO* m_pCreatedOccDialogInfo;
 	virtual BOOL SetOccDialogInfo(_AFX_OCC_DIALOG_INFO* pOccDialogInfo);
-	virtual _AFX_OCC_DIALOG_INFO* GetOccDialogInfo();
 	afx_msg LRESULT HandleInitDialog(WPARAM, LPARAM);
 #endif
 
@@ -897,7 +838,7 @@ public:
 
 protected:
 	int m_nTabStops;            // tab stops in dialog units
-	LPTSTR m_pShadowBuffer;     // special shadow buffer only used in Win95
+	LPTSTR m_pShadowBuffer;     // special shadow buffer only used in Win32s
 	UINT m_nShadowSize;
 
 	CUIntArray m_aPageStart;    // array of starting pages
@@ -991,28 +932,9 @@ public:
 				int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
 			CSize TabbedTextOut(int x, int y, const CString& str,
 				int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
-#pragma push_macro("DrawText")
-#pragma push_macro("DrawTextEx")
-#undef DrawText
-#undef DrawTextEx
-	virtual int _AFX_FUNCNAME(DrawText)(LPCTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat);
-			int _AFX_FUNCNAME(DrawText)(const CString& str, LPRECT lpRect, UINT nFormat);
-
-	virtual int _AFX_FUNCNAME(DrawTextEx)(_In_count_(nCount) LPTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
-			int _AFX_FUNCNAME(DrawTextEx)(const CString& str, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
-
-
-			int DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect,
+	virtual int DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect,
 				UINT nFormat);
 			int DrawText(const CString& str, LPRECT lpRect, UINT nFormat);
-
-			int DrawTextEx(_In_count_(nCount) LPTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
-			int DrawTextEx(const CString& str, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
-#pragma pop_macro("DrawText")
-#pragma pop_macro("DrawTextEx")
 
 // Printer Escape Functions
 	virtual int Escape(int nEscape, int nCount, LPCSTR lpszInData, LPVOID lpOutData);
@@ -1116,7 +1038,6 @@ struct CPrintInfo // Printing information structure
 	CString m_strPageDesc;   // Format string for page number display
 	LPVOID m_lpUserData;     // pointer to user created struct
 	CRect m_rectDraw;        // rectangle defining current usable page area
-	int m_nJobNumber;			 // job number (after StartDoc)
 
 	// these only valid if m_bDocObject
 	UINT m_nOffsetPage;      // offset of first page in combined IPrint job
@@ -1179,6 +1100,9 @@ struct CCreateContext   // Creation information structure
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXEXT_H__

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< Standard-MFC-Ressourcen können nicht geändert werden! >\0"
+"< Cannot change standard MFC resources! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -32,23 +32,23 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_SQL_CONNECT_FAIL
-		"Fehler beim Herstellen der Verbindung mit der Datenquelle."
+		"Der Verbindungsversuch zur Datenquelle ist gescheitert."
 	AFX_IDP_SQL_RECORDSET_FORWARD_ONLY
-		"Recordset unterstützt nur Vorwärtsbewegung."
+		"Datensatzgruppe unterstützt nur Vorwärtsbewegung."
 	AFX_IDP_SQL_EMPTY_COLUMN_LIST
-		"Fehler beim Öffnen einer Tabelle: Es wurden keine abzurufenden Spalten angegeben."
+		"Der Versuch, eine Tabelle zu öffnen, ist fehlgeschlagen, da am angegebenen Ort keine Spalten abgerufen werden konnten."
 	AFX_IDP_SQL_FIELD_SCHEMA_MISMATCH
 		"Von einer Abfrage wurden unerwartete Spaltendatentypen zurückgegeben."
-	AFX_IDP_SQL_ILLEGAL_MODE "Fehler beim Aktualisieren oder Löschen."
+	AFX_IDP_SQL_ILLEGAL_MODE "Versuch zu aktualisieren oder zu löschen ist fehlgeschlagen."
 	AFX_IDP_SQL_MULTIPLE_ROWS_AFFECTED "Es wurden mehrere Zeilen aktualisiert."
-	AFX_IDP_SQL_NO_CURRENT_RECORD "Fehler bei der Operation, es gibt keinen aktuellen Datensatz."
+	AFX_IDP_SQL_NO_CURRENT_RECORD "Operation ist fehlgeschlagen; es gibt keinen aktuellen Datensatz."
 	AFX_IDP_SQL_NO_ROWS_AFFECTED
 		"Es waren keine Zeilen von der Aktualisierungs- oder Löschoperation betroffen."
-	AFX_IDP_SQL_RECORDSET_READONLY "Recordset kann nur gelesen werden."
+	AFX_IDP_SQL_RECORDSET_READONLY "Datensatzgruppe kann nur gelesen werden."
 	AFX_IDP_SQL_SQL_NO_TOTAL
 		"Der ODBC-Treiber unterstützt das MFC-LongBinary-Datenmodell nicht."
 	AFX_IDP_SQL_ODBC_LOAD_FAILED
-		"Fehler beim Versuch, die benötigte Komponente ODBC32.DLL zu laden."
+		"Der Versuch, die benötigte Komponente ODBC32.DLL zu laden, ist fehlgeschlagen."
 	AFX_IDP_SQL_DYNASET_NOT_SUPPORTED
 		"Der ODBC-Treiber unterstützt keine Dynasets."
 	AFX_IDP_SQL_SNAPSHOT_NOT_SUPPORTED
@@ -72,17 +72,17 @@ BEGIN
 	AFX_IDP_SQL_ROW_FETCH
 		"Fehler beim Abruf eines Datensatzes."
 	AFX_IDP_SQL_INCORRECT_ODBC
-		"Ein erforderlicher ODBC-Einsprungspunkt konnte nicht gefunden werden. Überprüfen Sie, ob OBDC korrekt installiert ist."
+		"Ein benötigter ODBC-Einsprungspunkt konnte nicht gefunden werden. Überprüfen Sie, ob OBDC korrekt installiert ist."
 	AFX_IDP_SQL_UPDATE_DELETE_FAILED
 		"Fehler bei der Aktualisierungs- oder Löschoperation."
 	AFX_IDP_SQL_DYNAMIC_CURSOR_NOT_SUPPORTED
 		"Dynamische Cursor werden vom ODBC-Treiber nicht unterstützt."
 	AFX_IDP_SQL_FIELD_NOT_FOUND
-		"Falscher Feldname oder Feldindex."
+		"Ungültiger Feldname oder Feldindex."
 	AFX_IDP_SQL_BOOKMARKS_NOT_SUPPORTED
 		"Lesezeichen werden für ODBC-Treiber nicht unterstützt."
 	AFX_IDP_SQL_BOOKMARKS_NOT_ENABLED
-		"Lesezeichen bei Recordset nicht aktiviert."
+		"Lesezeichen bei Satzgruppe nicht aktiviert."
 	AFX_IDP_DAO_ENGINE_INITIALIZATION
 		"Initialisierung des DAO/Jet-Datenbankmoduls nicht möglich."
 	AFX_IDP_DAO_DFX_BIND
@@ -94,7 +94,7 @@ BEGIN
 	AFX_IDP_DAO_BADBINDINFO
 		"GetRows-Bindungsfehler. Nicht übereinstimmende Datentypen sind wahrscheinlich die Ursache."
 	AFX_IDP_DAO_COLUMNUNAVAILABLE
-		"Fehler bei GetRows-Operation. Die angeforderte Spalte ist kein Element des Recordsets."
+		"Fehler bei GetRows-Operation. Die angeforderte Spalte ist kein Element der Datensatzgruppe."
 
 	AFX_IDS_DELETED "<Gelöscht>"
 END

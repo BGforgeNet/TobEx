@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,8 +14,6 @@
 #ifndef __AFXCTL_H__
 #define __AFXCTL_H__
 
-#pragma once
-
 // make sure afxole.h is included first
 #ifndef __AFXOLE_H__
 	#include <afxole.h>
@@ -23,7 +21,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Classes declared in this file
@@ -39,6 +40,10 @@ class CPictureHolder;               // For manipulating picture objects
 
 //CDialog
 	class COlePropertyPage;         // OLE Property page
+		class CStockPropPage;
+			class CColorPropPage;
+			class CFontPropPage;
+			class CPicturePropPage;
 
 class CPropExchange;                // Abstract base for property exchange
 
@@ -105,55 +110,28 @@ struct AFX_EVENTMAP_ENTRY
 
 struct AFX_EVENTMAP
 {
-#ifdef _AFXDLL
-	const AFX_EVENTMAP* (PASCAL* pfnGetBaseMap)();
-#else
 	const AFX_EVENTMAP* lpBaseEventMap;
-#endif
 	const AFX_EVENTMAP_ENTRY* lpEntries;
 	DWORD* lpStockEventMask;
 };
 
-#ifdef _AFXDLL
 #define DECLARE_EVENT_MAP() \
 private: \
-	static const AFX_EVENTMAP_ENTRY _eventEntries[]; \
+	static const AFX_DATA AFX_EVENTMAP_ENTRY _eventEntries[]; \
 	static DWORD _dwStockEventMask; \
 protected: \
-	static const AFX_EVENTMAP eventMap; \
-	static const AFX_EVENTMAP* PASCAL GetThisEventMap(); \
-	virtual const AFX_EVENTMAP* GetEventMap() const; \
-
-#define BEGIN_EVENT_MAP(theClass, baseClass) \
-	const AFX_EVENTMAP* PASCAL theClass::GetThisEventMap() \
-		{ return &theClass::eventMap; } \
-	const AFX_EVENTMAP* theClass::GetEventMap() const \
-		{ return &eventMap; } \
-	AFX_COMDAT const AFX_EVENTMAP theClass::eventMap = \
-		{ &(baseClass::GetThisEventMap), theClass::_eventEntries, \
-			&theClass::_dwStockEventMask }; \
-	AFX_COMDAT DWORD theClass::_dwStockEventMask = (DWORD)-1; \
-	AFX_COMDAT const AFX_EVENTMAP_ENTRY theClass::_eventEntries[] = \
-	{
-#else
-#define DECLARE_EVENT_MAP() \
-private: \
-	static const AFX_EVENTMAP_ENTRY _eventEntries[]; \
-	static DWORD _dwStockEventMask; \
-protected: \
-	static const AFX_EVENTMAP eventMap; \
+	static const AFX_DATA AFX_EVENTMAP eventMap; \
 	virtual const AFX_EVENTMAP* GetEventMap() const;
 
 #define BEGIN_EVENT_MAP(theClass, baseClass) \
 	const AFX_EVENTMAP* theClass::GetEventMap() const \
 		{ return &eventMap; } \
-	AFX_COMDAT const AFX_EVENTMAP theClass::eventMap = \
+	const AFX_DATADEF AFX_EVENTMAP theClass::eventMap = \
 		{ &(baseClass::eventMap), theClass::_eventEntries, \
 			&theClass::_dwStockEventMask }; \
 	AFX_COMDAT DWORD theClass::_dwStockEventMask = (DWORD)-1; \
-	AFX_COMDAT const AFX_EVENTMAP_ENTRY theClass::_eventEntries[] = \
+	AFX_COMDAT const AFX_DATADEF AFX_EVENTMAP_ENTRY theClass::_eventEntries[] = \
 	{
-#endif
 
 #define END_EVENT_MAP() \
 		{ afxEventCustom, DISPID_UNKNOWN, NULL, NULL }, \
@@ -296,9 +274,9 @@ protected: \
 #define END_OLEFACTORY(class_name) \
 	}; \
 	friend class class_name##Factory; \
-	static class_name##Factory factory; \
+	static AFX_DATA class_name##Factory factory; \
 public: \
-	static const GUID guid; \
+	static AFX_DATA const GUID guid; \
 	virtual HRESULT GetClassID(LPCLSID pclsid);
 
 #define DECLARE_OLECREATE_EX(class_name) \
@@ -308,10 +286,10 @@ public: \
 #define IMPLEMENT_OLECREATE_EX(class_name, external_name, \
 			l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
 	const TCHAR _szProgID_##class_name[] = _T(external_name); \
-	class_name::class_name##Factory class_name::factory( \
+	AFX_DATADEF class_name::class_name##Factory class_name::factory( \
 		class_name::guid, RUNTIME_CLASS(class_name), FALSE, \
 		_szProgID_##class_name); \
-	const GUID class_name::guid = \
+	const AFX_DATADEF GUID class_name::guid = \
 		{ l, w1, w2, { b1, b2, b3, b4, b5, b6, b7, b8 } }; \
 	HRESULT class_name::GetClassID(LPCLSID pclsid) \
 		{ *pclsid = guid; return NOERROR; }
@@ -362,7 +340,7 @@ class CFontHolder
 {
 // Constructors
 public:
-	explicit CFontHolder(LPPROPERTYNOTIFYSINK pNotify);
+	CFontHolder(LPPROPERTYNOTIFYSINK pNotify);
 
 // Attributes
 	LPFONT m_pFont;
@@ -434,10 +412,6 @@ public:
 class CDataPathProperty: public CAsyncMonikerFile
 {
 	DECLARE_DYNAMIC(CDataPathProperty)
-
-private:
-   using CAsyncMonikerFile::Open;
-
 // Constructors
 public:
 	CDataPathProperty(COleControl* pControl = NULL);
@@ -533,7 +507,11 @@ public:
 	CRect m_rectClip;   // saves the original clipping rectangle
 };
 
+#ifdef _AFXDLL
+class COleControl : public CWnd
+#else
 class AFX_NOVTABLE COleControl : public CWnd
+#endif
 {
 	DECLARE_DYNAMIC(COleControl)
 
@@ -830,7 +808,7 @@ public:
 
 // Implementation
 public:
-	virtual ~COleControl() = 0;
+	~COleControl();
 	void RequestAsynchronousExchange(DWORD dwVersion);
 
 #ifdef _DEBUG
@@ -901,12 +879,9 @@ protected:
 	virtual BOOL GetExtraConnectionPoints(CPtrArray* pConnPoints);
 
 	// Events
-	static const AFX_EVENTMAP_ENTRY _eventEntries[];
-#ifdef _AFXDLL
-	static const AFX_EVENTMAP* PASCAL GetThisEventMap();
-#endif
+	static const AFX_DATA AFX_EVENTMAP_ENTRY _eventEntries[];
 	virtual const AFX_EVENTMAP* GetEventMap() const;
-	static const AFX_EVENTMAP eventMap;
+	static const AFX_DATA AFX_EVENTMAP eventMap;
 	const AFX_EVENTMAP_ENTRY* GetEventMapEntry(LPCTSTR pszName,
 		DISPID* pDispid) const;
 	void FireEventV(DISPID dispid, BYTE* pbParams, va_list argList);
@@ -957,7 +932,7 @@ protected:
 	virtual LPCLSID GetPropPageIDs(ULONG& cPropPages);
 
 	// IOleObject implementation
-	void GetUserType(_Pre_notnull_ _Post_z_ LPTSTR pszUserType);
+	void GetUserType(LPTSTR pszUserType);
 	virtual UINT GetUserTypeNameID() = 0;
 	virtual DWORD GetMiscStatus() = 0;
 
@@ -1096,7 +1071,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnNcPaint();
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
-	afx_msg LRESULT OnNcHitTest(CPoint point);
+	afx_msg UINT OnNcHitTest(CPoint point);
 	afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg UINT OnGetDlgCode();
@@ -1196,7 +1171,7 @@ public:
 	BEGIN_INTERFACE_PART(ViewObject, IViewObjectEx)
 		INIT_INTERFACE_PART(COleControl, ViewObject)
 		STDMETHOD(Draw)(DWORD, LONG, void*, DVTARGETDEVICE*, HDC, HDC,
-			LPCRECTL, LPCRECTL, BOOL (CALLBACK*)(DWORD_PTR), DWORD_PTR);
+			LPCRECTL, LPCRECTL, BOOL (CALLBACK*)(DWORD), DWORD);
 		STDMETHOD(GetColorSet)(DWORD, LONG, void*, DVTARGETDEVICE*,
 			HDC, LPLOGPALETTE*);
 		STDMETHOD(Freeze)(DWORD, LONG, void*, DWORD*);
@@ -1326,8 +1301,7 @@ protected:
 	BEGIN_CONNECTION_PART(COleControl, EventConnPt)
 		virtual void OnAdvise(BOOL bAdvise);
 		virtual REFIID GetIID();
-		virtual HRESULT QuerySinkInterface(LPUNKNOWN pUnkSink, 
-			void** ppInterface);
+		virtual LPUNKNOWN QuerySinkInterface(LPUNKNOWN pUnkSink);
 	END_CONNECTION_PART(EventConnPt)
 
 	// Connection point for property notifications
@@ -1340,6 +1314,19 @@ protected:
 
 /////////////////////////////////////////////////////////////////////////////
 // Registry functions
+
+enum AFX_REG_FLAGS
+{
+	afxRegDefault               = 0x0000,
+	afxRegInsertable            = 0x0001,
+	afxRegApartmentThreading    = 0x0002,
+};
+
+BOOL AFXAPI AfxOleRegisterTypeLib(HINSTANCE hInstance, REFGUID tlid,
+	LPCTSTR pszFileName = NULL, LPCTSTR pszHelpDir = NULL);
+
+BOOL AFXAPI AfxOleUnregisterTypeLib(REFGUID tlid, WORD wVerMajor = 0,
+	WORD wVerMinor = 0, LCID lcid = 0);
 
 BOOL AFXAPI AfxOleRegisterControlClass(HINSTANCE hInstance, REFCLSID clsid,
 	LPCTSTR pszProgID, UINT idTypeName, UINT idBitmap, int nRegFlags,
@@ -1362,7 +1349,11 @@ BOOL AFXAPI AfxVerifyLicFile(HINSTANCE hInstance, LPCTSTR pszLicFileName,
 /////////////////////////////////////////////////////////////////////////////
 // CPropExchange - Abstract base class for property exchange
 
+#ifdef _AFXDLL
+class CPropExchange
+#else
 class AFX_NOVTABLE CPropExchange
+#endif
 {
 // Operations
 public:
@@ -1387,8 +1378,6 @@ public:
 				LPUNKNOWN* ppUnk, REFIID iid, LPUNKNOWN pUnkDefault) = 0;
 
 // Implementation
-public:
-   virtual ~CPropExchange() = 0 { }
 protected:
 	CPropExchange();
 	BOOL m_bLoading;
@@ -1488,7 +1477,11 @@ typedef struct tagAFX_PPFIELDSTATUS
 /////////////////////////////////////////////////////////////////////////////
 // Property Page Dialog Class
 
+#ifdef _AFXDLL
+class COlePropertyPage : public CDialog
+#else
 class AFX_NOVTABLE COlePropertyPage : public CDialog
+#endif
 {
 	DECLARE_DYNAMIC(COlePropertyPage)
 
@@ -1510,15 +1503,9 @@ public:
 	BOOL SetControlStatus(UINT nID, BOOL bDirty);
 	void IgnoreApply(UINT nID);
 
-#pragma push_macro("MessageBox")
-#undef MessageBox
-	// note that these are non-virtual overrides of CWnd::MessageBox()
-	int _AFX_FUNCNAME(MessageBox)(LPCTSTR lpszText, LPCTSTR lpszCaption = NULL,
-			UINT nType = MB_OK);
-
 	int MessageBox(LPCTSTR lpszText, LPCTSTR lpszCaption = NULL,
 			UINT nType = MB_OK);
-#pragma pop_macro("MessageBox")
+	// note that this is a non-virtual override of CWnd::MessageBox()
 
 // Overridables
 	virtual void OnSetPageSite();
@@ -1557,7 +1544,7 @@ public:
 	CPtrArray m_arrayDDP;      // pending DDP data
 
 	// Destructors
-	virtual ~COlePropertyPage() = 0;
+	~COlePropertyPage();
 
 protected:
 	LRESULT WindowProc(UINT msg, WPARAM wParam, LPARAM lParam);
@@ -1643,6 +1630,287 @@ public:
 	DECLARE_INTERFACE_MAP()
 };
 
+/////////////////////////////////////////////////////////////////////////////
+//  CStockPropPage
+
+#ifdef _AFXDLL
+class CStockPropPage : public COlePropertyPage
+#else
+class AFX_NOVTABLE CStockPropPage : public COlePropertyPage
+#endif
+{
+	DECLARE_DYNAMIC(CStockPropPage)
+
+// Constructor
+public:
+	CStockPropPage(UINT idDlg, UINT idCaption);
+
+// Implementation
+protected:
+	void FillPropnameList(REFGUID guid, int nIndirect, CComboBox& combo);
+	void OnSelchangePropname(CComboBox& combo);
+	BOOL OnEditProperty(DISPID dispid, CComboBox& combo);
+
+	LCID m_lcid;
+	CString m_strPropName;
+	int m_iPropName;
+
+	DECLARE_MESSAGE_MAP()
+};
+
+///////////////////////////////////////////////////////////////////////////////
+// CColorButton: used by CColorPropPage
+
+class CColorButton : public CButton
+{
+public:
+	CColorButton(void);
+	void SetFaceColor(COLORREF colFace);
+	COLORREF colGetFaceColor(void);
+	void SetState(BOOL fSelected);
+	static UINT idClicked;
+protected:
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+private:
+	BOOL m_fSelected;
+	COLORREF m_colFace;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CColorPropPage
+
+class CColorPropPage : public CStockPropPage
+{
+	DECLARE_DYNCREATE(CColorPropPage)
+#ifdef _AFXDLL
+	DECLARE_OLECREATE_EX(CColorPropPage)
+#endif
+
+// Construction
+public:
+	CColorPropPage();   // Constructor
+
+// Dialog Data
+	//{{AFX_DATA(CColorPropPage)
+	enum { IDD = AFX_IDD_PROPPAGE_COLOR };
+	CComboBox   m_SysColors;
+	CComboBox   m_ColorProp;
+	//}}AFX_DATA
+
+// Implementation
+public:
+	enum { NBUTTONS = 16 };
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);        // DDX/DDV support
+	virtual BOOL OnInitDialog(void);
+	virtual BOOL OnEditProperty(DISPID dispid);
+	virtual void OnObjectsChanged();
+	void FillSysColors();
+	BOOL SetColorProp(CDataExchange* pDX, COLORREF color, LPCTSTR pszPropName);
+	BOOL GetColorProp(CDataExchange* pDX, COLORREF* pcolor, LPCTSTR pszPropName);
+
+private:
+	CColorButton m_Buttons[NBUTTONS];
+	CColorButton *m_pSelectedButton;
+
+	void SetButton(CColorButton *Button);
+
+	// Generated message map functions
+	//{{AFX_MSG(CColorPropPage)
+	afx_msg void OnSelchangeColorprop();
+	afx_msg void OnSelect(void);
+	afx_msg void OnSelchangeSystemcolors();
+	//}}AFX_MSG
+
+	DECLARE_MESSAGE_MAP()
+};
+
+// Stores all the information about a font
+typedef struct tagFONTOBJECT
+{
+	CString strName;
+	CY  cySize;
+	BOOL bBold;
+	BOOL bItalic;
+	BOOL bUnderline;
+	BOOL bStrikethrough;
+	short sWeight;
+} FONTOBJECT;
+
+// Merge objects are used when trying to consolidate multiple font properties.
+// If the characteristics of these multiple properties differ then this is
+// represented in the merge object.
+typedef struct tagMERGEOBJECT
+{
+	BOOL bNameOK;
+	BOOL bSizeOK;
+	BOOL bStyleOK;
+	BOOL bUnderlineOK;
+	BOOL bStrikethroughOK;
+} MERGEOBJECT;
+
+/////////////////////////////////////////////////////////////////////////////
+// CSizeComboBox window
+
+class CSizeComboBox : public CComboBox
+{
+// Operations
+public:
+	int AddSize(int PointSize, LONG lfHeight);
+
+	void            GetPointSize(CY& cy);
+	LONG            GetHeight(int sel=-1);
+	void            UpdateLogFont( LPLOGFONT lpLF, int sel=-1 );
+};
+
+/////////////////////////////////////////////////////////////////////////////
+// CFontComboBox window
+
+struct FONTITEM_PPG
+{
+	DWORD dwFontType;
+	LOGFONT lf;
+};
+
+class CFontComboBox : public CComboBox
+{
+// Construction
+public:
+	CFontComboBox();
+	virtual ~CFontComboBox();
+
+// Operations
+public:
+	int AddFont(LOGFONT *, DWORD);
+	CString GetCurrentName();
+
+	FONTITEM_PPG* GetFontItem(int sel=-1);
+	LPLOGFONT GetLogFont(int sel=-1);
+	DWORD GetFontType(int sel=-1);
+
+// Implementation
+public:
+	virtual void DrawItem(LPDRAWITEMSTRUCT lpDIS);
+	virtual void DeleteItem(LPDELETEITEMSTRUCT lpDIS);
+
+protected:
+	CBitmap m_bmpTrueType;
+	CBitmap m_bmpMask;
+};
+
+///////////////////////////////////////////////////////////////////////////
+// CFontPropPage class
+
+class CFontPropPage : public CStockPropPage
+{
+	DECLARE_DYNCREATE(CFontPropPage)
+#ifdef _AFXDLL
+	DECLARE_OLECREATE_EX(CFontPropPage)
+#endif
+
+public:
+	CFontPropPage();
+
+	// Dialog Data
+	//{{AFX_DATA(CFontPropPage)
+	enum { IDD = AFX_IDD_PROPPAGE_FONT };
+	CComboBox   m_FontProp;
+	CStatic m_SampleBox;
+	CComboBox   m_FontStyles;
+	CSizeComboBox   m_FontSizes;
+	CFontComboBox   m_FontNames;
+	//}}AFX_DATA
+
+// Attributes
+protected:
+	int nPixelsY;
+	CFont SampleFont;
+	DWORD m_nCurrentStyle;
+	DWORD m_nActualStyle;
+	DWORD m_nStyles;
+	BOOL m_bStrikeOut;
+	BOOL m_bUnderline;
+	CString m_strFontSize;
+
+// Implementation
+protected:
+
+	void FillFacenameList();
+	void FillSizeList();
+	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void OnPaint();
+	virtual BOOL OnEditProperty(DISPID dispid);
+	virtual void OnObjectsChanged();
+	void UpdateSampleFont();
+	void SelectFontFromList(CString strFaceName, MERGEOBJECT* pmobj);
+
+	//{{AFX_MSG(CFontPropPage)
+	virtual BOOL OnInitDialog();
+	afx_msg void OnEditupdateFontnames();
+	afx_msg void OnEditupdateFontsizes();
+	afx_msg void OnSelchangeFontnames();
+	afx_msg void OnSelchangeFontsizes();
+	afx_msg void OnSelchangeFontstyles();
+	afx_msg void OnEditchangeFontstyles();
+	afx_msg void OnStrikeout();
+	afx_msg void OnUnderline();
+	afx_msg void OnSelchangeFontprop();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+
+	static int CALLBACK EnumFontFamiliesCallBack(ENUMLOGFONT* lpelf, NEWTEXTMETRIC* lpntm, int FontType, LPARAM lParam);
+	static int CALLBACK EnumFontFamiliesCallBack2(ENUMLOGFONT* lpelf, NEWTEXTMETRIC* lpntm, int FontType, LPARAM lParam);
+
+	BOOL SetFontProps(CDataExchange* pDX, FONTOBJECT fobj, LPCTSTR pszPropName);
+	BOOL GetFontProps(CDataExchange* pDX, FONTOBJECT*  pfobj, LPCTSTR pszPropName, MERGEOBJECT* pmobj);
+};
+
+////////////////////////////////////////////////////////////////////////////
+//  CPicturePropPage
+
+class CPicturePropPage : public CStockPropPage
+{
+	DECLARE_DYNCREATE(CPicturePropPage)
+#ifdef _AFXDLL
+	DECLARE_OLECREATE_EX(CPicturePropPage)
+#endif
+
+// Construction
+public:
+	CPicturePropPage(); // standard constructor
+	~CPicturePropPage();
+
+// Dialog Data
+	//{{AFX_DATA(CPicturePropPage)
+	enum { IDD = AFX_IDD_PROPPAGE_PICTURE };
+	CComboBox   m_PropName;
+	CStatic m_Static;
+	//}}AFX_DATA
+
+// Implementation
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog(void);
+	virtual BOOL OnEditProperty(DISPID dispid);
+	virtual void OnObjectsChanged();
+
+	BOOL SetPictureProp(CDataExchange* pDX, LPPICTUREDISP pPictDisp, LPCTSTR pszPropName);
+	BOOL GetPictureProp(CDataExchange* pDX, LPPICTUREDISP* ppPictDisp, LPCTSTR pszPropName);
+	void ChangePicture(LPPICTURE pPict);
+
+	LPPICTUREDISP m_pPictDisp;
+
+// Generated message map functions
+protected:
+	//{{AFX_MSG(CPicturePropPage)
+	afx_msg void OnPaint();
+	afx_msg void OnBrowse();
+	afx_msg void OnClear();
+	afx_msg void OnSelchangePictProp();
+	//}}AFX_MSG
+	DECLARE_MESSAGE_MAP()
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // Property Page Dialog Data Exchange routines
@@ -1691,6 +1959,9 @@ BOOL AFXAPI AfxOleTypeMatchGuid(LPTYPEINFO pTypeInfo,
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFXCTL_H__

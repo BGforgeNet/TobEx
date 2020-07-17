@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,8 +14,6 @@
 // Please refer to Technical Note 033 (TN033) for more details.
 
 /////////////////////////////////////////////////////////////////////////////
-
-#pragma once
 
 #ifndef _AFXDLL
 	#error file must be compiled with _AFXDLL
@@ -52,7 +50,7 @@ class CDynLinkLibrary : public CCmdTarget
 public:
 
 // Constructor
-	explicit CDynLinkLibrary(AFX_EXTENSION_MODULE& state, BOOL bSystem = FALSE);
+	CDynLinkLibrary(AFX_EXTENSION_MODULE& state, BOOL bSystem = FALSE);
 	CDynLinkLibrary(HINSTANCE hModule, HINSTANCE hResource);
 
 // Attributes
@@ -82,18 +80,21 @@ void AFXAPI AfxTermExtensionModule(AFX_EXTENSION_MODULE&, BOOL bAll = FALSE);
 
 // special function(s) for stand-alone DLLs (and controls)
 void AFXAPI AfxCoreInitModule();
+#if defined(_DEBUG) && !defined(_AFX_MONOLITHIC)
+void AFXAPI AfxOleInitModule();
+void AFXAPI AfxNetInitModule();
+void AFXAPI AfxDbInitModule();
+#else
 #define AfxOleInitModule()
 #define AfxNetInitModule()
 #define AfxDbInitModule()
-
+#endif
 
 // special functions for loading and freeing MFC extension DLLs
 // (necessary if your app is multithreaded and loads extension
 //  DLLs dynamically)
 HINSTANCE AFXAPI AfxLoadLibrary(LPCTSTR lpszModuleName);
-HINSTANCE AFXAPI AfxLoadLibraryEx( LPCTSTR lpFileName,  HANDLE hFile,  DWORD dwFlags);
 BOOL AFXAPI AfxFreeLibrary(HINSTANCE hInstLib);
- 
 
 #undef AFX_DATA
 #define AFX_DATA

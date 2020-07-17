@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -17,45 +17,69 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
 #endif
 
 #ifdef _DEBUG
+static char _szAfxTempl[] = "afxtempl.h";
+#undef THIS_FILE
+#define THIS_FILE _szAfxTempl
 #endif
 
-#pragma warning( push )
-#pragma warning( disable: 4505 4127 )
+#ifndef ALL_WARNINGS
+#pragma warning(disable: 4114)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // global helpers (can be overridden)
 
-#pragma push_macro("new")
+#ifdef new
+#undef new
+#define _REDEF_NEW
+#endif
 
 #ifndef _INC_NEW
 	#include <new.h>
 #endif
 
-namespace ATL
+template<class TYPE>
+AFX_INLINE void AFXAPI ConstructElements(TYPE* pElements, int nCount)
 {
-	class CComBSTR;
-}
-using ATL::CComBSTR;
+	ASSERT(nCount == 0 ||
+		AfxIsValidAddress(pElements, nCount * sizeof(TYPE)));
 
-// the two functions below are deprecated.  Use a constructor/destructor instead.
-#pragma deprecated( DestructElements )
-#pragma deprecated( ConstructElements )
+	// first do bit-wise zero initialization
+	memset((void*)pElements, 0, nCount * sizeof(TYPE));
+
+	// then call the constructor(s)
+	for (; nCount--; pElements++)
+		::new((void*)pElements) TYPE;
+}
 
 template<class TYPE>
-AFX_INLINE void AFXAPI CopyElements(TYPE* pDest, const TYPE* pSrc, INT_PTR nCount)
+AFX_INLINE void AFXAPI DestructElements(TYPE* pElements, int nCount)
 {
-	ENSURE(nCount == 0 || pDest != 0 && pSrc != 0);
 	ASSERT(nCount == 0 ||
-		AfxIsValidAddress(pDest, (size_t)nCount * sizeof(TYPE)));
+		AfxIsValidAddress(pElements, nCount * sizeof(TYPE)));
+
+	// call the destructor(s)
+	for (; nCount--; pElements++)
+		pElements->~TYPE();
+}
+
+template<class TYPE>
+AFX_INLINE void AFXAPI CopyElements(TYPE* pDest, const TYPE* pSrc, int nCount)
+{
 	ASSERT(nCount == 0 ||
-		AfxIsValidAddress(pSrc, (size_t)nCount * sizeof(TYPE)));
+		AfxIsValidAddress(pDest, nCount * sizeof(TYPE)));
+	ASSERT(nCount == 0 ||
+		AfxIsValidAddress(pSrc, nCount * sizeof(TYPE)));
 
 	// default is element-copy using assignment
 	while (nCount--)
@@ -63,81 +87,24 @@ AFX_INLINE void AFXAPI CopyElements(TYPE* pDest, const TYPE* pSrc, INT_PTR nCoun
 }
 
 template<class TYPE>
-void AFXAPI SerializeElements(CArchive& ar, TYPE* pElements, INT_PTR nCount)
+void AFXAPI SerializeElements(CArchive& ar, TYPE* pElements, int nCount)
 {
-	ENSURE(nCount == 0 || pElements != NULL);
 	ASSERT(nCount == 0 ||
-		AfxIsValidAddress(pElements, (size_t)nCount * sizeof(TYPE)));
+		AfxIsValidAddress(pElements, nCount * sizeof(TYPE)));
 
 	// default is bit-wise read/write
 	if (ar.IsStoring())
-	{
-		TYPE* pData;
-		UINT_PTR nElementsLeft;
-
-		nElementsLeft = nCount;
-		pData = pElements;
-		while( nElementsLeft > 0 )
-		{
-			UINT nElementsToWrite;
-
-			nElementsToWrite = UINT(__min(nElementsLeft, INT_MAX/sizeof(TYPE)));
-			ar.Write(pData, nElementsToWrite*sizeof(TYPE));
-			nElementsLeft -= nElementsToWrite;
-			pData += nElementsToWrite;
-		}
-	}
+		ar.Write((void*)pElements, nCount * sizeof(TYPE));
 	else
-	{
-		TYPE* pData;
-		UINT_PTR nElementsLeft;
-
-		nElementsLeft = nCount;
-		pData = pElements;
-		while( nElementsLeft > 0 )
-		{
-			UINT nElementsToRead;
-
-			nElementsToRead = UINT(__min(nElementsLeft, INT_MAX/sizeof(TYPE)));
-			ar.EnsureRead(pData, nElementsToRead*sizeof(TYPE));
-			nElementsLeft -= nElementsToRead;
-			pData += nElementsToRead;
-		}
-	}
-}
-
-template<class TYPE>
-void AFXAPI SerializeElementsInsertExtract(CArchive& ar, TYPE* pElements, 
-	INT_PTR nCount)
-{
-	ENSURE(nCount == 0 || pElements != NULL);
-	ASSERT((nCount == 0) || 
-		(AfxIsValidAddress(pElements, nCount*sizeof(TYPE))));
-
-	if (nCount == 0 || pElements == NULL)
-	{
-		return;
-	}
-
-	if (ar.IsStoring())
-	{
-		for (; nCount--; ++pElements)
-			ar << *pElements;
-	}
-	else
-	{
-		for (; nCount--; ++pElements)
-			ar >> *pElements;
-	}
+		ar.Read((void*)pElements, nCount * sizeof(TYPE));
 }
 
 #ifdef _DEBUG
 template<class TYPE>
-void AFXAPI DumpElements(CDumpContext& dc, const TYPE* pElements, INT_PTR nCount)
+void AFXAPI DumpElements(CDumpContext& dc, const TYPE* pElements, int nCount)
 {
-	ENSURE(nCount == 0 || pElements != NULL);
 	ASSERT(nCount == 0 ||
-		AfxIsValidAddress(pElements, (size_t)nCount * sizeof(TYPE), FALSE));
+		AfxIsValidAddress(pElements, nCount * sizeof(TYPE), FALSE));
 	&dc; // not used
 	pElements;  // not used
 	nCount; // not used
@@ -149,7 +116,6 @@ void AFXAPI DumpElements(CDumpContext& dc, const TYPE* pElements, INT_PTR nCount
 template<class TYPE, class ARG_TYPE>
 BOOL AFXAPI CompareElements(const TYPE* pElement1, const ARG_TYPE* pElement2)
 {
-	ENSURE(pElement1 != NULL && pElement2 != NULL);
 	ASSERT(AfxIsValidAddress(pElement1, sizeof(TYPE), FALSE));
 	ASSERT(AfxIsValidAddress(pElement2, sizeof(ARG_TYPE), FALSE));
 
@@ -160,24 +126,29 @@ template<class ARG_KEY>
 AFX_INLINE UINT AFXAPI HashKey(ARG_KEY key)
 {
 	// default identity hash - works for most primitive values
-	return (DWORD)(((DWORD_PTR)key)>>4);
+	return ((UINT)(void*)(DWORD)key) >> 4;
 }
 
 // special versions for CString
 #if _MSC_VER >= 1100
-template<> void AFXAPI SerializeElements<CStringA> (CArchive& ar, CStringA* pElements, INT_PTR nCount);
-template<> void AFXAPI SerializeElements<CStringW> (CArchive& ar, CStringW* pElements, INT_PTR nCount);
+template<> void AFXAPI ConstructElements<CString> (CString* pElements, int nCount);
+template<> void AFXAPI DestructElements<CString> (CString* pElements, int nCount);
+template<> void AFXAPI CopyElements<CString> (CString* pDest, const CString* pSrc, int nCount);
+template<> void AFXAPI SerializeElements<CString> (CArchive& ar, CString* pElements, int nCount);
+#ifndef OLE2ANSI
 template<> UINT AFXAPI HashKey<LPCWSTR> (LPCWSTR key);
+#endif
 template<> UINT AFXAPI HashKey<LPCSTR> (LPCSTR key);
 #else // _MSC_VER >= 1100
-void AFXAPI SerializeElements(CArchive& ar, CString* pElements, INT_PTR nCount);
+void AFXAPI ConstructElements(CString* pElements, int nCount);
+void AFXAPI DestructElements(CString* pElements, int nCount);
+void AFXAPI CopyElements(CString* pDest, const CString* pSrc, int nCount);
+void AFXAPI SerializeElements(CArchive& ar, CString* pElements, int nCount);
+#ifndef OLE2ANSI
 UINT AFXAPI HashKey(LPCWSTR key);
+#endif
 UINT AFXAPI HashKey(LPCSTR key);
 #endif // _MSC_VER >= 1100
-
-// special versions for CComBSTR
-template<> void AFXAPI SerializeElements<CComBSTR> (CArchive& ar, CComBSTR* pElements, INT_PTR nCount);
-template<> UINT AFXAPI HashKey<CComBSTR> (CComBSTR key);
 
 // forward declarations
 class COleVariant;
@@ -185,17 +156,21 @@ struct tagVARIANT;
 
 // special versions for COleVariant
 #if _MSC_VER >= 1100
-template<> void AFXAPI CopyElements<COleVariant> (COleVariant* pDest, const COleVariant* pSrc, INT_PTR nCount);
-template<> void AFXAPI SerializeElements<COleVariant> (CArchive& ar, COleVariant* pElements, INT_PTR nCount);
+template<> void AFXAPI ConstructElements<COleVariant> (COleVariant* pElements, int nCount);
+template<> void AFXAPI DestructElements<COleVariant> (COleVariant* pElements, int nCount);
+template<> void AFXAPI CopyElements<COleVariant> (COleVariant* pDest, const COleVariant* pSrc, int nCount);
+template<> void AFXAPI SerializeElements<COleVariant> (CArchive& ar, COleVariant* pElements, int nCount);
 #ifdef _DEBUG
-template<> void AFXAPI DumpElements<COleVariant> (CDumpContext& dc, const COleVariant* pElements, INT_PTR nCount);
+template<> void AFXAPI DumpElements<COleVariant> (CDumpContext& dc, const COleVariant* pElements, int nCount);
 #endif
 template<> UINT AFXAPI HashKey<const struct tagVARIANT&> (const struct tagVARIANT& var);
 #else // _MSC_VER >= 1100
-void AFXAPI CopyElements(COleVariant* pDest, const COleVariant* pSrc, INT_PTR nCount);
-void AFXAPI SerializeElements(CArchive& ar, COleVariant* pElements, INT_PTR nCount);
+void AFXAPI ConstructElements(COleVariant* pElements, int nCount);
+void AFXAPI DestructElements(COleVariant* pElements, int nCount);
+void AFXAPI CopyElements(COleVariant* pDest, const COleVariant* pSrc, int nCount);
+void AFXAPI SerializeElements(CArchive& ar, COleVariant* pElements, int nCount);
 #ifdef _DEBUG
-void AFXAPI DumpElements(CDumpContext& dc, const COleVariant* pElements, INT_PTR nCount);
+void AFXAPI DumpElements(CDumpContext& dc, const COleVariant* pElements, int nCount);
 #endif
 UINT AFXAPI HashKey(const struct tagVARIANT& var);
 #endif // _MSC_VER >= 1100
@@ -205,7 +180,7 @@ UINT AFXAPI HashKey(const struct tagVARIANT& var);
 /////////////////////////////////////////////////////////////////////////////
 // CArray<TYPE, ARG_TYPE>
 
-template<class TYPE, class ARG_TYPE = const TYPE&>
+template<class TYPE, class ARG_TYPE>
 class CArray : public CObject
 {
 public:
@@ -213,11 +188,9 @@ public:
 	CArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -225,37 +198,35 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	const TYPE& GetAt(INT_PTR nIndex) const;
-	TYPE& GetAt(INT_PTR nIndex);
-	void SetAt(INT_PTR nIndex, ARG_TYPE newElement);
-	const TYPE& ElementAt(INT_PTR nIndex) const;
-	TYPE& ElementAt(INT_PTR nIndex);
+	TYPE GetAt(int nIndex) const;
+	void SetAt(int nIndex, ARG_TYPE newElement);
+	TYPE& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const TYPE* GetData() const;
 	TYPE* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, ARG_TYPE newElement);
-	INT_PTR Add(ARG_TYPE newElement);
-	INT_PTR Append(const CArray& src);
+	void SetAtGrow(int nIndex, ARG_TYPE newElement);
+	int Add(ARG_TYPE newElement);
+	int Append(const CArray& src);
 	void Copy(const CArray& src);
 
 	// overloaded operator helpers
-	const TYPE& operator[](INT_PTR nIndex) const;
-	TYPE& operator[](INT_PTR nIndex);
+	TYPE operator[](int nIndex) const;
+	TYPE& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, ARG_TYPE newElement, INT_PTR nCount = 1);
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CArray* pNewArray);
+	void InsertAt(int nIndex, ARG_TYPE newElement, int nCount = 1);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CArray* pNewArray);
 
 // Implementation
 protected:
 	TYPE* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 public:
 	~CArray();
@@ -270,61 +241,26 @@ public:
 // CArray<TYPE, ARG_TYPE> inline functions
 
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CArray<TYPE, ARG_TYPE>::GetSize() const
+AFX_INLINE int CArray<TYPE, ARG_TYPE>::GetSize() const
 	{ return m_nSize; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CArray<TYPE, ARG_TYPE>::GetCount() const
-	{ return m_nSize; }
-template<class TYPE, class ARG_TYPE>
-AFX_INLINE BOOL CArray<TYPE, ARG_TYPE>::IsEmpty() const
-	{ return m_nSize == 0; }
-template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CArray<TYPE, ARG_TYPE>::GetUpperBound() const
+AFX_INLINE int CArray<TYPE, ARG_TYPE>::GetUpperBound() const
 	{ return m_nSize-1; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE void CArray<TYPE, ARG_TYPE>::RemoveAll()
 	{ SetSize(0, -1); }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE TYPE& CArray<TYPE, ARG_TYPE>::GetAt(INT_PTR nIndex)
-{ 
-	ASSERT(nIndex >= 0 && nIndex < m_nSize);
-	if(nIndex >= 0 && nIndex < m_nSize)
-		return m_pData[nIndex]; 
-	AfxThrowInvalidArgException();		
-}
+AFX_INLINE TYPE CArray<TYPE, ARG_TYPE>::GetAt(int nIndex) const
+	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
+		return m_pData[nIndex]; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CArray<TYPE, ARG_TYPE>::GetAt(INT_PTR nIndex) const
-{
-	ASSERT(nIndex >= 0 && nIndex < m_nSize);
-	if(nIndex >= 0 && nIndex < m_nSize)
-		return m_pData[nIndex]; 
-	AfxThrowInvalidArgException();		
-}
+AFX_INLINE void CArray<TYPE, ARG_TYPE>::SetAt(int nIndex, ARG_TYPE newElement)
+	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
+		m_pData[nIndex] = newElement; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE void CArray<TYPE, ARG_TYPE>::SetAt(INT_PTR nIndex, ARG_TYPE newElement)
-{ 
-	ASSERT(nIndex >= 0 && nIndex < m_nSize);
-	if(nIndex >= 0 && nIndex < m_nSize)
-		m_pData[nIndex] = newElement; 
-	else
-		AfxThrowInvalidArgException();		
-}
-template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CArray<TYPE, ARG_TYPE>::ElementAt(INT_PTR nIndex) const
-{ 
-	ASSERT(nIndex >= 0 && nIndex < m_nSize);
-	if(nIndex >= 0 && nIndex < m_nSize)
-		return m_pData[nIndex]; 
-	AfxThrowInvalidArgException();		
-}
-template<class TYPE, class ARG_TYPE>
-AFX_INLINE TYPE& CArray<TYPE, ARG_TYPE>::ElementAt(INT_PTR nIndex)
-{ 
-	ASSERT(nIndex >= 0 && nIndex < m_nSize);
-	if(nIndex >= 0 && nIndex < m_nSize)
-		return m_pData[nIndex]; 
-	AfxThrowInvalidArgException();		
-}
+AFX_INLINE TYPE& CArray<TYPE, ARG_TYPE>::ElementAt(int nIndex)
+	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
+		return m_pData[nIndex]; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE const TYPE* CArray<TYPE, ARG_TYPE>::GetData() const
 	{ return (const TYPE*)m_pData; }
@@ -332,15 +268,15 @@ template<class TYPE, class ARG_TYPE>
 AFX_INLINE TYPE* CArray<TYPE, ARG_TYPE>::GetData()
 	{ return (TYPE*)m_pData; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CArray<TYPE, ARG_TYPE>::Add(ARG_TYPE newElement)
-	{ INT_PTR nIndex = m_nSize;
+AFX_INLINE int CArray<TYPE, ARG_TYPE>::Add(ARG_TYPE newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CArray<TYPE, ARG_TYPE>::operator[](INT_PTR nIndex) const
+AFX_INLINE TYPE CArray<TYPE, ARG_TYPE>::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE TYPE& CArray<TYPE, ARG_TYPE>::operator[](INT_PTR nIndex)
+AFX_INLINE TYPE& CArray<TYPE, ARG_TYPE>::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -360,22 +296,18 @@ CArray<TYPE, ARG_TYPE>::~CArray()
 
 	if (m_pData != NULL)
 	{
-		for( int i = 0; i < m_nSize; i++ )
-			(m_pData + i)->~TYPE();
+		DestructElements<TYPE>(m_pData, m_nSize);
 		delete[] (BYTE*)m_pData;
 	}
 }
 
 template<class TYPE, class ARG_TYPE>
-void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
+void CArray<TYPE, ARG_TYPE>::SetSize(int nNewSize, int nGrowBy)
 {
 	ASSERT_VALID(this);
 	ASSERT(nNewSize >= 0);
 
-	if(nNewSize < 0 )
-		AfxThrowInvalidArgException();
-
-	if (nGrowBy >= 0)
+	if (nGrowBy != -1)
 		m_nGrowBy = nGrowBy;  // set new size
 
 	if (nNewSize == 0)
@@ -383,8 +315,7 @@ void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
 		// shrink to nothing
 		if (m_pData != NULL)
 		{
-			for( int i = 0; i < m_nSize; i++ )
-				(m_pData + i)->~TYPE();
+			DestructElements<TYPE>(m_pData, m_nSize);
 			delete[] (BYTE*)m_pData;
 			m_pData = NULL;
 		}
@@ -392,21 +323,13 @@ void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
 	}
 	else if (m_pData == NULL)
 	{
-		// create buffer big enough to hold number of requested elements or
-		// m_nGrowBy elements, whichever is larger.
+		// create one with exact size
 #ifdef SIZE_T_MAX
 		ASSERT(nNewSize <= SIZE_T_MAX/sizeof(TYPE));    // no overflow
 #endif
-		size_t nAllocSize = __max(nNewSize, m_nGrowBy);
-		m_pData = (TYPE*) new BYTE[(size_t)nAllocSize * sizeof(TYPE)];
-		memset((void*)m_pData, 0, (size_t)nAllocSize * sizeof(TYPE));
-		for( int i = 0; i < nNewSize; i++ )
-#pragma push_macro("new")
-#undef new
-			::new( (void*)( m_pData + i ) ) TYPE;
-#pragma pop_macro("new")
-		m_nSize = nNewSize;
-		m_nMaxSize = nAllocSize;
+		m_pData = (TYPE*) new BYTE[nNewSize * sizeof(TYPE)];
+		ConstructElements<TYPE>(m_pData, nNewSize);
+		m_nSize = m_nMaxSize = nNewSize;
 	}
 	else if (nNewSize <= m_nMaxSize)
 	{
@@ -414,25 +337,19 @@ void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
 		if (nNewSize > m_nSize)
 		{
 			// initialize the new elements
-			memset((void*)(m_pData + m_nSize), 0, (size_t)(nNewSize-m_nSize) * sizeof(TYPE));
-			for( int i = 0; i < nNewSize-m_nSize; i++ )
-#pragma push_macro("new")
-#undef new
-				::new( (void*)( m_pData + m_nSize + i ) ) TYPE;
-#pragma pop_macro("new")
+			ConstructElements<TYPE>(&m_pData[m_nSize], nNewSize-m_nSize);
 		}
 		else if (m_nSize > nNewSize)
 		{
 			// destroy the old elements
-			for( int i = 0; i < m_nSize-nNewSize; i++ )
-				(m_pData + nNewSize + i)->~TYPE();
+			DestructElements<TYPE>(&m_pData[nNewSize], m_nSize-nNewSize);
 		}
 		m_nSize = nNewSize;
 	}
 	else
 	{
 		// otherwise, grow array
-		nGrowBy = m_nGrowBy;
+		int nGrowBy = m_nGrowBy;
 		if (nGrowBy == 0)
 		{
 			// heuristically determine growth when nGrowBy == 0
@@ -440,34 +357,24 @@ void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
 			nGrowBy = m_nSize / 8;
 			nGrowBy = (nGrowBy < 4) ? 4 : ((nGrowBy > 1024) ? 1024 : nGrowBy);
 		}
-		INT_PTR nNewMax;
+		int nNewMax;
 		if (nNewSize < m_nMaxSize + nGrowBy)
 			nNewMax = m_nMaxSize + nGrowBy;  // granularity
 		else
 			nNewMax = nNewSize;  // no slush
 
 		ASSERT(nNewMax >= m_nMaxSize);  // no wrap around
-		
-		if(nNewMax  < m_nMaxSize)
-			AfxThrowInvalidArgException();
-
 #ifdef SIZE_T_MAX
 		ASSERT(nNewMax <= SIZE_T_MAX/sizeof(TYPE)); // no overflow
 #endif
-		TYPE* pNewData = (TYPE*) new BYTE[(size_t)nNewMax * sizeof(TYPE)];
+		TYPE* pNewData = (TYPE*) new BYTE[nNewMax * sizeof(TYPE)];
 
 		// copy new data from old
-		::ATL::Checked::memcpy_s(pNewData, (size_t)nNewMax * sizeof(TYPE),
-			m_pData, (size_t)m_nSize * sizeof(TYPE));
+		memcpy(pNewData, m_pData, m_nSize * sizeof(TYPE));
 
 		// construct remaining elements
 		ASSERT(nNewSize > m_nSize);
-		memset((void*)(pNewData + m_nSize), 0, (size_t)(nNewSize-m_nSize) * sizeof(TYPE));
-		for( int i = 0; i < nNewSize-m_nSize; i++ )
-#pragma push_macro("new")
-#undef new
-			::new( (void*)( pNewData + m_nSize + i ) ) TYPE;
-#pragma pop_macro("new")
+		ConstructElements<TYPE>(&pNewData[m_nSize], nNewSize-m_nSize);
 
 		// get rid of old stuff (note: no destructors called)
 		delete[] (BYTE*)m_pData;
@@ -478,15 +385,12 @@ void CArray<TYPE, ARG_TYPE>::SetSize(INT_PTR nNewSize, INT_PTR nGrowBy)
 }
 
 template<class TYPE, class ARG_TYPE>
-INT_PTR CArray<TYPE, ARG_TYPE>::Append(const CArray& src)
+int CArray<TYPE, ARG_TYPE>::Append(const CArray& src)
 {
 	ASSERT_VALID(this);
 	ASSERT(this != &src);   // cannot append to itself
-	
-	if(this == &src)
-		AfxThrowInvalidArgException();
 
-	INT_PTR nOldSize = m_nSize;
+	int nOldSize = m_nSize;
 	SetSize(m_nSize + src.m_nSize);
 	CopyElements<TYPE>(m_pData + nOldSize, src.m_pData, src.m_nSize);
 	return nOldSize;
@@ -498,11 +402,8 @@ void CArray<TYPE, ARG_TYPE>::Copy(const CArray& src)
 	ASSERT_VALID(this);
 	ASSERT(this != &src);   // cannot append to itself
 
-	if(this != &src)
-	{
-		SetSize(src.m_nSize);
-		CopyElements<TYPE>(m_pData, src.m_pData, src.m_nSize);
-	}
+	SetSize(src.m_nSize);
+	CopyElements<TYPE>(m_pData, src.m_pData, src.m_nSize);
 }
 
 template<class TYPE, class ARG_TYPE>
@@ -521,8 +422,7 @@ void CArray<TYPE, ARG_TYPE>::FreeExtra()
 		{
 			pNewData = (TYPE*) new BYTE[m_nSize * sizeof(TYPE)];
 			// copy new data from old
-			::ATL::Checked::memcpy_s(pNewData, m_nSize * sizeof(TYPE),
-				m_pData, m_nSize * sizeof(TYPE));
+			memcpy(pNewData, m_pData, m_nSize * sizeof(TYPE));
 		}
 
 		// get rid of old stuff (note: no destructors called)
@@ -533,13 +433,10 @@ void CArray<TYPE, ARG_TYPE>::FreeExtra()
 }
 
 template<class TYPE, class ARG_TYPE>
-void CArray<TYPE, ARG_TYPE>::SetAtGrow(INT_PTR nIndex, ARG_TYPE newElement)
+void CArray<TYPE, ARG_TYPE>::SetAtGrow(int nIndex, ARG_TYPE newElement)
 {
 	ASSERT_VALID(this);
 	ASSERT(nIndex >= 0);
-	
-	if(nIndex < 0)
-		AfxThrowInvalidArgException();
 
 	if (nIndex >= m_nSize)
 		SetSize(nIndex+1, -1);
@@ -547,14 +444,11 @@ void CArray<TYPE, ARG_TYPE>::SetAtGrow(INT_PTR nIndex, ARG_TYPE newElement)
 }
 
 template<class TYPE, class ARG_TYPE>
-void CArray<TYPE, ARG_TYPE>::InsertAt(INT_PTR nIndex, ARG_TYPE newElement, INT_PTR nCount /*=1*/)
+void CArray<TYPE, ARG_TYPE>::InsertAt(int nIndex, ARG_TYPE newElement, int nCount /*=1*/)
 {
 	ASSERT_VALID(this);
 	ASSERT(nIndex >= 0);    // will expand to meet need
 	ASSERT(nCount > 0);     // zero or negative size not allowed
-
-	if(nIndex < 0 || nCount <= 0)
-		AfxThrowInvalidArgException();
 
 	if (nIndex >= m_nSize)
 	{
@@ -564,22 +458,16 @@ void CArray<TYPE, ARG_TYPE>::InsertAt(INT_PTR nIndex, ARG_TYPE newElement, INT_P
 	else
 	{
 		// inserting in the middle of the array
-		INT_PTR nOldSize = m_nSize;
+		int nOldSize = m_nSize;
 		SetSize(m_nSize + nCount, -1);  // grow it to new size
 		// destroy intial data before copying over it
-		for( int i = 0; i < nCount; i++ )
-			(m_pData + nOldSize + i)->~TYPE();
+		DestructElements<TYPE>(&m_pData[nOldSize], nCount);
 		// shift old data up to fill gap
-		::ATL::Checked::memmove_s(m_pData + nIndex + nCount, (nOldSize-nIndex) * sizeof(TYPE),
-			m_pData + nIndex, (nOldSize-nIndex) * sizeof(TYPE));
+		memmove(&m_pData[nIndex+nCount], &m_pData[nIndex],
+			(nOldSize-nIndex) * sizeof(TYPE));
 
 		// re-init slots we copied from
-		memset((void*)(m_pData + nIndex), 0, (size_t)nCount * sizeof(TYPE));
-		for( int i = 0; i < nCount; i++ )
-#pragma push_macro("new")
-#undef new
-			::new( (void*)( m_pData + nIndex + i ) ) TYPE;
-#pragma pop_macro("new")
+		ConstructElements<TYPE>(&m_pData[nIndex], nCount);
 	}
 
 	// insert new value in the gap
@@ -589,44 +477,34 @@ void CArray<TYPE, ARG_TYPE>::InsertAt(INT_PTR nIndex, ARG_TYPE newElement, INT_P
 }
 
 template<class TYPE, class ARG_TYPE>
-void CArray<TYPE, ARG_TYPE>::RemoveAt(INT_PTR nIndex, INT_PTR nCount)
+void CArray<TYPE, ARG_TYPE>::RemoveAt(int nIndex, int nCount)
 {
 	ASSERT_VALID(this);
 	ASSERT(nIndex >= 0);
 	ASSERT(nCount >= 0);
-	INT_PTR nUpperBound = nIndex + nCount;
-	ASSERT(nUpperBound <= m_nSize && nUpperBound >= nIndex && nUpperBound >= nCount);
-
-	if(nIndex < 0 || nCount < 0 || (nUpperBound > m_nSize) || (nUpperBound < nIndex) || (nUpperBound < nCount))
-		AfxThrowInvalidArgException();
+	ASSERT(nIndex + nCount <= m_nSize);
 
 	// just remove a range
-	INT_PTR nMoveCount = m_nSize - (nUpperBound);
-	for( int i = 0; i < nCount; i++ )
-		(m_pData + nIndex + i)->~TYPE();
+	int nMoveCount = m_nSize - (nIndex + nCount);
+	DestructElements<TYPE>(&m_pData[nIndex], nCount);
 	if (nMoveCount)
-	{
-		::ATL::Checked::memmove_s(m_pData + nIndex, (size_t)nMoveCount * sizeof(TYPE),
-			m_pData + nUpperBound, (size_t)nMoveCount * sizeof(TYPE));
-	}
+		memmove(&m_pData[nIndex], &m_pData[nIndex + nCount],
+			nMoveCount * sizeof(TYPE));
 	m_nSize -= nCount;
 }
 
 template<class TYPE, class ARG_TYPE>
-void CArray<TYPE, ARG_TYPE>::InsertAt(INT_PTR nStartIndex, CArray* pNewArray)
+void CArray<TYPE, ARG_TYPE>::InsertAt(int nStartIndex, CArray* pNewArray)
 {
 	ASSERT_VALID(this);
 	ASSERT(pNewArray != NULL);
 	ASSERT_VALID(pNewArray);
 	ASSERT(nStartIndex >= 0);
 
-	if(pNewArray == NULL || nStartIndex < 0)
-		AfxThrowInvalidArgException();
-
 	if (pNewArray->GetSize() > 0)
 	{
 		InsertAt(nStartIndex, pNewArray->GetAt(0), pNewArray->GetSize());
-		for (INT_PTR i = 0; i < pNewArray->GetSize(); i++)
+		for (int i = 0; i < pNewArray->GetSize(); i++)
 			SetAt(nStartIndex + i, pNewArray->GetAt(i));
 	}
 }
@@ -643,7 +521,7 @@ void CArray<TYPE, ARG_TYPE>::Serialize(CArchive& ar)
 	}
 	else
 	{
-		DWORD_PTR nOldSize = ar.ReadCount();
+		DWORD nOldSize = ar.ReadCount();
 		SetSize(nOldSize, -1);
 	}
 	SerializeElements<TYPE>(ar, m_pData, m_nSize);
@@ -688,7 +566,7 @@ void CArray<TYPE, ARG_TYPE>::AssertValid() const
 /////////////////////////////////////////////////////////////////////////////
 // CList<TYPE, ARG_TYPE>
 
-template<class TYPE, class ARG_TYPE = const TYPE&>
+template<class TYPE, class ARG_TYPE>
 class CList : public CObject
 {
 protected:
@@ -700,19 +578,18 @@ protected:
 	};
 public:
 // Construction
-	/* explicit */ CList(INT_PTR nBlockSize = 10);
+	CList(int nBlockSize = 10);
 
 // Attributes (head and tail)
 	// count of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// peek at head or tail
 	TYPE& GetHead();
-	const TYPE& GetHead() const;
+	TYPE GetHead() const;
 	TYPE& GetTail();
-	const TYPE& GetTail() const;
+	TYPE GetTail() const;
 
 // Operations
 	// get head or tail (and remove it) - don't call on empty list !
@@ -734,13 +611,13 @@ public:
 	POSITION GetHeadPosition() const;
 	POSITION GetTailPosition() const;
 	TYPE& GetNext(POSITION& rPosition); // return *Position++
-	const TYPE& GetNext(POSITION& rPosition) const; // return *Position++
+	TYPE GetNext(POSITION& rPosition) const; // return *Position++
 	TYPE& GetPrev(POSITION& rPosition); // return *Position--
-	const TYPE& GetPrev(POSITION& rPosition) const; // return *Position--
+	TYPE GetPrev(POSITION& rPosition) const; // return *Position--
 
 	// getting/modifying an element at a given position
 	TYPE& GetAt(POSITION position);
-	const TYPE& GetAt(POSITION position) const;
+	TYPE GetAt(POSITION position) const;
 	void SetAt(POSITION pos, ARG_TYPE newElement);
 	void RemoveAt(POSITION position);
 
@@ -751,17 +628,17 @@ public:
 	// helper functions (note: O(n) speed)
 	POSITION Find(ARG_TYPE searchValue, POSITION startAfter = NULL) const;
 		// defaults to starting at the HEAD, return NULL if not found
-	POSITION FindIndex(INT_PTR nIndex) const;
+	POSITION FindIndex(int nIndex) const;
 		// get the 'nIndex'th element (may return NULL)
 
 // Implementation
 protected:
 	CNode* m_pNodeHead;
 	CNode* m_pNodeTail;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CNode* m_pNodeFree;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CNode* NewNode(CNode*, CNode*);
 	void FreeNode(CNode*);
@@ -779,29 +656,26 @@ public:
 // CList<TYPE, ARG_TYPE> inline functions
 
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CList<TYPE, ARG_TYPE>::GetCount() const
-	{ return m_nCount; }
-template<class TYPE, class ARG_TYPE>
-AFX_INLINE INT_PTR CList<TYPE, ARG_TYPE>::GetSize() const
+AFX_INLINE int CList<TYPE, ARG_TYPE>::GetCount() const
 	{ return m_nCount; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE BOOL CList<TYPE, ARG_TYPE>::IsEmpty() const
 	{ return m_nCount == 0; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE TYPE& CList<TYPE, ARG_TYPE>::GetHead()
-	{ ENSURE(m_pNodeHead != NULL);
+	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CList<TYPE, ARG_TYPE>::GetHead() const
-	{ ENSURE(m_pNodeHead != NULL);
+AFX_INLINE TYPE CList<TYPE, ARG_TYPE>::GetHead() const
+	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE TYPE& CList<TYPE, ARG_TYPE>::GetTail()
-	{ ENSURE(m_pNodeTail != NULL);
+	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CList<TYPE, ARG_TYPE>::GetTail() const
-	{ ENSURE(m_pNodeTail != NULL);
+AFX_INLINE TYPE CList<TYPE, ARG_TYPE>::GetTail() const
+	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
 template<class TYPE, class ARG_TYPE>
 AFX_INLINE POSITION CList<TYPE, ARG_TYPE>::GetHeadPosition() const
@@ -816,7 +690,7 @@ AFX_INLINE TYPE& CList<TYPE, ARG_TYPE>::GetNext(POSITION& rPosition) // return *
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CList<TYPE, ARG_TYPE>::GetNext(POSITION& rPosition) const // return *Position++
+AFX_INLINE TYPE CList<TYPE, ARG_TYPE>::GetNext(POSITION& rPosition) const // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
 		rPosition = (POSITION) pNode->pNext;
@@ -828,7 +702,7 @@ AFX_INLINE TYPE& CList<TYPE, ARG_TYPE>::GetPrev(POSITION& rPosition) // return *
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CList<TYPE, ARG_TYPE>::GetPrev(POSITION& rPosition) const // return *Position--
+AFX_INLINE TYPE CList<TYPE, ARG_TYPE>::GetPrev(POSITION& rPosition) const // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
 		rPosition = (POSITION) pNode->pPrev;
@@ -839,7 +713,7 @@ AFX_INLINE TYPE& CList<TYPE, ARG_TYPE>::GetAt(POSITION position)
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
 		return pNode->data; }
 template<class TYPE, class ARG_TYPE>
-AFX_INLINE const TYPE& CList<TYPE, ARG_TYPE>::GetAt(POSITION position) const
+AFX_INLINE TYPE CList<TYPE, ARG_TYPE>::GetAt(POSITION position) const
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
 		return pNode->data; }
@@ -850,7 +724,7 @@ AFX_INLINE void CList<TYPE, ARG_TYPE>::SetAt(POSITION pos, ARG_TYPE newElement)
 		pNode->data = newElement; }
 
 template<class TYPE, class ARG_TYPE>
-CList<TYPE, ARG_TYPE>::CList(INT_PTR nBlockSize)
+CList<TYPE, ARG_TYPE>::CList(int nBlockSize)
 {
 	ASSERT(nBlockSize > 0);
 
@@ -868,7 +742,7 @@ void CList<TYPE, ARG_TYPE>::RemoveAll()
 	// destroy elements
 	CNode* pNode;
 	for (pNode = m_pNodeHead; pNode != NULL; pNode = pNode->pNext)
-		pNode->data.~TYPE();
+		DestructElements<TYPE>(&pNode->data, 1);
 
 	m_nCount = 0;
 	m_pNodeHead = m_pNodeTail = m_pNodeFree = NULL;
@@ -899,8 +773,8 @@ CList<TYPE, ARG_TYPE>::~CList()
 //
 
 template<class TYPE, class ARG_TYPE>
-typename CList<TYPE, ARG_TYPE>::CNode*
-CList<TYPE, ARG_TYPE>::NewNode(CNode* pPrev, CNode* pNext)
+CList<TYPE, ARG_TYPE>::CNode*
+CList<TYPE, ARG_TYPE>::NewNode(CList::CNode* pPrev, CList::CNode* pNext)
 {
 	if (m_pNodeFree == NULL)
 	{
@@ -912,13 +786,13 @@ CList<TYPE, ARG_TYPE>::NewNode(CNode* pPrev, CNode* pNext)
 		CNode* pNode = (CNode*) pNewBlock->data();
 		// free in reverse order to make it easier to debug
 		pNode += m_nBlockSize - 1;
-		for (INT_PTR i = m_nBlockSize-1; i >= 0; i--, pNode--)
+		for (int i = m_nBlockSize-1; i >= 0; i--, pNode--)
 		{
 			pNode->pNext = m_pNodeFree;
 			m_pNodeFree = pNode;
 		}
 	}
-	ENSURE(m_pNodeFree != NULL);  // we must have something
+	ASSERT(m_pNodeFree != NULL);  // we must have something
 
 	CList::CNode* pNode = m_pNodeFree;
 	m_pNodeFree = m_pNodeFree->pNext;
@@ -927,17 +801,14 @@ CList<TYPE, ARG_TYPE>::NewNode(CNode* pPrev, CNode* pNext)
 	m_nCount++;
 	ASSERT(m_nCount > 0);  // make sure we don't overflow
 
-#pragma push_macro("new")
-#undef new
-	::new( (void*)( &pNode->data ) ) TYPE;
-#pragma pop_macro("new")
+	ConstructElements<TYPE>(&pNode->data, 1);
 	return pNode;
 }
 
 template<class TYPE, class ARG_TYPE>
-void CList<TYPE, ARG_TYPE>::FreeNode(CNode* pNode)
+void CList<TYPE, ARG_TYPE>::FreeNode(CList::CNode* pNode)
 {
-	pNode->data.~TYPE();
+	DestructElements<TYPE>(&pNode->data, 1);
 	pNode->pNext = m_pNodeFree;
 	m_pNodeFree = pNode;
 	m_nCount--;
@@ -983,7 +854,7 @@ void CList<TYPE, ARG_TYPE>::AddHead(CList* pNewList)
 {
 	ASSERT_VALID(this);
 
-	ENSURE(pNewList != NULL);
+	ASSERT(pNewList != NULL);
 	ASSERT_VALID(pNewList);
 
 	// add a list of same elements to head (maintain order)
@@ -996,7 +867,7 @@ template<class TYPE, class ARG_TYPE>
 void CList<TYPE, ARG_TYPE>::AddTail(CList* pNewList)
 {
 	ASSERT_VALID(this);
-	ENSURE(pNewList != NULL);
+	ASSERT(pNewList != NULL);
 	ASSERT_VALID(pNewList);
 
 	// add a list of same elements
@@ -1009,7 +880,7 @@ template<class TYPE, class ARG_TYPE>
 TYPE CList<TYPE, ARG_TYPE>::RemoveHead()
 {
 	ASSERT_VALID(this);
-	ENSURE(m_pNodeHead != NULL);  // don't call on empty list !!!
+	ASSERT(m_pNodeHead != NULL);  // don't call on empty list !!!
 	ASSERT(AfxIsValidAddress(m_pNodeHead, sizeof(CNode)));
 
 	CNode* pOldNode = m_pNodeHead;
@@ -1028,7 +899,7 @@ template<class TYPE, class ARG_TYPE>
 TYPE CList<TYPE, ARG_TYPE>::RemoveTail()
 {
 	ASSERT_VALID(this);
-	ENSURE(m_pNodeTail != NULL);  // don't call on empty list !!!
+	ASSERT(m_pNodeTail != NULL);  // don't call on empty list !!!
 	ASSERT(AfxIsValidAddress(m_pNodeTail, sizeof(CNode)));
 
 	CNode* pOldNode = m_pNodeTail;
@@ -1129,7 +1000,7 @@ void CList<TYPE, ARG_TYPE>::RemoveAt(POSITION position)
 }
 
 template<class TYPE, class ARG_TYPE>
-POSITION CList<TYPE, ARG_TYPE>::FindIndex(INT_PTR nIndex) const
+POSITION CList<TYPE, ARG_TYPE>::FindIndex(int nIndex) const
 {
 	ASSERT_VALID(this);
 
@@ -1180,23 +1051,17 @@ void CList<TYPE, ARG_TYPE>::Serialize(CArchive& ar)
 		for (CNode* pNode = m_pNodeHead; pNode != NULL; pNode = pNode->pNext)
 		{
 			ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-			TYPE* pData;
-			/* 
-			 * in some cases the & operator might be overloaded, and we cannot use it to obtain
-			 * the address of a given object.  We then use the following trick to get the address
-			 */
-			pData = reinterpret_cast< TYPE* >( &reinterpret_cast< int& >( static_cast< TYPE& >( pNode->data ) ) );
-			SerializeElements<TYPE>(ar, pData, 1);
+			SerializeElements<TYPE>(ar, &pNode->data, 1);
 		}
 	}
 	else
 	{
-		DWORD_PTR nNewCount = ar.ReadCount();
+		DWORD nNewCount = ar.ReadCount();
 		while (nNewCount--)
 		{
-			TYPE newData[1];
-			SerializeElements<TYPE>(ar, newData, 1);
-			AddTail(newData[0]);
+			TYPE newData;
+			SerializeElements<TYPE>(ar, &newData, 1);
+			AddTail(newData);
 		}
 	}
 }
@@ -1213,10 +1078,8 @@ void CList<TYPE, ARG_TYPE>::Dump(CDumpContext& dc) const
 		POSITION pos = GetHeadPosition();
 		while (pos != NULL)
 		{
-			TYPE temp[1];
-			temp[0] = ((CList*)this)->GetNext(pos);
 			dc << "\n";
-			DumpElements<TYPE>(dc, temp, 1);
+			DumpElements<TYPE>(dc, &((CList*)this)->GetNext(pos), 1);
 		}
 	}
 
@@ -1249,41 +1112,26 @@ void CList<TYPE, ARG_TYPE>::AssertValid() const
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 class CMap : public CObject
 {
-public:
-	// CPair
-	struct CPair
-	{
-		const KEY key;
-		VALUE value;
-	protected:
-		CPair( ARG_KEY keyval ) : key( keyval )	{}
-	};
-
 protected:
 	// Association
-	class CAssoc : public CPair
+	struct CAssoc
 	{
-		friend class CMap<KEY,ARG_KEY,VALUE,ARG_VALUE>;
 		CAssoc* pNext;
 		UINT nHashValue;  // needed for efficient iteration
-	public:
-		CAssoc( ARG_KEY key ) : CPair( key ) {}
+		KEY key;
+		VALUE value;
 	};
-
 public:
 // Construction
-	/* explicit */ CMap(INT_PTR nBlockSize = 10);
+	CMap(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
 	BOOL Lookup(ARG_KEY key, VALUE& rValue) const;
-	const CPair *PLookup(ARG_KEY key) const;
-	CPair *PLookup(ARG_KEY key);
 
 // Operations
 	// Lookup and add if not there
@@ -1298,14 +1146,7 @@ public:
 
 	// iterating all (key, value) pairs
 	POSITION GetStartPosition() const;
-
-	const CPair *PGetFirstAssoc() const;
-	CPair *PGetFirstAssoc();
-
 	void GetNextAssoc(POSITION& rNextPosition, KEY& rKey, VALUE& rValue) const;
-
-	const CPair *PGetNextAssoc(const CPair *pAssocRet) const;
-	CPair *PGetNextAssoc(const CPair *pAssocRet);
 
 	// advanced features for derived classes
 	UINT GetHashTableSize() const;
@@ -1315,14 +1156,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
-	CAssoc* NewAssoc(ARG_KEY key);
+	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(ARG_KEY, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(ARG_KEY, UINT&) const;
 
 public:
 	~CMap();
@@ -1337,63 +1178,17 @@ public:
 // CMap<KEY, ARG_KEY, VALUE, ARG_VALUE> inline functions
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-AFX_INLINE INT_PTR CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetCount() const
+AFX_INLINE int CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetCount() const
 	{ return m_nCount; }
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-AFX_INLINE INT_PTR CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetSize() const
-	{ return m_nCount; }
-
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 AFX_INLINE BOOL CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::IsEmpty() const
 	{ return m_nCount == 0; }
-
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 AFX_INLINE void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::SetAt(ARG_KEY key, ARG_VALUE newValue)
 	{ (*this)[key] = newValue; }
-
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 AFX_INLINE POSITION CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetStartPosition() const
 	{ return (m_nCount == 0) ? NULL : BEFORE_START_POSITION; }
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-const typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PGetFirstAssoc() const
-{ 
-	ASSERT_VALID(this);
-	if(m_nCount == 0) return NULL;
-
-	ASSERT(m_pHashTable != NULL);  // never call on empty map
-
-	CAssoc* pAssocRet = (CAssoc*)BEFORE_START_POSITION;
-
-	// find the first association
-	for (UINT nBucket = 0; nBucket < m_nHashTableSize; nBucket++)
-		if ((pAssocRet = m_pHashTable[nBucket]) != NULL)
-			break;
-	ASSERT(pAssocRet != NULL);  // must find something
-
-	return pAssocRet;
-}
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PGetFirstAssoc()
-{ 
-	ASSERT_VALID(this);
-	if(m_nCount == 0) return NULL;
-
-	ASSERT(m_pHashTable != NULL);  // never call on empty map
-
-	CAssoc* pAssocRet = (CAssoc*)BEFORE_START_POSITION;
-
-	// find the first association
-	for (UINT nBucket = 0; nBucket < m_nHashTableSize; nBucket++)
-		if ((pAssocRet = m_pHashTable[nBucket]) != NULL)
-			break;
-	ASSERT(pAssocRet != NULL);  // must find something
-
-	return pAssocRet;
-}
-
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 AFX_INLINE UINT CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetHashTableSize() const
 	{ return m_nHashTableSize; }
@@ -1402,7 +1197,7 @@ AFX_INLINE UINT CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetHashTableSize() const
 // CMap<KEY, ARG_KEY, VALUE, ARG_VALUE> out-of-line functions
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CMap(INT_PTR nBlockSize)
+CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CMap(int nBlockSize)
 {
 	ASSERT(nBlockSize > 0);
 
@@ -1435,7 +1230,6 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::InitHashTable(
 	if (bAllocNow)
 	{
 		m_pHashTable = new CAssoc* [nHashSize];
-		ENSURE(m_pHashTable != NULL);
 		memset(m_pHashTable, 0, sizeof(CAssoc*) * nHashSize);
 	}
 	m_nHashTableSize = nHashSize;
@@ -1455,9 +1249,8 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::RemoveAll()
 			for (pAssoc = m_pHashTable[nHash]; pAssoc != NULL;
 			  pAssoc = pAssoc->pNext)
 			{
-				pAssoc->CAssoc::~CAssoc();
-				//DestructElements<VALUE>(&pAssoc->value, 1);
-				//DestructElements<KEY>((KEY*)&pAssoc->key, 1);
+				DestructElements<VALUE>(&pAssoc->value, 1);
+				DestructElements<KEY>(&pAssoc->key, 1);
 			}
 		}
 	}
@@ -1480,8 +1273,8 @@ CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::~CMap()
 }
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CAssoc*
-CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::NewAssoc(ARG_KEY key)
+CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CAssoc*
+CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::NewAssoc()
 {
 	if (m_pFreeList == NULL)
 	{
@@ -1491,39 +1284,28 @@ CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::NewAssoc(ARG_KEY key)
 		CMap::CAssoc* pAssoc = (CMap::CAssoc*) newBlock->data();
 		// free in reverse order to make it easier to debug
 		pAssoc += m_nBlockSize - 1;
-		for (INT_PTR i = m_nBlockSize-1; i >= 0; i--, pAssoc--)
+		for (int i = m_nBlockSize-1; i >= 0; i--, pAssoc--)
 		{
 			pAssoc->pNext = m_pFreeList;
 			m_pFreeList = pAssoc;
 		}
 	}
-	ENSURE(m_pFreeList != NULL);  // we must have something
+	ASSERT(m_pFreeList != NULL);  // we must have something
 
 	CMap::CAssoc* pAssoc = m_pFreeList;
-
-	// zero the memory
-	CMap::CAssoc* pTemp = pAssoc->pNext;
-	memset( pAssoc, 0, sizeof(CMap::CAssoc) );
-	pAssoc->pNext = pTemp;
-
 	m_pFreeList = m_pFreeList->pNext;
 	m_nCount++;
 	ASSERT(m_nCount > 0);  // make sure we don't overflow
-#pragma push_macro("new")
-#undef new
-	::new(pAssoc) CMap::CAssoc(key);
-#pragma pop_macro("new")
-//	ConstructElements<KEY>(&pAssoc->key, 1);
-//	ConstructElements<VALUE>(&pAssoc->value, 1);   // special construct values
+	ConstructElements<KEY>(&pAssoc->key, 1);
+	ConstructElements<VALUE>(&pAssoc->value, 1);   // special construct values
 	return pAssoc;
 }
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::FreeAssoc(CAssoc* pAssoc)
+void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::FreeAssoc(CMap::CAssoc* pAssoc)
 {
-	pAssoc->CAssoc::~CAssoc();
-//	DestructElements<VALUE>(&pAssoc->value, 1);
-//	DestructElements<KEY>(&pAssoc->key, 1);
+	DestructElements<VALUE>(&pAssoc->value, 1);
+	DestructElements<KEY>(&pAssoc->key, 1);
 	pAssoc->pNext = m_pFreeList;
 	m_pFreeList = pAssoc;
 	m_nCount--;
@@ -1535,21 +1317,20 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::FreeAssoc(CAssoc* pAssoc)
 }
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CAssoc*
-CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetAssocAt(ARG_KEY key, UINT& nHashBucket, UINT& nHashValue) const
+CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CAssoc*
+CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetAssocAt(ARG_KEY key, UINT& nHash) const
 // find association (or return NULL)
 {
-	nHashValue = HashKey<ARG_KEY>(key);
-	nHashBucket = nHashValue % m_nHashTableSize;
+	nHash = HashKey<ARG_KEY>(key) % m_nHashTableSize;
 
 	if (m_pHashTable == NULL)
 		return NULL;
 
 	// see if it exists
 	CAssoc* pAssoc;
-	for (pAssoc = m_pHashTable[nHashBucket]; pAssoc != NULL; pAssoc = pAssoc->pNext)
+	for (pAssoc = m_pHashTable[nHash]; pAssoc != NULL; pAssoc = pAssoc->pNext)
 	{
-		if (pAssoc->nHashValue == nHashValue && CompareElements(&pAssoc->key, &key))
+		if (CompareElements(&pAssoc->key, &key))
 			return pAssoc;
 	}
 	return NULL;
@@ -1560,8 +1341,8 @@ BOOL CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::Lookup(ARG_KEY key, VALUE& rValue) co
 {
 	ASSERT_VALID(this);
 
-	UINT nHashBucket, nHashValue;
-	CAssoc* pAssoc = GetAssocAt(key, nHashBucket, nHashValue);
+	UINT nHash;
+	CAssoc* pAssoc = GetAssocAt(key, nHash);
 	if (pAssoc == NULL)
 		return FALSE;  // not in map
 
@@ -1570,46 +1351,26 @@ BOOL CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::Lookup(ARG_KEY key, VALUE& rValue) co
 }
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-const typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PLookup(ARG_KEY key) const
-{
-	ASSERT_VALID(this);
-
-	UINT nHashBucket, nHashValue;
-	CAssoc* pAssoc = GetAssocAt(key, nHashBucket, nHashValue);
-	return pAssoc;
-}
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PLookup(ARG_KEY key)
-{
-	ASSERT_VALID(this);
-
-	UINT nHashBucket, nHashValue;
-	CAssoc* pAssoc = GetAssocAt(key, nHashBucket, nHashValue);
-	return pAssoc;
-}
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
 VALUE& CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::operator[](ARG_KEY key)
 {
 	ASSERT_VALID(this);
 
-	UINT nHashBucket, nHashValue;
+	UINT nHash;
 	CAssoc* pAssoc;
-	if ((pAssoc = GetAssocAt(key, nHashBucket, nHashValue)) == NULL)
+	if ((pAssoc = GetAssocAt(key, nHash)) == NULL)
 	{
 		if (m_pHashTable == NULL)
 			InitHashTable(m_nHashTableSize);
 
-		ENSURE(m_pHashTable);
 		// it doesn't exist, add a new Association
-		pAssoc = NewAssoc(key);
-		pAssoc->nHashValue = nHashValue;
-		//'pAssoc->value' is a constructed object, nothing more
+		pAssoc = NewAssoc();
+		pAssoc->nHashValue = nHash;
+		pAssoc->key = key;
+		// 'pAssoc->value' is a constructed object, nothing more
 
 		// put into hash table
-		pAssoc->pNext = m_pHashTable[nHashBucket];
-		m_pHashTable[nHashBucket] = pAssoc;
+		pAssoc->pNext = m_pHashTable[nHash];
+		m_pHashTable[nHash] = pAssoc;
 	}
 	return pAssoc->value;  // return new reference
 }
@@ -1623,15 +1384,13 @@ BOOL CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::RemoveKey(ARG_KEY key)
 	if (m_pHashTable == NULL)
 		return FALSE;  // nothing in the table
 
-	UINT nHashValue;
 	CAssoc** ppAssocPrev;
-	nHashValue = HashKey<ARG_KEY>(key);
-	ppAssocPrev = &m_pHashTable[nHashValue%m_nHashTableSize];
+	ppAssocPrev = &m_pHashTable[HashKey<ARG_KEY>(key) % m_nHashTableSize];
 
 	CAssoc* pAssoc;
 	for (pAssoc = *ppAssocPrev; pAssoc != NULL; pAssoc = pAssoc->pNext)
 	{
-		if ((pAssoc->nHashValue == nHashValue) && CompareElements(&pAssoc->key, &key))
+		if (CompareElements(&pAssoc->key, &key))
 		{
 			// remove it
 			*ppAssocPrev = pAssoc->pNext;  // remove from list
@@ -1648,22 +1407,18 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetNextAssoc(POSITION& rNextPosition,
 	KEY& rKey, VALUE& rValue) const
 {
 	ASSERT_VALID(this);
-	ENSURE(m_pHashTable != NULL);  // never call on empty map
+	ASSERT(m_pHashTable != NULL);  // never call on empty map
 
 	CAssoc* pAssocRet = (CAssoc*)rNextPosition;
-	ENSURE(pAssocRet != NULL);
+	ASSERT(pAssocRet != NULL);
 
 	if (pAssocRet == (CAssoc*) BEFORE_START_POSITION)
 	{
 		// find the first association
 		for (UINT nBucket = 0; nBucket < m_nHashTableSize; nBucket++)
-		{
 			if ((pAssocRet = m_pHashTable[nBucket]) != NULL)
-			{
 				break;
-			}
-		}
-		ENSURE(pAssocRet != NULL);  // must find something
+		ASSERT(pAssocRet != NULL);  // must find something
 	}
 
 	// find next association
@@ -1672,7 +1427,7 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetNextAssoc(POSITION& rNextPosition,
 	if ((pAssocNext = pAssocRet->pNext) == NULL)
 	{
 		// go to next bucket
-		for (UINT nBucket = (pAssocRet->nHashValue % m_nHashTableSize) + 1;
+		for (UINT nBucket = pAssocRet->nHashValue + 1;
 		  nBucket < m_nHashTableSize; nBucket++)
 			if ((pAssocNext = m_pHashTable[nBucket]) != NULL)
 				break;
@@ -1683,68 +1438,6 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::GetNextAssoc(POSITION& rNextPosition,
 	// fill in return data
 	rKey = pAssocRet->key;
 	rValue = pAssocRet->value;
-}
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-const typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair*
-CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PGetNextAssoc(const typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* pPairRet) const
-{
-	ASSERT_VALID(this);
-
-	CAssoc* pAssocRet = (CAssoc*)pPairRet;
-
-	ASSERT(m_pHashTable != NULL);  // never call on empty map
-	ASSERT(pAssocRet != NULL);
-	
-	if(m_pHashTable == NULL || pAssocRet == NULL)
-		return NULL;
-		
-	ASSERT(pAssocRet != (CAssoc*)BEFORE_START_POSITION);
-
-	// find next association
-	ASSERT(AfxIsValidAddress(pAssocRet, sizeof(CAssoc)));
-	CAssoc* pAssocNext;
-	if ((pAssocNext = pAssocRet->pNext) == NULL)
-	{
-		// go to next bucket
-		for (UINT nBucket = (pAssocRet->nHashValue % m_nHashTableSize) + 1;
-		  nBucket < m_nHashTableSize; nBucket++)
-			if ((pAssocNext = m_pHashTable[nBucket]) != NULL)
-				break;
-	}
-
-	return pAssocNext;
-}
-
-template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
-typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair*
-CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::PGetNextAssoc(const typename CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::CPair* pPairRet)
-{
-	ASSERT_VALID(this);
-
-	CAssoc* pAssocRet = (CAssoc*)pPairRet;
-
-	ASSERT(m_pHashTable != NULL);  // never call on empty map
-	ASSERT(pAssocRet != NULL);
-	
-	if(m_pHashTable == NULL || pAssocRet == NULL)
-		return NULL;
-		
-	ASSERT(pAssocRet != (CAssoc*)BEFORE_START_POSITION);
-
-	// find next association
-	ASSERT(AfxIsValidAddress(pAssocRet, sizeof(CAssoc)));
-	CAssoc* pAssocNext;
-	if ((pAssocNext = pAssocRet->pNext) == NULL)
-	{
-		// go to next bucket
-		for (UINT nBucket = (pAssocRet->nHashValue % m_nHashTableSize) + 1;
-		  nBucket < m_nHashTableSize; nBucket++)
-			if ((pAssocNext = m_pHashTable[nBucket]) != NULL)
-				break;
-	}
-
-	return pAssocNext;
 }
 
 template<class KEY, class ARG_KEY, class VALUE, class ARG_VALUE>
@@ -1767,30 +1460,21 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::Serialize(CArchive& ar)
 			for (pAssoc = m_pHashTable[nHash]; pAssoc != NULL;
 			  pAssoc = pAssoc->pNext)
 			{
-				KEY* pKey;
-				VALUE* pValue;
-				/* 
-				 * in some cases the & operator might be overloaded, and we cannot use it to 
-				 * obtain the address of a given object.  We then use the following trick to 
-				 * get the address
-				 */
-				pKey = reinterpret_cast< KEY* >( &reinterpret_cast< int& >( const_cast< KEY& > ( static_cast< const KEY& >( pAssoc->key ) ) ) );
-				pValue = reinterpret_cast< VALUE* >( &reinterpret_cast< int& >( static_cast< VALUE& >( pAssoc->value ) ) );
-				SerializeElements<KEY>(ar, pKey, 1);
-				SerializeElements<VALUE>(ar, pValue, 1);
+				SerializeElements<KEY>(ar, &pAssoc->key, 1);
+				SerializeElements<VALUE>(ar, &pAssoc->value, 1);
 			}
 		}
 	}
 	else
 	{
-		DWORD_PTR nNewCount = ar.ReadCount();
+		DWORD nNewCount = ar.ReadCount();
 		while (nNewCount--)
 		{
-			KEY newKey[1];
-			VALUE newValue[1];
-			SerializeElements<KEY>(ar, newKey, 1);
-			SerializeElements<VALUE>(ar, newValue, 1);
-			SetAt(newKey[0], newValue[0]);
+			KEY newKey;
+			VALUE newValue;
+			SerializeElements<KEY>(ar, &newKey, 1);
+			SerializeElements<VALUE>(ar, &newValue, 1);
+			SetAt(newKey, newValue);
 		}
 	}
 }
@@ -1805,17 +1489,17 @@ void CMap<KEY, ARG_KEY, VALUE, ARG_VALUE>::Dump(CDumpContext& dc) const
 	if (dc.GetDepth() > 0)
 	{
 		// Dump in format "[key] -> value"
-		KEY key[1];
-		VALUE val[1];
+		KEY key;
+		VALUE val;
 
 		POSITION pos = GetStartPosition();
 		while (pos != NULL)
 		{
-			GetNextAssoc(pos, key[0], val[0]);
+			GetNextAssoc(pos, key, val);
 			dc << "\n\t[";
-			DumpElements<KEY>(dc, key, 1);
+			DumpElements<KEY>(dc, &key, 1);
 			dc << "] = ";
-			DumpElements<VALUE>(dc, val, 1);
+			DumpElements<VALUE>(dc, &val, 1);
 		}
 	}
 
@@ -1841,33 +1525,33 @@ class CTypedPtrArray : public BASE_CLASS
 {
 public:
 	// Accessing elements
-	TYPE GetAt(INT_PTR nIndex) const
+	TYPE GetAt(int nIndex) const
 		{ return (TYPE)BASE_CLASS::GetAt(nIndex); }
-	TYPE& ElementAt(INT_PTR nIndex)
+	TYPE& ElementAt(int nIndex)
 		{ return (TYPE&)BASE_CLASS::ElementAt(nIndex); }
-	void SetAt(INT_PTR nIndex, TYPE ptr)
+	void SetAt(int nIndex, TYPE ptr)
 		{ BASE_CLASS::SetAt(nIndex, ptr); }
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, TYPE newElement)
-		{ BASE_CLASS::SetAtGrow(nIndex, newElement); }
-	INT_PTR Add(TYPE newElement)
-		{ return BASE_CLASS::Add(newElement); }
-	INT_PTR Append(const CTypedPtrArray<BASE_CLASS, TYPE>& src)
-		{ return BASE_CLASS::Append(src); }
+	void SetAtGrow(int nIndex, TYPE newElement)
+	   { BASE_CLASS::SetAtGrow(nIndex, newElement); }
+	int Add(TYPE newElement)
+	   { return BASE_CLASS::Add(newElement); }
+	int Append(const CTypedPtrArray<BASE_CLASS, TYPE>& src)
+	   { return BASE_CLASS::Append(src); }
 	void Copy(const CTypedPtrArray<BASE_CLASS, TYPE>& src)
 		{ BASE_CLASS::Copy(src); }
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, TYPE newElement, INT_PTR nCount = 1)
+	void InsertAt(int nIndex, TYPE newElement, int nCount = 1)
 		{ BASE_CLASS::InsertAt(nIndex, newElement, nCount); }
-	void InsertAt(INT_PTR nStartIndex, CTypedPtrArray<BASE_CLASS, TYPE>* pNewArray)
-		{ BASE_CLASS::InsertAt(nStartIndex, pNewArray); }
+	void InsertAt(int nStartIndex, CTypedPtrArray<BASE_CLASS, TYPE>* pNewArray)
+	   { BASE_CLASS::InsertAt(nStartIndex, pNewArray); }
 
 	// overloaded operator helpers
-	TYPE operator[](INT_PTR nIndex) const
+	TYPE operator[](int nIndex) const
 		{ return (TYPE)BASE_CLASS::operator[](nIndex); }
-	TYPE& operator[](INT_PTR nIndex)
+	TYPE& operator[](int nIndex)
 		{ return (TYPE&)BASE_CLASS::operator[](nIndex); }
 };
 
@@ -1879,7 +1563,7 @@ class _CTypedPtrList : public BASE_CLASS
 {
 public:
 // Construction
-	_CTypedPtrList(INT_PTR nBlockSize = 10)
+	_CTypedPtrList(int nBlockSize = 10)
 		: BASE_CLASS(nBlockSize) { }
 
 	// peek at head or tail
@@ -1915,40 +1599,6 @@ public:
 		{ return (TYPE)BASE_CLASS::GetAt(position); }
 	void SetAt(POSITION pos, TYPE newElement)
 		{ BASE_CLASS::SetAt(pos, newElement); }
-
-	// inserting before or after a given position
-	POSITION InsertBefore(POSITION position, TYPE newElement)
-		{ return BASE_CLASS::InsertBefore(position, newElement); }
-	POSITION InsertAfter(POSITION position, TYPE newElement)
-		{ return BASE_CLASS::InsertAfter(position, newElement); }
-
-	// transfer before or after a given position
-	// Transfer semantics ensure no leakage by deleting the element in the case of an exception
-	POSITION TransferInsertBefore(POSITION position, TYPE newElement)
-	{
-		try
-		{
-			return BASE_CLASS::InsertBefore(position, newElement); 
-		}
-		catch(...)
-		{
-			delete newElement;
-			throw;
-		}
-	}
-
-	POSITION TransferInsertAfter(POSITION position, TYPE newElement)
-	{
-		try
-		{
-			return BASE_CLASS::InsertAfter(position, newElement); 
-		}
-		catch(...)
-		{
-			delete newElement;
-			throw;
-		}
-	}
 };
 
 template<class BASE_CLASS, class TYPE>
@@ -1956,7 +1606,7 @@ class CTypedPtrList : public _CTypedPtrList<BASE_CLASS, TYPE>
 {
 public:
 // Construction
-	CTypedPtrList(INT_PTR nBlockSize = 10)
+	CTypedPtrList(int nBlockSize = 10)
 		: _CTypedPtrList<BASE_CLASS, TYPE>(nBlockSize) { }
 
 	// add before head or after tail
@@ -1964,32 +1614,6 @@ public:
 		{ return BASE_CLASS::AddHead(newElement); }
 	POSITION AddTail(TYPE newElement)
 		{ return BASE_CLASS::AddTail(newElement); }
-
-	// transfer add before head or tail
-	POSITION TransferAddHead(TYPE newElement)
-	{ 
-		try
-		{
-			return BASE_CLASS::AddHead(newElement); 
-		}
-		catch(...)
-		{
-			delete newElement;
-			throw;
-		}
-	}
-	POSITION TransferAddTail(TYPE newElement)
-	{ 
-		try
-		{
-			return BASE_CLASS::AddTail(newElement); 
-		}
-		catch(...)
-		{
-			delete newElement;
-			throw;
-		}
-	}
 
 	// add another list of elements before head or after tail
 	void AddHead(CTypedPtrList<BASE_CLASS, TYPE>* pNewList)
@@ -2004,19 +1628,19 @@ template<> class CTypedPtrList<CObList, CObList*>
 {
 public:
 // Construction
-	CTypedPtrList(INT_PTR nBlockSize = 10)
+	CTypedPtrList(int nBlockSize = 10)
 		: _CTypedPtrList<CObList, CObList*>(nBlockSize) { }
 
 	// add before head or after tail
-	POSITION AddHead(CObList* newElement)
+	POSITION AddHead(TYPE newElement)
 		{ return _CTypedPtrList<CObList, CObList*>::AddHead((CObject*)newElement); }
-	POSITION AddTail(CObList* newElement)
+	POSITION AddTail(TYPE newElement)
 		{ return _CTypedPtrList<CObList, CObList*>::AddTail((CObject*)newElement); }
 
 	// add another list of elements before head or after tail
-	void AddHead(CTypedPtrList<CObList, CObList*>* pNewList)
+	void AddHead(CTypedPtrList<BASE_CLASS, TYPE>* pNewList)
 		{ _CTypedPtrList<CObList, CObList*>::AddHead(pNewList); }
-	void AddTail(CTypedPtrList<CObList, CObList*>* pNewList)
+	void AddTail(CTypedPtrList<BASE_CLASS, TYPE>* pNewList)
 		{ _CTypedPtrList<CObList, CObList*>::AddTail(pNewList); }
 };
 
@@ -2026,19 +1650,19 @@ template<> class CTypedPtrList<CPtrList, CPtrList*>
 {
 public:
 // Construction
-	CTypedPtrList(INT_PTR nBlockSize = 10)
+	CTypedPtrList(int nBlockSize = 10)
 		: _CTypedPtrList<CPtrList, CPtrList*>(nBlockSize) { }
 
 	// add before head or after tail
-	POSITION AddHead(CPtrList* newElement)
+	POSITION AddHead(TYPE newElement)
 		{ return _CTypedPtrList<CPtrList, CPtrList*>::AddHead((void*)newElement); }
-	POSITION AddTail(CPtrList* newElement)
+	POSITION AddTail(TYPE newElement)
 		{ return _CTypedPtrList<CPtrList, CPtrList*>::AddTail((void*)newElement); }
 
 	// add another list of elements before head or after tail
-	void AddHead(CTypedPtrList<CPtrList, CPtrList*>* pNewList)
+	void AddHead(CTypedPtrList<BASE_CLASS, TYPE>* pNewList)
 		{ _CTypedPtrList<CPtrList, CPtrList*>::AddHead(pNewList); }
-	void AddTail(CTypedPtrList<CPtrList, CPtrList*>* pNewList)
+	void AddTail(CTypedPtrList<BASE_CLASS, TYPE>* pNewList)
 		{ _CTypedPtrList<CPtrList, CPtrList*>::AddTail(pNewList); }
 };
 
@@ -2051,15 +1675,15 @@ class CTypedPtrMap : public BASE_CLASS
 public:
 
 // Construction
-	CTypedPtrMap(INT_PTR nBlockSize = 10)
+	CTypedPtrMap(int nBlockSize = 10)
 		: BASE_CLASS(nBlockSize) { }
 
 	// Lookup
-	BOOL Lookup(typename BASE_CLASS::BASE_ARG_KEY key, VALUE& rValue) const
+	BOOL Lookup(BASE_CLASS::BASE_ARG_KEY key, VALUE& rValue) const
 		{ return BASE_CLASS::Lookup(key, (BASE_CLASS::BASE_VALUE&)rValue); }
 
 	// Lookup and add if not there
-	VALUE& operator[](typename BASE_CLASS::BASE_ARG_KEY key)
+	VALUE& operator[](BASE_CLASS::BASE_ARG_KEY key)
 		{ return (VALUE&)BASE_CLASS::operator[](key); }
 
 	// add a new key (key, value) pair
@@ -2081,7 +1705,11 @@ public:
 #undef THIS_FILE
 #define THIS_FILE __FILE__
 
-#pragma pop_macro("new")
+#undef new
+#ifdef _REDEF_NEW
+#define new DEBUG_NEW
+#undef _REDEF_NEW
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(pop)
@@ -2090,8 +1718,9 @@ public:
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
-
-#pragma warning( pop )
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
+#endif
 
 #endif //__AFXTEMPL_H__
 

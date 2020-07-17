@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< Impossible de modifier les ressources MFC standard. >\0"
+"< Cannot change standard MFC resources! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 

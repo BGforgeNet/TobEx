@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,8 +10,6 @@
 
 #ifndef __AFXTLS_H__
 #define __AFXTLS_H__
-
-#pragma once
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -63,7 +61,7 @@ AFX_INLINE void CSimpleList::Construct(int nNextOffset)
 AFX_INLINE BOOL CSimpleList::IsEmpty() const
 	{ return m_pHead == NULL; }
 AFX_INLINE void** CSimpleList::GetNextPtr(void* p) const
-	{ ENSURE_ARG(p != NULL); return (void**)((BYTE*)p+m_nNextOffset); }
+	{ ASSERT(p != NULL); return (void**)((BYTE*)p+m_nNextOffset); }
 AFX_INLINE void CSimpleList::RemoveAll()
 	{ m_pHead = NULL; }
 AFX_INLINE void* CSimpleList::GetHead() const
@@ -85,13 +83,10 @@ public:
 		{ return (TYPE)CSimpleList::GetNext(p); }
 	BOOL Remove(TYPE p)
 		{ return CSimpleList::Remove((TYPE)p); }
-	operator TYPE();		
+	operator TYPE()
+		{ return (TYPE)CSimpleList::GetHead(); }
 };
-template<class TYPE>
-inline CTypedSimpleList<TYPE>::operator TYPE()
-{ 
-	return (TYPE)CSimpleList::GetHead(); 
-}
+
 /////////////////////////////////////////////////////////////////////////////
 // CThreadSlotData - manages owned array of "slots" for thread local storage
 
@@ -105,7 +100,8 @@ public:
 
 // Operations
 	int AllocSlot();
-	void FreeSlot(int nSlot);	
+	void FreeSlot(int nSlot);
+	void* GetValue(int nSlot);
 	void SetValue(int nSlot, void* pValue);
 	// delete all values in process/thread
 	void DeleteValues(HINSTANCE hInst, BOOL bAll = FALSE);
@@ -141,7 +137,7 @@ public:
 	void PASCAL operator delete(void* pObject, LPCSTR, int);
 #endif
 #endif
-    virtual ~CNoTrackObject() {};
+	virtual ~CNoTrackObject() { }
 };
 
 class AFX_NOVTABLE CThreadLocalObject
@@ -175,7 +171,7 @@ public:
 	AFX_INLINE TYPE* GetData()
 	{
 		TYPE* pData = (TYPE*)CThreadLocalObject::GetData(&CreateObject);
-		ENSURE(pData != NULL);
+		ASSERT(pData != NULL);
 		return pData;
 	}
 	AFX_INLINE TYPE* GetDataNA()
@@ -184,13 +180,9 @@ public:
 		return pData;
 	}
 	AFX_INLINE operator TYPE*()
-	{ 
-		return GetData(); 
-	}
+		{ return GetData(); }
 	AFX_INLINE TYPE* operator->()
-	{ 
-		return GetData(); 
-	}
+		{ return GetData(); }
 
 // Implementation
 public:
@@ -199,9 +191,9 @@ public:
 };
 
 #define THREAD_LOCAL(class_name, ident_name) \
-	AFX_COMDAT CThreadLocal<class_name> ident_name;
+	AFX_DATADEF CThreadLocal<class_name> ident_name;
 #define EXTERN_THREAD_LOCAL(class_name, ident_name) \
-	extern CThreadLocal<class_name> ident_name;
+	extern AFX_DATA THREAD_LOCAL(class_name, ident_name)
 
 template<class TYPE>
 class CProcessLocal : public CProcessLocalObject
@@ -211,7 +203,7 @@ public:
 	AFX_INLINE TYPE* GetData()
 	{
 		TYPE* pData = (TYPE*)CProcessLocalObject::GetData(&CreateObject);
-		ENSURE(pData != NULL);
+		ASSERT(pData != NULL);
 		return pData;
 	}
 	AFX_INLINE TYPE* GetDataNA()
@@ -228,9 +220,9 @@ public:
 };
 
 #define PROCESS_LOCAL(class_name, ident_name) \
-	AFX_COMDAT CProcessLocal<class_name> ident_name;
+	AFX_DATADEF CProcessLocal<class_name> ident_name;
 #define EXTERN_PROCESS_LOCAL(class_name, ident_name) \
-	extern CProcessLocal<class_name> ident_name;
+	extern AFX_DATA PROCESS_LOCAL(class_name, ident_name)
 
 /////////////////////////////////////////////////////////////////////////////
 

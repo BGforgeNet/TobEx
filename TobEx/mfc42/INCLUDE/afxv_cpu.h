@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -8,7 +8,11 @@
 // See these sources for detailed information regarding the
 // Microsoft Foundation Classes product.
 
-// afxv_cpu.h - target version/configuration control for various CPUs
+// afxv_cpu.h - target version/configuration control for non-Intel CPUs
+
+#if !defined(_M_MRX000) && !defined(_M_ALPHA) && !defined(_M_PPC)
+	#error afxv_cpu.h is only for MIPS R4000, DEC AXP, and IBM PowerPC builds
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -39,16 +43,3 @@ extern "C" void _BPT();
 #endif //_PPC_
 
 /////////////////////////////////////////////////////////////////////////////
-
-#ifdef _IA64_
-// specific overrides for IA64...
-#define _AFX_PACKING    8
-#define _SHADOW_DOUBLES 8
-#endif //_IA64_
-
-/////////////////////////////////////////////////////////////////////////////
-
-#ifdef _AMD64_
-// specific overrides for AMD64...
-#define _AFX_PACKING    8
-#endif //_AMD64_

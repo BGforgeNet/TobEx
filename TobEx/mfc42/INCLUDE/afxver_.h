@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,19 +10,70 @@
 
 // afxver_.h - target version/configuration control
 
-#pragma once
-
 /////////////////////////////////////////////////////////////////////////////
 // Master version numbers
 
 #define _AFX     1      // Microsoft Application Framework Classes
 #ifndef _MFC_VER
-#define _MFC_VER 0x0900 // Microsoft Foundation Classes version 9.00
+#define _MFC_VER 0x0600 // Microsoft Foundation Classes version 6.00, VC++ 6.0
 #endif
 
-#ifndef _MFC_FILENAME_VER
-#define _MFC_FILENAME_VER "90"
+/////////////////////////////////////////////////////////////////////////////
+// Default swap tuning for AFX library
+
+#define _TEXTSEG(name)  ".text$" #name
+
+// Most segments are tuned via function order list (DLL version)
+#ifndef _AFX_FUNCTION_ORDER
+#define AFX_CORE1_SEG   _TEXTSEG(AFX_CORE1) // core functionality
+#define AFX_CORE2_SEG   _TEXTSEG(AFX_CORE2) // more core functionality
+#define AFX_CORE3_SEG   _TEXTSEG(AFX_CORE3) // more core functionality
+#define AFX_CORE4_SEG   _TEXTSEG(AFX_CORE4) // more core functionality
+#define AFX_AUX_SEG     _TEXTSEG(AFX_AUX)   // auxilliary functionality
+#define AFX_CMNCTL_SEG  _TEXTSEG(AFX_CMNCTL)// most common controls
+#define AFX_COLL_SEG    _TEXTSEG(AFX_COL1)  // collections
+#define AFX_COLL2_SEG   _TEXTSEG(AFX_COL2)  // more collections
+#define AFX_INET_SEG    _TEXTSEG(AFX_INET)  // Internet client-side stuff
+#define AFX_OLE_SEG     _TEXTSEG(AFX_OLE1)  // OLE support
+#define AFX_OLE2_SEG    _TEXTSEG(AFX_OLE2)  // more OLE support
+#define AFX_OLE3_SEG    _TEXTSEG(AFX_OLE3)  // and more OLE support
+#define AFX_OLE4_SEG    _TEXTSEG(AFX_OLE4)  // and more OLE support
+#define AFX_OLE5_SEG    _TEXTSEG(AFX_OLE5)  // and even more OLE support
+#define AFX_OLERA_SEG   _TEXTSEG(AFX_OLERA) // (reserved for future use)
+#define AFX_PRINT_SEG   _TEXTSEG(AFX_PRNT)  // Printing functionality
+#define AFX_DBG1_SEG    _TEXTSEG(AFX_DBG1)  // inlines go here in _DEBUG
+#define AFX_DBG2_SEG    _TEXTSEG(AFX_DBG2)  // inlines go here in _DEBUG
+#define AFX_VDEL_SEG    _TEXTSEG(AFX_VDEL)  // vector deleting destructors
+#define AFX_TERM_SEG    _TEXTSEG(AFX_TERM)  // cleanup routines
+#define AFX_MAPI_SEG    _TEXTSEG(AFX_MAPI)  // simple MAPI support
+#define AFX_SOCK_SEG    _TEXTSEG(AFX_SOCK)  // windows sockets support
+#else
+#define AFX_CORE1_SEG                       // core functionality
+#define AFX_CORE2_SEG                       // more core functionality
+#define AFX_CORE3_SEG                       // more core functionality
+#define AFX_CORE4_SEG                       // more core functionality
+#define AFX_AUX_SEG                         // auxilliary functionality
+#define AFX_CMNCTL_SEG                      // most common controls
+#define AFX_COLL_SEG                        // collections
+#define AFX_COLL2_SEG                       // more collections
+#define AFX_INET_SEG                        // Internet client-side stuff
+#define AFX_OLE_SEG                         // OLE support
+#define AFX_OLE2_SEG                        // more OLE support
+#define AFX_OLE3_SEG                        // and more OLE support
+#define AFX_OLE4_SEG                        // and more OLE support
+#define AFX_OLE5_SEG                        // and even more OLE support
+#define AFX_OLERA_SEG                       // (reserved for future use)
+#define AFX_PRINT_SEG                       // Printing functionality
+#define AFX_DBG1_SEG                        // inlines go here in _DEBUG
+#define AFX_DBG2_SEG                        // inlines go here in _DEBUG
+#define AFX_VDEL_SEG                        // vector deleting destructors
+#define AFX_TERM_SEG                        // cleanup routines
+#define AFX_MAPI_SEG                        // simple MAPI support
+#define AFX_SOCK_SEG                        // windows sockets support
 #endif
+
+// AFX_INIT_SEG is hand tuned even in DLL version
+#define AFX_INIT_SEG    _TEXTSEG(AFX_INIT)  // initialization
 
 /////////////////////////////////////////////////////////////////////////////
 // turn off reference tracking for certain often used symbols
@@ -62,9 +113,7 @@
 //
 
 #ifndef _DEBUG
-#ifndef _AFX_DISABLE_INLINES
 	#define _AFX_ENABLE_INLINES
-#endif
 #endif
 
 #define _AFX_NO_NESTED_DERIVATION
@@ -161,7 +210,7 @@
 
 // FASTCALL is used for static member functions with little or no params
 #ifndef FASTCALL
-	#define FASTCALL __fastcall     
+	#define FASTCALL __fastcall
 #endif
 
 // CDECL and EXPORT are defined in case WINDOWS.H doesn't
@@ -174,107 +223,9 @@
 #endif
 
 // UNALIGNED is used for unaligned data access (in CArchive mostly)
-#if !defined(UNALIGNED)
-#if defined(_M_IA64) || defined(_M_AMD64)
-#define UNALIGNED __unaligned
-#else
-#define UNALIGNED
+#ifndef UNALIGNED
+	#define UNALIGNED
 #endif
-#endif
-
-// AFX_DEPRECATED is used for functions that should no longer be used
-#ifndef AFX_DEPRECATED
-#ifdef _AFX_DISABLE_DEPRECATED
-	#define AFX_DEPRECATED(_Message) 
-#else
-	#define AFX_DEPRECATED(_Message) __declspec(deprecated(_Message))
-#endif 
-#endif
-
-/* 
- * Why are these ANSI functions now deprecated?
- * 
- * AFX_ANSI_DEPRECATED is used to bring MFC into line with what messages and 
- * modes Windows supports for its controls.
- * 
- * Historically, all core controls could be created ANSI (CreateWindowA) or 
- * UNICODE (CreateWindowW). /DUNICODE builds of MFC used CreateWindowW and 
- * hence got UNICODE controls. But the set of functions and messages available 
- * for the controls wasn’t different between the two modes.
- * 
- * [Side note: There are some exceptions to this rule, both in MFC and Win32].
- * 
- * Windows XP came along and added comctrl version 6, which was not intended 
- * to be binary or behaviour compatible with previous versions. One of these 
- * incompatibilities was that the new controls are UNICODE from the ground up 
- * and do not support ANSI mode. These controls also have the new (at the time)
- * Windows XP "themed" look and feel applied to them, which made them very 
- * appealing to developers who wanted their apps to look up to date
- * 
- * To ensure that the new controls didn’t break existing apps, you have to opt 
- * in to using comctrl version 6 (via a dependency entry in your Win32 XML 
- * manifest). 
- * 
- * Unfortunately, even though these controls are not supported or documented 
- * to work in ANSI mode, they do have some limited functionality in ANSI mode 
- * (to support various complicated compatibility scenarios where controls are 
- * mixed in a process by addins). 
- * 
- * As a result, after Windows XP shipped, some people took existing ANSI apps 
- * (that call CreateWindowA) and applied XML manifests to them. This should 
- * not have worked (and is not documented to work), but sometimes does 
- * actually work. 
- * 
- * To further muddy the waters, VC7.0 applied the manifest indiscriminately 
- * to all newly-created MFC apps (even ANSI ones), furthering the impression 
- * that ANSI apps could use the themed controls. This was the source of quite 
- * a few bugs in VC7.0. VC7.1 fixed this problem -- the manifest was only 
- * applied to newly created projects when compiled Unicode (via a #ifdef in 
- * the .rc file), and VC8 made it a bit simpler by using the new manifest 
- * generation scheme.
- * 
- * Another mistake we made in VC7 was to provide wrappers for the new 
- * control’s new messages that were available in ANSI builds. This again 
- * allowed you to call some of these new methods on ANSI controls even though 
- * several of them wouldn’t even work.
- * 
- * In VC9 we are fixing this issue and bringing our projects and wrappers into 
- * line with the supported OS behaviour for Windows XP and Windows Vista. 
- * 
- * Messages and functions that are only supposed to work on UNICODE controls 
- * are now only available on UNICODE controls. You will see a deprecation 
- * message if you use one of these unsupported messages. If you want to use 
- * the new control features that have been added since Windows XP, you’ll need 
- * to compile your MFC-based project as UNICODE, and set appropriate values 
- * for the OS minimum version control macros (_WIN32_WINNT, _WIN32_IE, 
- * _NTDDI_VERSION, etc).
- * 
- */
-#ifndef AFX_ANSI_DEPRECATED
-#ifdef UNICODE
-	#define AFX_ANSI_DEPRECATED
-#else
-	#define AFX_ANSI_DEPRECATED AFX_DEPRECATED( \
-			"This MFC feature requires /DUNICODE to work correctly, because the underlying Windows control is only supported for UNICODE builds. " \
-			"Previous versions of MFC incorrectly enabled this in ANSI/MBCS builds. " \
-			"Please compile with /DUNICODE to use this feature. See product documentation for more information." \
-			)
-#endif
-#endif
-
-
-#if defined(_AFX_SECURE_NO_DEPRECATE) && !defined(_AFX_SECURE_NO_WARNINGS)
-#define _AFX_SECURE_NO_WARNINGS
-#endif
-
-// _AFX_INSECURE_DEPRECATE is used for deprecated, insecure functions.
-#ifndef _AFX_INSECURE_DEPRECATE
-#ifdef _AFX_SECURE_NO_WARNINGS
-#define _AFX_INSECURE_DEPRECATE(_Message)
-#else
-#define _AFX_INSECURE_DEPRECATE(_Message) __declspec(deprecated(_Message))
-#endif // _AFX_SECURE_NO_WARNINGS
-#endif // _AFX_INSECURE_DEPRECATE
 
 // AFXAPI is used on global public functions
 #ifndef AFXAPI
@@ -340,7 +291,7 @@
 
 // for global data that should be in COMDATs (packaged data)
 #ifndef AFX_COMDAT
-#define AFX_COMDAT __declspec(selectany)
+	#define AFX_COMDAT
 #endif
 
 // The following macros are used on data declarations/definitions
@@ -349,25 +300,25 @@
 #define AFX_DATADEF
 #define AFX_API
 
-// used when building the "core" MFCXX.DLL
+// used when building the "core" MFC42.DLL
 #ifndef AFX_CORE_DATA
 	#define AFX_CORE_DATA
 	#define AFX_CORE_DATADEF
 #endif
 
-// used when building the MFC/OLE support MFCOXX.DLL
+// used when building the MFC/OLE support MFCO42.DLL
 #ifndef AFX_OLE_DATA
 	#define AFX_OLE_DATA
 	#define AFX_OLE_DATADEF
 #endif
 
-// used when building the MFC/DB support MFCDXX.DLL
+// used when building the MFC/DB support MFCD42.DLL
 #ifndef AFX_DB_DATA
 	#define AFX_DB_DATA
 	#define AFX_DB_DATADEF
 #endif
 
-// used when building the MFC/NET support MFCNXX.DLL
+// used when building the MFC/NET support MFCN42.DLL
 #ifndef AFX_NET_DATA
 	#define AFX_NET_DATA
 	#define AFX_NET_DATADEF
@@ -393,4 +344,10 @@
 #ifndef BASED_STACK
 	#define BASED_STACK
 #endif
+
+// setup default code segment
+#ifdef AFX_DEF_SEG
+	#pragma code_seg(AFX_DEF_SEG)
+#endif
+
 /////////////////////////////////////////////////////////////////////////////

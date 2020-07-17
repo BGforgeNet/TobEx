@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 static AFX_EXTENSION_MODULE PROJNAMEDLL = { NULL, NULL };*/
 
 //Force inclusion of this module for _USRDLL
-extern "C" { int _afxForceUSRDLL; }
+extern "C" { int _afxForceUSRDLL; } 
 
 BOOL WINAPI DllMain (HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
 

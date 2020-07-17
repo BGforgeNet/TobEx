@@ -1,6 +1,9 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
+#define WINVER 0x0600
+
+
 #include "win32def.h"
 
 #include <cassert>

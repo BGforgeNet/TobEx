@@ -1,5 +1,5 @@
 # This is a part of the Microsoft Foundation Classes C++ library.
-# Copyright (C) Microsoft Corporation
+# Copyright (C) 1992-1998 Microsoft Corporation
 # All rights reserved.
 #
 # This source code is only intended as a supplement to the
@@ -41,7 +41,7 @@
 #     "COFF=1"      include COFF symbols
 
 !ifndef PROJ
-!ERROR You forgot to define the 'PROJ' symbol!!
+!ERROR You forgot to define 'PROJ' symbol!!
 !endif
 
 
@@ -50,7 +50,7 @@ ROOT=.
 !endif
 
 !ifndef OBJS
-!ERROR You forgot to define the 'OBJS' symbol!!
+!ERROR You forgot to define 'OBJS' symbol!!
 !endif
 
 !ifndef DEBUG
@@ -213,19 +213,19 @@ MFCDEFS=$(MFCDEFS) /D_MBCS
 !if "$(PLATFORM)" == "INTEL"
 MFCDEFS=$(MFCDEFS) /D_X86_
 CPP=cl
-CFLAGS=/EHsc /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
+CFLAGS=/GX /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
 !endif
 
 !if "$(PLATFORM)" == "MIPS"
 MFCDEFS=$(MFCDEFS) /D_MIPS_
 CPP=cl
-CFLAGS=/EHsc /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
+CFLAGS=/GX /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
 !endif
 
 !if "$(PLATFORM)" == "ALPHA"
 MFCDEFS=$(MFCDEFS) /D_ALPHA_
 CPP=cl
-CFLAGS=/EHsc /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
+CFLAGS=/GX /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
 !endif
 
 !if "$(PLATFORM)" == "PPC"
@@ -235,7 +235,7 @@ CPP=mcl
 !else
 CPP=cl
 !endif
-CFLAGS=/EHsc /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
+CFLAGS=/GX /c /W3 $(DEBUGFLAGS) $(MFCFLAGS) $(MFCDEFS)
 !endif
 
 CPPMAIN_FLAGS=$(CFLAGS)
@@ -250,15 +250,15 @@ CPPFLAGS=$(CPPMAIN_FLAGS) /Yustdafx.h /Fp$(PCHDIR)\$(STDAFX).pch
 !if "$(COFF)" == "1"
 NO_PDB=1
 !if "$(CODEVIEW)" != "1"
-LINKDEBUG=/incremental:no /debug /debugtype:coff
+LINKDEBUG=/incremental:no /debug:full /debugtype:coff
 !else
-LINKDEBUG=/incremental:no /debug /debugtype:both
+LINKDEBUG=/incremental:no /debug:full /debugtype:both
 !endif
 !endif
 
 !if "$(COFF)" != "1"
 !if "$(CODEVIEW)" == "1"
-LINKDEBUG=/incremental:no /debug /debugtype:cv
+LINKDEBUG=/incremental:no /debug:full /debugtype:cv
 !else
 LINKDEBUG=/incremental:no /debug:none
 !endif
@@ -300,17 +300,17 @@ GUIFLAGS=$(GUIFLAGS) /entry:wWinMainCRTStartup
 PROJRESFILE=$(PROJ).res
 RESFILE=$(PROJRESFILE)
 
-.SUFFIXES: .rcm .rc
-.SUFFIXES:: .c .cpp
+.SUFFIXES:
+.SUFFIXES: .c .cpp .rcm .rc
 
-.cpp.obj::
+.cpp.obj:
 	$(CPP) @<<
-$(CPPFLAGS) $<
+$(CPPFLAGS) $*.cpp
 <<
 
-.c.obj::
+.c.obj:
 	$(CPP) @<<
-$(CFLAGS) $(CVARS) $<
+$(CFLAGS) $(CVARS) $*.c
 <<
 
 .rc.res:

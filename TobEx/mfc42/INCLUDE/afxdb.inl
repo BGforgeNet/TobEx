@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXDB.H
-
-#pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 // General database inlines
@@ -39,7 +37,7 @@ _AFXDBCORE_INLINE int CDatabase::GetCursorRollbackBehavior() const
 _AFXDBCORE_INLINE void CDatabase::ThrowDBException(RETCODE nRetCode)
 	{ ASSERT_VALID(this); AfxThrowDBException(nRetCode, this, m_hstmt); }
 _AFXDBCORE_INLINE void CDatabase::SetSynchronousMode(BOOL /* bSynchronous */ )
-	{ ASSERT_VALID(this); TRACE(_T("Error: SetSynchronousMode is obsolete and has no effect.\n")); }
+	{ ASSERT_VALID(this); TRACE0("Error: SetSynchronousMode is obsolete and has not effect.\n"); }
 
 // CRecordset inlines
 _AFXDBCORE_INLINE const CString& CRecordset::GetSQL() const
@@ -61,16 +59,13 @@ _AFXDBCORE_INLINE BOOL CRecordset::CanAppend() const
 _AFXDBCORE_INLINE BOOL CRecordset::CanRestart() const
 	{ ASSERT(IsOpen()); return !(m_dwOptions & executeDirect); }
 _AFXDBCORE_INLINE BOOL CRecordset::CanTransact() const
-	{ ASSERT(m_pDatabase != NULL );
-		if( m_pDatabase == NULL )
-			AfxThrowUserException();
-		ASSERT(m_pDatabase->IsOpen());
+	{ ASSERT(m_pDatabase->IsOpen());
 		return m_pDatabase->m_bTransactions; }
 _AFXDBCORE_INLINE short CRecordset::GetODBCFieldCount() const
 	{ ASSERT(IsOpen()); return m_nResultCols; }
 _AFXDBCORE_INLINE DWORD CRecordset::GetRowsetSize() const
 	{ ASSERT(IsOpen()); return m_dwRowsetSize; }
-_AFXDBCORE_INLINE SQLULEN CRecordset::GetRowsFetched() const
+_AFXDBCORE_INLINE DWORD CRecordset::GetRowsFetched() const
 	{ ASSERT(IsOpen()); return m_dwRowsFetched; }
 _AFXDBCORE_INLINE WORD CRecordset::GetRowStatus(WORD wRow) const
 	{ ASSERT(IsOpen()); ASSERT(wRow > 0); return m_rgRowStatus[wRow-1]; }

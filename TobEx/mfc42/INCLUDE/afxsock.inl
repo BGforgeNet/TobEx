@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXSOCK.H
-
-#pragma once
 
 #ifdef _AFXSOCK_INLINE
 

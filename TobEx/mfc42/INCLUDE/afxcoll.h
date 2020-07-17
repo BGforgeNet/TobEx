@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -15,11 +15,12 @@
 	#include <afx.h>
 #endif
 
-#pragma once
-
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -71,11 +72,9 @@ public:
 	CByteArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -83,39 +82,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	BYTE GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, BYTE newElement);
+	BYTE GetAt(int nIndex) const;
+	void SetAt(int nIndex, BYTE newElement);
 
-	BYTE& ElementAt(INT_PTR nIndex);
+	BYTE& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const BYTE* GetData() const;
 	BYTE* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, BYTE newElement);
+	void SetAtGrow(int nIndex, BYTE newElement);
 
-	INT_PTR Add(BYTE newElement);
+	int Add(BYTE newElement);
 
-	INT_PTR Append(const CByteArray& src);
+	int Append(const CByteArray& src);
 	void Copy(const CByteArray& src);
 
 	// overloaded operator helpers
-	BYTE operator[](INT_PTR nIndex) const;
-	BYTE& operator[](INT_PTR nIndex);
+	BYTE operator[](int nIndex) const;
+	BYTE& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, BYTE newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, BYTE newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CByteArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CByteArray* pNewArray);
 
 // Implementation
 protected:
 	BYTE* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -146,11 +145,9 @@ public:
 	CWordArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -158,39 +155,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	WORD GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, WORD newElement);
+	WORD GetAt(int nIndex) const;
+	void SetAt(int nIndex, WORD newElement);
 
-	WORD& ElementAt(INT_PTR nIndex);
+	WORD& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const WORD* GetData() const;
 	WORD* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, WORD newElement);
+	void SetAtGrow(int nIndex, WORD newElement);
 
-	INT_PTR Add(WORD newElement);
+	int Add(WORD newElement);
 
-	INT_PTR Append(const CWordArray& src);
+	int Append(const CWordArray& src);
 	void Copy(const CWordArray& src);
 
 	// overloaded operator helpers
-	WORD operator[](INT_PTR nIndex) const;
-	WORD& operator[](INT_PTR nIndex);
+	WORD operator[](int nIndex) const;
+	WORD& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, WORD newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, WORD newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CWordArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CWordArray* pNewArray);
 
 // Implementation
 protected:
 	WORD* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -221,11 +218,9 @@ public:
 	CDWordArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -233,39 +228,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	DWORD GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, DWORD newElement);
+	DWORD GetAt(int nIndex) const;
+	void SetAt(int nIndex, DWORD newElement);
 
-	DWORD& ElementAt(INT_PTR nIndex);
+	DWORD& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const DWORD* GetData() const;
 	DWORD* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, DWORD newElement);
+	void SetAtGrow(int nIndex, DWORD newElement);
 
-	INT_PTR Add(DWORD newElement);
+	int Add(DWORD newElement);
 
-	INT_PTR Append(const CDWordArray& src);
+	int Append(const CDWordArray& src);
 	void Copy(const CDWordArray& src);
 
 	// overloaded operator helpers
-	DWORD operator[](INT_PTR nIndex) const;
-	DWORD& operator[](INT_PTR nIndex);
+	DWORD operator[](int nIndex) const;
+	DWORD& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, DWORD newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, DWORD newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CDWordArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CDWordArray* pNewArray);
 
 // Implementation
 protected:
 	DWORD* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -296,11 +291,9 @@ public:
 	CUIntArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -308,39 +301,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	UINT GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, UINT newElement);
+	UINT GetAt(int nIndex) const;
+	void SetAt(int nIndex, UINT newElement);
 
-	UINT& ElementAt(INT_PTR nIndex);
+	UINT& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const UINT* GetData() const;
 	UINT* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, UINT newElement);
+	void SetAtGrow(int nIndex, UINT newElement);
 
-	INT_PTR Add(UINT newElement);
+	int Add(UINT newElement);
 
-	INT_PTR Append(const CUIntArray& src);
+	int Append(const CUIntArray& src);
 	void Copy(const CUIntArray& src);
 
 	// overloaded operator helpers
-	UINT operator[](INT_PTR nIndex) const;
-	UINT& operator[](INT_PTR nIndex);
+	UINT operator[](int nIndex) const;
+	UINT& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, UINT newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, UINT newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CUIntArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CUIntArray* pNewArray);
 
 // Implementation
 protected:
 	UINT* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -369,11 +362,9 @@ public:
 	CPtrArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -381,39 +372,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	void* GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, void* newElement);
+	void* GetAt(int nIndex) const;
+	void SetAt(int nIndex, void* newElement);
 
-	void*& ElementAt(INT_PTR nIndex);
+	void*& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const void** GetData() const;
 	void** GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, void* newElement);
+	void SetAtGrow(int nIndex, void* newElement);
 
-	INT_PTR Add(void* newElement);
+	int Add(void* newElement);
 
-	INT_PTR Append(const CPtrArray& src);
+	int Append(const CPtrArray& src);
 	void Copy(const CPtrArray& src);
 
 	// overloaded operator helpers
-	void* operator[](INT_PTR nIndex) const;
-	void*& operator[](INT_PTR nIndex);
+	void* operator[](int nIndex) const;
+	void*& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, void* newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, void* newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CPtrArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CPtrArray* pNewArray);
 
 // Implementation
 protected:
 	void** m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -442,11 +433,9 @@ public:
 	CObArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -454,39 +443,39 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	CObject* GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, CObject* newElement);
+	CObject* GetAt(int nIndex) const;
+	void SetAt(int nIndex, CObject* newElement);
 
-	CObject*& ElementAt(INT_PTR nIndex);
+	CObject*& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const CObject** GetData() const;
 	CObject** GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, CObject* newElement);
+	void SetAtGrow(int nIndex, CObject* newElement);
 
-	INT_PTR Add(CObject* newElement);
+	int Add(CObject* newElement);
 
-	INT_PTR Append(const CObArray& src);
+	int Append(const CObArray& src);
 	void Copy(const CObArray& src);
 
 	// overloaded operator helpers
-	CObject* operator[](INT_PTR nIndex) const;
-	CObject*& operator[](INT_PTR nIndex);
+	CObject* operator[](int nIndex) const;
+	CObject*& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, CObject* newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, CObject* newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, CObArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CObArray* pNewArray);
 
 // Implementation
 protected:
 	CObject** m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
 
 public:
@@ -517,11 +506,9 @@ public:
 	CStringArray();
 
 // Attributes
-	INT_PTR GetSize() const;
-	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
-	INT_PTR GetUpperBound() const;
-	void SetSize(INT_PTR nNewSize, INT_PTR nGrowBy = -1);
+	int GetSize() const;
+	int GetUpperBound() const;
+	void SetSize(int nNewSize, int nGrowBy = -1);
 
 // Operations
 	// Clean up
@@ -529,49 +516,49 @@ public:
 	void RemoveAll();
 
 	// Accessing elements
-	const CString& GetAt(INT_PTR nIndex) const;
-	void SetAt(INT_PTR nIndex, LPCTSTR newElement);
+	CString GetAt(int nIndex) const;
+	void SetAt(int nIndex, LPCTSTR newElement);
 
-	void SetAt(INT_PTR nIndex, const CString& newElement);
+	void SetAt(int nIndex, const CString& newElement);
 
-	CString& ElementAt(INT_PTR nIndex);
+	CString& ElementAt(int nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const CString* GetData() const;
 	CString* GetData();
 
 	// Potentially growing the array
-	void SetAtGrow(INT_PTR nIndex, LPCTSTR newElement);
+	void SetAtGrow(int nIndex, LPCTSTR newElement);
 
-	void SetAtGrow(INT_PTR nIndex, const CString& newElement);
+	void SetAtGrow(int nIndex, const CString& newElement);
 
-	INT_PTR Add(LPCTSTR newElement);
+	int Add(LPCTSTR newElement);
 
-	INT_PTR Add(const CString& newElement);
+	int Add(const CString& newElement);
 
-	INT_PTR Append(const CStringArray& src);
+	int Append(const CStringArray& src);
 	void Copy(const CStringArray& src);
 
 	// overloaded operator helpers
-	const CString& operator[](INT_PTR nIndex) const;
-	CString& operator[](INT_PTR nIndex);
+	CString operator[](int nIndex) const;
+	CString& operator[](int nIndex);
 
 	// Operations that move elements around
-	void InsertAt(INT_PTR nIndex, LPCTSTR newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, LPCTSTR newElement, int nCount = 1);
 
-	void InsertAt(INT_PTR nIndex, const CString& newElement, INT_PTR nCount = 1);
+	void InsertAt(int nIndex, const CString& newElement, int nCount = 1);
 
-	void RemoveAt(INT_PTR nIndex, INT_PTR nCount = 1);
-	void InsertAt(INT_PTR nStartIndex, const CStringArray* pNewArray);
+	void RemoveAt(int nIndex, int nCount = 1);
+	void InsertAt(int nStartIndex, CStringArray* pNewArray);
 
 // Implementation
 protected:
 	CString* m_pData;   // the actual array of data
-	INT_PTR m_nSize;     // # of elements (upperBound - 1)
-	INT_PTR m_nMaxSize;  // max allocated
-	INT_PTR m_nGrowBy;   // grow amount
+	int m_nSize;     // # of elements (upperBound - 1)
+	int m_nMaxSize;  // max allocated
+	int m_nGrowBy;   // grow amount
 
-	void InsertEmpty(INT_PTR nIndex, INT_PTR nCount);
+	void InsertEmpty(int nIndex, int nCount);
 
 
 public:
@@ -607,19 +594,18 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CPtrList(INT_PTR nBlockSize = 10);
+	CPtrList(int nBlockSize = 10);
 
 // Attributes (head and tail)
 	// count of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// peek at head or tail
 	void*& GetHead();
-	const void* GetHead() const;
+	void* GetHead() const;
 	void*& GetTail();
-	const void* GetTail() const;
+	void* GetTail() const;
 
 // Operations
 	// get head or tail (and remove it) - don't call on empty list!
@@ -642,13 +628,13 @@ public:
 	POSITION GetHeadPosition() const;
 	POSITION GetTailPosition() const;
 	void*& GetNext(POSITION& rPosition); // return *Position++
-	const void* GetNext(POSITION& rPosition) const; // return *Position++
+	void* GetNext(POSITION& rPosition) const; // return *Position++
 	void*& GetPrev(POSITION& rPosition); // return *Position--
-	const void* GetPrev(POSITION& rPosition) const; // return *Position--
+	void* GetPrev(POSITION& rPosition) const; // return *Position--
 
 	// getting/modifying an element at a given position
 	void*& GetAt(POSITION position);
-	const void* GetAt(POSITION position) const;
+	void* GetAt(POSITION position) const;
 	void SetAt(POSITION pos, void* newElement);
 
 	void RemoveAt(POSITION position);
@@ -662,17 +648,17 @@ public:
 	POSITION Find(void* searchValue, POSITION startAfter = NULL) const;
 						// defaults to starting at the HEAD
 						// return NULL if not found
-	POSITION FindIndex(INT_PTR nIndex) const;
+	POSITION FindIndex(int nIndex) const;
 						// get the 'nIndex'th element (may return NULL)
 
 // Implementation
 protected:
 	CNode* m_pNodeHead;
 	CNode* m_pNodeTail;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CNode* m_pNodeFree;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CNode* NewNode(CNode*, CNode*);
 	void FreeNode(CNode*);
@@ -706,19 +692,18 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CObList(INT_PTR nBlockSize = 10);
+	CObList(int nBlockSize = 10);
 
 // Attributes (head and tail)
 	// count of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// peek at head or tail
 	CObject*& GetHead();
-	const CObject* GetHead() const;
+	CObject* GetHead() const;
 	CObject*& GetTail();
-	const CObject* GetTail() const;
+	CObject* GetTail() const;
 
 // Operations
 	// get head or tail (and remove it) - don't call on empty list!
@@ -741,13 +726,13 @@ public:
 	POSITION GetHeadPosition() const;
 	POSITION GetTailPosition() const;
 	CObject*& GetNext(POSITION& rPosition); // return *Position++
-	const CObject* GetNext(POSITION& rPosition) const; // return *Position++
+	CObject* GetNext(POSITION& rPosition) const; // return *Position++
 	CObject*& GetPrev(POSITION& rPosition); // return *Position--
-	const CObject* GetPrev(POSITION& rPosition) const; // return *Position--
+	CObject* GetPrev(POSITION& rPosition) const; // return *Position--
 
 	// getting/modifying an element at a given position
 	CObject*& GetAt(POSITION position);
-	const CObject* GetAt(POSITION position) const;
+	CObject* GetAt(POSITION position) const;
 	void SetAt(POSITION pos, CObject* newElement);
 
 	void RemoveAt(POSITION position);
@@ -761,17 +746,17 @@ public:
 	POSITION Find(CObject* searchValue, POSITION startAfter = NULL) const;
 						// defaults to starting at the HEAD
 						// return NULL if not found
-	POSITION FindIndex(INT_PTR nIndex) const;
+	POSITION FindIndex(int nIndex) const;
 						// get the 'nIndex'th element (may return NULL)
 
 // Implementation
 protected:
 	CNode* m_pNodeHead;
 	CNode* m_pNodeTail;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CNode* m_pNodeFree;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CNode* NewNode(CNode*, CNode*);
 	void FreeNode(CNode*);
@@ -807,19 +792,18 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CStringList(INT_PTR nBlockSize = 10);
+	CStringList(int nBlockSize = 10);
 
 // Attributes (head and tail)
 	// count of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// peek at head or tail
 	CString& GetHead();
-	const CString& GetHead() const;
+	CString GetHead() const;
 	CString& GetTail();
-	const CString& GetTail() const;
+	CString GetTail() const;
 
 // Operations
 	// get head or tail (and remove it) - don't call on empty list!
@@ -845,13 +829,13 @@ public:
 	POSITION GetHeadPosition() const;
 	POSITION GetTailPosition() const;
 	CString& GetNext(POSITION& rPosition); // return *Position++
-	const CString& GetNext(POSITION& rPosition) const; // return *Position++
+	CString GetNext(POSITION& rPosition) const; // return *Position++
 	CString& GetPrev(POSITION& rPosition); // return *Position--
-	const CString& GetPrev(POSITION& rPosition) const; // return *Position--
+	CString GetPrev(POSITION& rPosition) const; // return *Position--
 
 	// getting/modifying an element at a given position
 	CString& GetAt(POSITION position);
-	const CString& GetAt(POSITION position) const;
+	CString GetAt(POSITION position) const;
 	void SetAt(POSITION pos, LPCTSTR newElement);
 
 	void SetAt(POSITION pos, const CString& newElement);
@@ -870,17 +854,17 @@ public:
 	POSITION Find(LPCTSTR searchValue, POSITION startAfter = NULL) const;
 						// defaults to starting at the HEAD
 						// return NULL if not found
-	POSITION FindIndex(INT_PTR nIndex) const;
+	POSITION FindIndex(int nIndex) const;
 						// get the 'nIndex'th element (may return NULL)
 
 // Implementation
 protected:
 	CNode* m_pNodeHead;
 	CNode* m_pNodeTail;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CNode* m_pNodeFree;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CNode* NewNode(CNode*, CNode*);
 	void FreeNode(CNode*);
@@ -910,19 +894,19 @@ protected:
 	struct CAssoc
 	{
 		CAssoc* pNext;
-		void* value;
+
 		WORD key;
+		void* value;
 	};
 
 public:
 
 // Construction
-	/* explicit */ CMapWordToPtr(INT_PTR nBlockSize = 10);
+	CMapWordToPtr(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -955,14 +939,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(WORD, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(WORD, UINT&) const;
 
 public:
 	~CMapWordToPtr();
@@ -1000,12 +984,11 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CMapPtrToWord(INT_PTR nBlockSize = 10);
+	CMapPtrToWord(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -1038,14 +1021,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(void*, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(void*, UINT&) const;
 
 public:
 	~CMapPtrToWord();
@@ -1083,12 +1066,11 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CMapPtrToPtr(INT_PTR nBlockSize = 10);
+	CMapPtrToPtr(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -1121,14 +1103,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(void*, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(void*, UINT&) const;
 
 public:
 	~CMapPtrToPtr();
@@ -1160,19 +1142,19 @@ protected:
 	struct CAssoc
 	{
 		CAssoc* pNext;
-		CObject* value;
+
 		WORD key;
+		CObject* value;
 	};
 
 public:
 
 // Construction
-	/* explicit */ CMapWordToOb(INT_PTR nBlockSize = 10);
+	CMapWordToOb(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -1205,14 +1187,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(WORD, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(WORD, UINT&) const;
 
 public:
 	~CMapWordToOb();
@@ -1252,12 +1234,11 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CMapStringToPtr(INT_PTR nBlockSize = 10);
+	CMapStringToPtr(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -1291,14 +1272,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(LPCTSTR, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(LPCTSTR, UINT&) const;
 
 public:
 	~CMapStringToPtr();
@@ -1335,12 +1316,11 @@ protected:
 public:
 
 // Construction
-	/* explicit */ CMapStringToOb(INT_PTR nBlockSize = 10);
+	CMapStringToOb(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
@@ -1374,14 +1354,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
 	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(LPCTSTR, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(LPCTSTR, UINT&) const;
 
 public:
 	~CMapStringToOb();
@@ -1402,44 +1382,33 @@ protected:
 
 
 /////////////////////////////////////////////////////////////////////////////
+
 class CMapStringToString : public CObject
 {
 
 	DECLARE_SERIAL(CMapStringToString)
-public:
-	// Association
-	struct CPair
-	{
-		const CString key;
-		CString value;
-	protected:
-		CPair(LPCTSTR keyval) : key(keyval) {}
-	};
 protected:
-	class CAssoc : public CPair
+	// Association
+	struct CAssoc
 	{
-		friend class CMapStringToString;
 		CAssoc* pNext;
 		UINT nHashValue;  // needed for efficient iteration
-	public:
-		CAssoc( LPCTSTR keyval ) : CPair( keyval ) {}
+		CString key;
+		CString value;
 	};
 
 public:
 
 // Construction
-	/* explicit */ CMapStringToString(INT_PTR nBlockSize = 10);
+	CMapStringToString(int nBlockSize = 10);
 
 // Attributes
 	// number of elements
-	INT_PTR GetCount() const;
-	INT_PTR GetSize() const;
+	int GetCount() const;
 	BOOL IsEmpty() const;
 
 	// Lookup
 	BOOL Lookup(LPCTSTR key, CString& rValue) const;
-	const CPair *PLookup(LPCTSTR key) const;
-	CPair *PLookup(LPCTSTR key);
 	BOOL LookupKey(LPCTSTR key, LPCTSTR& rKey) const;
 
 // Operations
@@ -1455,14 +1424,7 @@ public:
 
 	// iterating all (key, value) pairs
 	POSITION GetStartPosition() const;
-
-	const CPair *PGetFirstAssoc() const;
-	CPair *PGetFirstAssoc();
-
 	void GetNextAssoc(POSITION& rNextPosition, CString& rKey, CString& rValue) const;
-
-	const CPair *PGetNextAssoc(const CPair* pAssoc) const;
-	CPair *PGetNextAssoc(const CPair* pAssoc);
 
 	// advanced features for derived classes
 	UINT GetHashTableSize() const;
@@ -1476,14 +1438,14 @@ public:
 protected:
 	CAssoc** m_pHashTable;
 	UINT m_nHashTableSize;
-	INT_PTR m_nCount;
+	int m_nCount;
 	CAssoc* m_pFreeList;
 	struct CPlex* m_pBlocks;
-	INT_PTR m_nBlockSize;
+	int m_nBlockSize;
 
-	CAssoc* NewAssoc(LPCTSTR key);
+	CAssoc* NewAssoc();
 	void FreeAssoc(CAssoc*);
-	CAssoc* GetAssocAt(LPCTSTR, UINT&, UINT&) const;
+	CAssoc* GetAssocAt(LPCTSTR, UINT&) const;
 
 public:
 	~CMapStringToString();
@@ -1524,6 +1486,9 @@ protected:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //!__AFXCOLL_H__

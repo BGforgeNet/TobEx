@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,15 +11,9 @@
 #ifndef __AFXDAO_H
 #define __AFXDAO_H
 
-#ifdef _WIN64
-	#error DAO Database classes are not supported for Win64 platforms
-#endif
-
 #ifdef _AFX_NO_DAO_SUPPORT
 	#error DAO Database classes not supported in this library variant.
 #endif
-
-#pragma once
 
 #ifndef __AFXDISP_H__
 	#include <afxdisp.h>    // Must include this before dao headers
@@ -47,12 +41,28 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifndef _AFX_NOFORCE_LIBS
 
 /////////////////////////////////////////////////////////////////////////////
 // Win32 libraries
+
+#ifdef _AFXDLL
+	#if defined(_DEBUG) && !defined(_AFX_MONOLITHIC)
+		#ifndef _UNICODE
+			#pragma comment(lib, "mfco42d.lib")
+			#pragma comment(lib, "mfcd42d.lib")
+		#else
+			#pragma comment(lib, "mfco42ud.lib")
+			#pragma comment(lib, "mfcd42ud.lib")
+		#endif
+	#endif
+
+#endif
 
 #pragma comment(lib, "daouuid.lib")
 
@@ -505,8 +515,8 @@ void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, COleDateTime& value,
 	CDaoRecordset* pRecordset);
 void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, CString& value,
 	CDaoRecordset* pRecordset);
-void AFXAPI DDX_FieldText(_In_ CDataExchange* pDX, _In_ int nIDC, _Out_z_cap_(nMaxLen) LPTSTR pstrValue,
-	_In_ int nMaxLen, _In_ CDaoRecordset* pRecordset);
+void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, LPTSTR pstrValue,
+	int nMaxLen, CDaoRecordset* pRecordset);
 
 // special control types
 void AFXAPI DDX_FieldCheck(CDataExchange* pDX, int nIDC, int& value,
@@ -665,8 +675,8 @@ public:
 	DAOError* m_pDAOError;
 	DAOErrors* m_pDAOErrors;
 
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 
 protected:
 	void InitErrorsCollection();
@@ -686,7 +696,7 @@ class CDaoDatabase : public CObject
 
 // Constructors
 public:
-	/* explicit */ CDaoDatabase(CDaoWorkspace* pWorkspace = NULL);
+	CDaoDatabase(CDaoWorkspace* pWorkspace = NULL);
 
 	virtual void Create(LPCTSTR lpszName,
 		LPCTSTR lpszLocale = dbLangGeneral, int dwOptions = 0);
@@ -793,7 +803,7 @@ class CDaoTableDef : public CObject
 
 // Constructors
 public:
-	/* explicit */ CDaoTableDef(CDaoDatabase* pDatabase);
+	CDaoTableDef(CDaoDatabase* pDatabase);
 
 	virtual void Create(LPCTSTR lpszName, long lAttributes = 0,
 		LPCTSTR lpszSrcTable = NULL, LPCTSTR lpszConnect = NULL);
@@ -887,7 +897,7 @@ class CDaoQueryDef : public CObject
 
 // Constructors
 public:
-	/* explicit */ CDaoQueryDef(CDaoDatabase* pDatabase);
+	CDaoQueryDef(CDaoDatabase* pDatabase);
 
 	virtual void Create(LPCTSTR lpszName = NULL,
 		LPCTSTR lpszSQL = NULL);
@@ -983,7 +993,7 @@ class CDaoRecordset : public CObject
 
 // Constructor
 public:
-	/* explicit */ CDaoRecordset(CDaoDatabase* pDatabase = NULL);
+	CDaoRecordset(CDaoDatabase* pDatabase = NULL);
 
 	virtual void Open(int nOpenType = AFX_DAO_USE_DEFAULT_TYPE,
 		LPCTSTR lpszSQL = NULL, int nOptions = 0);
@@ -1180,7 +1190,7 @@ public:
 	CMapPtrToPtr* m_pMapFieldCache;
 	CMapPtrToPtr* m_pMapFieldIndex;
 
-	static void AFX_CDECL StripBrackets(_In_z_ LPCTSTR lpszSrc, _Pre_notnull_ _Post_z_ LPTSTR lpszDest);
+	static void AFX_CDECL StripBrackets(LPCTSTR lpszSrc, LPTSTR lpszDest);
 
 protected:
 	BOOL m_bOpen;
@@ -1228,14 +1238,18 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // CDaoRecordView - form for viewing data records
 
+#ifdef _AFXDLL
+class CDaoRecordView : public CFormView
+#else
 class AFX_NOVTABLE CDaoRecordView : public CFormView
+#endif
 {
 	DECLARE_DYNAMIC(CDaoRecordView)
 
 // Construction
 protected:  // must derive your own class
-	explicit CDaoRecordView(LPCTSTR lpszTemplateName);
-	explicit CDaoRecordView(UINT nIDTemplate);
+	CDaoRecordView(LPCTSTR lpszTemplateName);
+	CDaoRecordView(UINT nIDTemplate);
 
 // Attributes
 public:
@@ -1250,7 +1264,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CDaoRecordView() = 0;
+	virtual ~CDaoRecordView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -1303,26 +1317,8 @@ void AFXAPI AfxDaoTerm();
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
-
-#ifndef _AFX_DISABLE_DEPRECATED
-#pragma deprecated( CDaoException )
-#pragma deprecated( CDaoRecordView )
-#pragma deprecated( CDaoWorkspace )
-#pragma deprecated( CDaoDatabase )
-#pragma deprecated( CDaoRecordset )
-#pragma deprecated( CDaoTableDef )
-#pragma deprecated( CDaoQueryDef )
-#pragma deprecated( CDaoFieldExchange )
-#pragma deprecated( CDaoFieldCache )
-#pragma deprecated( CDaoErrorInfo )
-#pragma deprecated( CDaoWorkspaceInfo )
-#pragma deprecated( CDaoDatabaseInfo )
-#pragma deprecated( CDaoTableDefInfo )
-#pragma deprecated( CDaoFieldInfo )
-#pragma deprecated( CDaoIndexInfo )
-#pragma deprecated( CDaoRelationInfo )
-#pragma deprecated( CDaoQueryDefInfo )
-#pragma deprecated( CDaoParameterInfo )
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXDAO_H__

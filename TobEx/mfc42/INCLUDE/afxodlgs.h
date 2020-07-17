@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,8 +14,6 @@
 #ifdef _AFX_NO_OLE_SUPPORT
 	#error OLE classes not supported in this library variant.
 #endif
-
-#pragma once
 
 #ifndef __AFXOLE_H__
 	#include <afxole.h>
@@ -32,7 +30,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -74,8 +75,7 @@ public:
 // Implementation
 	COleDocument* m_pDocument;          // document being manipulated
 	COleClientItem* m_pSelectedItem;    // primary selected item in m_pDocument
-	POSITION m_pos;						// used during link enumeration
-
+	POSITION m_pos;                     // used during link enumeration
 	BOOL m_bUpdateLinks;                // update links?
 	BOOL m_bUpdateEmbeddings;           // update embeddings?
 
@@ -87,23 +87,24 @@ public:
 	STDMETHOD_(DWORD,GetNextLink)(DWORD);
 	STDMETHOD(SetLinkUpdateOptions)(DWORD, DWORD);
 	STDMETHOD(GetLinkUpdateOptions)(DWORD, LPDWORD);
-	STDMETHOD(SetLinkSource)(DWORD, _In_count_(_LenFileName) LPTSTR, ULONG _LenFileName, ULONG*, BOOL);
-	STDMETHOD(GetLinkSource)(DWORD, _Deref_out_ LPTSTR*, ULONG*, _Deref_out_ LPTSTR*, _Deref_out_ LPTSTR*, BOOL*,
+	STDMETHOD(SetLinkSource)(DWORD, LPTSTR, ULONG, ULONG*, BOOL);
+	STDMETHOD(GetLinkSource)(DWORD, LPTSTR*, ULONG*, LPTSTR*, LPTSTR*, BOOL*,
 		BOOL*);
 	STDMETHOD(OpenLinkSource)(DWORD);
 	STDMETHOD(UpdateLink)(DWORD, BOOL, BOOL);
 	STDMETHOD(CancelLink)(DWORD);
 	// IOleUILinkInfo
 	STDMETHOD(GetLastUpdate)(DWORD dwLink, FILETIME* lpLastUpdate);
-
-private:
-	COleClientItem* GetLinkItem(DWORD dwLink);
 };
 
 /////////////////////////////////////////////////////////////////////////////
 // Wrappers for OLE UI dialogs
 
+#ifdef _AFXDLL
+class COleDialog : public CCommonDialog
+#else
 class AFX_NOVTABLE COleDialog : public CCommonDialog
+#endif
 {
 	DECLARE_DYNAMIC(COleDialog)
 
@@ -114,14 +115,16 @@ public:
 // Implementation
 public:
 	int MapResult(UINT nResult);
-	explicit COleDialog(CWnd* pParentWnd);
-	virtual ~COleDialog() = 0 { }
+	COleDialog(CWnd* pParentWnd);
 #ifdef _DEBUG
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
 protected:
 	UINT m_nLastError;
+
+protected:
+	friend UINT CALLBACK _AfxOleHookProc(HWND, UINT, WPARAM, LPARAM);
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -136,12 +139,12 @@ public:
 	OLEUIINSERTOBJECT m_io; // structure for OleUIInsertObject
 
 // Constructors
-	/* explicit */ COleInsertDialog(DWORD dwFlags = IOF_SELECTCREATENEW,
+	COleInsertDialog(DWORD dwFlags = IOF_SELECTCREATENEW,
 		CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
-	INT_PTR DoModal(DWORD dwFlags);
+	virtual int DoModal();
+	int DoModal(DWORD dwFlags);
 	BOOL CreateItem(COleClientItem* pItem);
 		// call after DoModal to create item based on dialog data
 
@@ -190,12 +193,12 @@ public:
 	OLEUICONVERT m_cv;  // structure for OleUIConvert
 
 // Constructors
-	explicit COleConvertDialog(COleClientItem* pItem,
+	COleConvertDialog(COleClientItem* pItem,
 		DWORD dwFlags = CF_SELECTCONVERTTO, CLSID* pClassID = NULL,
 		CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 		// just display the dialog and collect convert info
 	BOOL DoConvert(COleClientItem* pItem);
 		// do the conversion on pItem (after DoModal == IDOK)
@@ -228,12 +231,12 @@ public:
 	OLEUICHANGEICON m_ci;   // structure for OleUIChangeIcon
 
 // Constructors
-	explicit COleChangeIconDialog(COleClientItem* pItem,
+	COleChangeIconDialog(COleClientItem* pItem,
 		DWORD dwFlags = CIF_SELECTCURRENT,
 		CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 	BOOL DoChangeIcon(COleClientItem* pItem);
 
 // Attributes
@@ -259,18 +262,18 @@ public:
 	OLEUIPASTESPECIAL m_ps; // structure for OleUIPasteSpecial
 
 // Constructors
-	/* explicit */ COlePasteSpecialDialog(DWORD dwFlags = PSF_SELECTPASTE,
+	COlePasteSpecialDialog(DWORD dwFlags = PSF_SELECTPASTE,
 		COleDataObject* pDataObject = NULL, CWnd *pParentWnd = NULL);
 
 // Operations
 	OLEUIPASTEFLAG AddLinkEntry(UINT cf);
-	void AddFormat(const FORMATETC& formatEtc, _In_z_ LPTSTR lpszFormat,
-		_In_z_ LPTSTR lpszResult, DWORD flags);
+	void AddFormat(const FORMATETC& formatEtc, LPTSTR lpszFormat,
+		LPTSTR lpszResult, DWORD flags);
 	void AddFormat(UINT cf, DWORD tymed, UINT nFormatID, BOOL bEnableIcon,
 		BOOL bLink);
 	void AddStandardFormats(BOOL bEnableLink = TRUE);
 
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 	BOOL CreateItem(COleClientItem *pNewItem);
 		// creates a standard OLE item from selection data
 
@@ -313,7 +316,7 @@ public:
 		CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();  // display the dialog and edit links
+	virtual int DoModal();  // display the dialog and edit links
 
 // Implementation
 public:
@@ -336,12 +339,12 @@ class COleUpdateDialog : public COleLinksDialog
 
 // Constructors
 public:
-	explicit COleUpdateDialog(COleDocument* pDoc,
+	COleUpdateDialog(COleDocument* pDoc,
 		BOOL bUpdateLinks = TRUE, BOOL bUpdateEmbeddings = FALSE,
 		CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 
 // Implementation
 public:
@@ -366,11 +369,11 @@ public:
 	OLEUIBUSY m_bz;
 
 // Constructors
-	explicit COleBusyDialog(HTASK htaskBusy, BOOL bNotResponding = FALSE,
+	COleBusyDialog(HTASK htaskBusy, BOOL bNotResponding = FALSE,
 		DWORD dwFlags = 0, CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 
 	enum Selection { switchTo = 1, retry = 2, callUnblocked = 3 };
 	UINT GetSelectionType() const;
@@ -407,7 +410,7 @@ public:
 		UINT nScaleMin = 10, UINT nScaleMax = 500, CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 
 // Overridables
 	virtual BOOL OnApplyScale(
@@ -415,8 +418,6 @@ public:
 
 // Implementation
 public:
-	COleDocument* m_pDoc;
-
 #ifdef _DEBUG
 	virtual void Dump(CDumpContext& dc) const;
 	virtual void AssertValid() const;
@@ -456,10 +457,10 @@ public:
 
 // Constructors
 public:
-	explicit COleChangeSourceDialog(COleClientItem* pItem, CWnd* pParentWnd = NULL);
+	COleChangeSourceDialog(COleClientItem* pItem, CWnd* pParentWnd = NULL);
 
 // Operations
-	virtual INT_PTR DoModal();
+	virtual int DoModal();
 
 // Attributes (after DoModal returns IDOK)
 	BOOL IsValidSource();
@@ -499,6 +500,9 @@ public:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXODLGS_H__

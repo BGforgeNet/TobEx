@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,24 +14,13 @@
 #ifdef RC_INVOKED
 #ifndef _INC_WINDOWS
 #define _INC_WINDOWS
-   #include "winres.h"           // extract from windows header
+	#include "winres.h"           // extract from windows header
 #endif
 #endif
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
 #endif
-
-#ifndef _MFC_FILENAME_VER
-#define _MFC_FILENAME_VER "90"
-#endif
-
-#ifdef RC_INVOKED
-	#if defined(_VC80_UPGRADE) && (_VC80_UPGRADE >= 0x0700) && (_VC80_UPGRADE < 0x0800) && defined(IDR_MANIFEST)
-		// Handle project upgrade from VC7/VC7.1 for projects with manifest
-		#define IDR_MANIFEST	1024
-	#endif
-#endif	// RC_INVOKED
 
 #ifdef APSTUDIO_INVOKED
 #define APSTUDIO_HIDDEN_SYMBOLS
@@ -92,10 +81,6 @@
 #define CBRS_TOP            (CBRS_ALIGN_TOP|CBRS_BORDER_BOTTOM)
 #define CBRS_RIGHT          (CBRS_ALIGN_RIGHT|CBRS_BORDER_LEFT)
 #define CBRS_BOTTOM         (CBRS_ALIGN_BOTTOM|CBRS_BORDER_TOP)
-
-/////////////////////////////////////////////////////////////////////////////
-// Manifest Resource ID of manifest containing Localized DLL information
-#define ID_MFCLOC_MANIFEST             1000
 
 /////////////////////////////////////////////////////////////////////////////
 // Standard window components
@@ -188,7 +173,6 @@
 #define ID_FILE_UPDATE                  0xE10A
 #define ID_FILE_SAVE_COPY_AS            0xE10B
 #define ID_FILE_SEND_MAIL               0xE10C
-#define ID_FILE_NEW_FRAME               0xE10D
 
 #define ID_FILE_MRU_FIRST               0xE110
 #define ID_FILE_MRU_FILE1               0xE110          // range - 16 max
@@ -280,7 +264,7 @@
 #define ID_VIEW_STATUS_BAR              0xE801
 #define ID_VIEW_REBAR                   0xE804
 #define ID_VIEW_AUTOARRANGE         0xE805
-   // E810 -> E81F must be kept in order for RANGE macros
+	// E810 -> E81F must be kept in order for RANGE macros
 #define ID_VIEW_SMALLICON               0xE810
 #define ID_VIEW_LARGEICON               0xE811
 #define ID_VIEW_LIST                   0xE812
@@ -289,7 +273,7 @@
 #define ID_VIEW_BYNAME                  0xE815
 #define AFX_ID_VIEW_MINIMUM              ID_VIEW_SMALLICON
 #define AFX_ID_VIEW_MAXIMUM              ID_VIEW_BYNAME
-   // E800 -> E8FF reserved for other control bar commands
+	// E800 -> E8FF reserved for other control bar commands
 
 // RecordForm commands
 #define ID_RECORD_FIRST                 0xE900
@@ -342,7 +326,6 @@
 #define AFX_IDS_RESOURCE_EXCEPTION      0xF022
 #define AFX_IDS_MEMORY_EXCEPTION        0xF023
 #define AFX_IDS_USER_EXCEPTION          0xF024
-#define AFX_IDS_INVALID_ARG_EXCEPTION   0xF025
 
 // Printing and print preview strings
 #define AFX_IDS_PRINTONPORT             0xF040
@@ -417,9 +400,6 @@
 #define AFX_IDP_PARSE_UINT              0xF117
 #define AFX_IDP_PARSE_DATETIME          0xF118
 #define AFX_IDP_PARSE_CURRENCY          0xF119
-#define AFX_IDP_PARSE_GUID              0xF11A
-#define AFX_IDP_PARSE_TIME              0xF11B
-#define AFX_IDP_PARSE_DATE              0xF11C
 
 // CFile/CArchive error strings for user failure
 #define AFX_IDP_FAILED_INVALID_FORMAT   0xF120
@@ -430,16 +410,12 @@
 #define AFX_IDP_FAILED_IO_ERROR_READ    0xF125
 #define AFX_IDP_FAILED_IO_ERROR_WRITE   0xF126
 
-// Script errors / prompt strings
-#define AFX_IDP_SCRIPT_ERROR            0xF130
-#define AFX_IDP_SCRIPT_DISPATCH_EXCEPTION 0xF131
-
 // OLE errors / prompt strings
 #define AFX_IDP_STATIC_OBJECT           0xF180
 #define AFX_IDP_FAILED_TO_CONNECT       0xF181
 #define AFX_IDP_SERVER_BUSY             0xF182
 #define AFX_IDP_BAD_VERB                0xF183
-#define AFX_IDS_NOT_DOCOBJECT           0xF184
+#define AFX_IDS_NOT_DOCOBJECT                0xF184
 #define AFX_IDP_FAILED_TO_NOTIFY        0xF185
 #define AFX_IDP_FAILED_TO_LAUNCH        0xF186
 #define AFX_IDP_ASK_TO_UPDATE           0xF187
@@ -526,7 +502,7 @@
 #define AFX_IDP_SQL_BOOKMARKS_NOT_ENABLED       0xF29C
 
 // ODBC Database strings
-#define AFX_IDS_DELETED                   0xF29D
+#define AFX_IDS_DELETED                         0xF29D
 
 // DAO Database errors / prompt strings
 #ifndef RC_INVOKED      // code only
@@ -556,18 +532,11 @@
 #define AFX_IDS_HTTP_NOT_IMPLEMENTED    0xF2D8
 
 /////////////////////////////////////////////////////////////////////////////
-// Strings for Accessibility support for CCheckListBox
-#define AFX_IDS_CHECKLISTBOX_UNCHECK	0xF2E1
-#define AFX_IDS_CHECKLISTBOX_CHECK		0xF2E2
-#define AFX_IDS_CHECKLISTBOX_MIXED		0xF2E3
-
-/////////////////////////////////////////////////////////////////////////////
 // AFX implementation - control IDs (AFX_IDC)
 
 // Parts of dialogs
 #define AFX_IDC_LISTBOX                 100
 #define AFX_IDC_CHANGE                  101
-#define AFX_IDC_BROWSER             102
 
 // for print dialog
 #define AFX_IDC_PRINT_DOCNAME           201
@@ -615,11 +584,8 @@
 #define AFX_IDD_OBJECTPROPERTIES        30732
 #define AFX_IDD_CHANGESOURCE            30733
 
-//WinForms
-#define AFX_IDD_EMPTYDIALOG				30734
-
 // Standard cursors (0x7901->)
-   // AFX_IDC = Cursor resources
+	// AFX_IDC = Cursor resources
 #define AFX_IDC_CONTEXTHELP             30977       // context sensitive help
 #define AFX_IDC_MAGNIFY                 30978       // print preview zoom
 #define AFX_IDC_SMALLARROWS             30979       // splitter
@@ -633,30 +599,11 @@
 #define AFX_IDC_TRACK4WAY               30987       // tracker
 #define AFX_IDC_MOVE4WAY                30988       // resize bar (server only)
 
-// Wheel mouse cursors
-// NOTE: values must be in this order!  See CScrollView::OnTimer()
-#define AFX_IDC_MOUSE_PAN_NW            30998       // pan east
-#define AFX_IDC_MOUSE_PAN_N             30999       // pan northeast
-#define AFX_IDC_MOUSE_PAN_NE            31000       // pan north
-#define AFX_IDC_MOUSE_PAN_W             31001       // pan northwest
-#define AFX_IDC_MOUSE_PAN_HV            31002       // pan both axis
-#define AFX_IDC_MOUSE_PAN_E             31003       // pan west
-#define AFX_IDC_MOUSE_PAN_SW            31004       // pan south-west
-#define AFX_IDC_MOUSE_PAN_S             31005       // pan south
-#define AFX_IDC_MOUSE_PAN_SE            31006       // pan south-east
-#define AFX_IDC_MOUSE_PAN_HORZ          31007       // pan X-axis
-#define AFX_IDC_MOUSE_PAN_VERT          31008       // pan Y-axis
-
-// Wheel mouse bitmaps
-#define AFX_IDC_MOUSE_ORG_HORZ          31009       // anchor for horz only
-#define AFX_IDC_MOUSE_ORG_VERT          31010       // anchor for vert only
-#define AFX_IDC_MOUSE_ORG_HV            31011       // anchor for horz/vert
-#define AFX_IDC_MOUSE_MASK              31012
-
 // Mini frame window bitmap ID
 #define AFX_IDB_MINIFRAME_MENU          30994
 
 // CheckListBox checks bitmap ID
+#define AFX_IDB_CHECKLISTBOX_NT         30995
 #define AFX_IDB_CHECKLISTBOX_95         30996
 
 // AFX standard accelerator resources

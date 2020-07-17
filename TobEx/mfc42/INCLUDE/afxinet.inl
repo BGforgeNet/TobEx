@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,14 +10,12 @@
 
 // Inlines for AFXINET.H
 
-#pragma once
-
 /////////////////////////////////////////////////////////////////////////////
 //
 
 #ifdef _AFXINET_INLINE
 
-_AFXINET_INLINE DWORD_PTR CInternetSession::GetContext() const
+_AFXINET_INLINE DWORD CInternetSession::GetContext() const
 	{ return m_dwContext; }
 
 _AFXINET_INLINE CString CInternetConnection::GetServerName() const
@@ -44,17 +42,10 @@ _AFXINET_INLINE CGopherLocator::CGopherLocator(const CGopherLocator& ref)
 	{ m_Locator = ref.m_Locator; m_dwBufferLength = ref.m_dwBufferLength; }
 
 
-#pragma push_macro("GetObject")
-#undef GetObject
-_AFXINET_INLINE CString CHttpFile::GetObject() const
-	{ return _AFX_FUNCNAME(GetObject)(); }
-#pragma pop_macro("GetObject")
-
-
 _AFXINET_INLINE CInternetConnection::operator HINTERNET() const
 	{ return m_hConnection; }
 
-_AFXINET_INLINE DWORD_PTR CInternetConnection::GetContext() const
+_AFXINET_INLINE DWORD CInternetConnection::GetContext() const
 	{ return m_dwContext; }
 
 _AFXINET_INLINE BOOL CInternetConnection::SetOption(DWORD dwOption,
@@ -62,7 +53,7 @@ _AFXINET_INLINE BOOL CInternetConnection::SetOption(DWORD dwOption,
 	{ return SetOption(dwOption, &dwValue, sizeof(dwValue), dwFlags); }
 
 
-_AFXINET_INLINE DWORD_PTR CInternetFile::GetContext() const
+_AFXINET_INLINE DWORD CInternetFile::GetContext() const
 	{ return m_dwContext; }
 
 _AFXINET_INLINE CInternetFile::operator HINTERNET() const
@@ -71,19 +62,6 @@ _AFXINET_INLINE CInternetFile::operator HINTERNET() const
 _AFXINET_INLINE BOOL CInternetFile::SetOption(DWORD dwOption, DWORD dwValue,
 	DWORD dwFlags /* = 0 */)
 	{ ASSERT((dwFlags & INTERNET_FLAG_ASYNC) == 0); return SetOption(dwOption, &dwValue, sizeof(dwValue), dwFlags); }
-
-
-#pragma push_macro("SetCurrentDirectory")
-#undef SetCurrentDirectory
-_AFXINET_INLINE BOOL CFtpConnection::SetCurrentDirectory(LPCTSTR pstrDirName)
-	{ return _AFX_FUNCNAME(SetCurrentDirectory)(pstrDirName); }
-#pragma pop_macro("SetCurrentDirectory")
-
-#pragma push_macro("CreateDirectory")
-#undef CreateDirectory
-_AFXINET_INLINE BOOL CFtpConnection::CreateDirectory(LPCTSTR pstrDirName)
-	{ return _AFX_FUNCNAME(CreateDirectory)(pstrDirName); }
-#pragma pop_macro("CreateDirectory")
 
 
 #endif //_AFXINET_INLINE

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< 標準 MFC リソースの変更はできません! >\0"
+"< 標準 MFC ﾘｿｰｽの変更はできません! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -45,18 +45,18 @@ AFX_IDD_PROPPAGE_FONT DIALOG DISCARDABLE  13, 54, 250, 110
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "プロパティ名(&N):",IDC_STATIC,3,5,61,8
+	LTEXT           "ﾌﾟﾛﾊﾟﾃｨ名(&N):",IDC_STATIC,3,5,61,8
 	COMBOBOX        AFX_IDC_FONTPROP,65,3,100,71,CBS_DROPDOWNLIST | CBS_SORT |
 					WS_VSCROLL | WS_TABSTOP
-	LTEXT           "フォント名(&F):",IDC_STATIC,3,19,91,8
+	LTEXT           "ﾌｫﾝﾄ名(&F):",IDC_STATIC,3,19,91,8
 	COMBOBOX        AFX_IDC_FONTNAMES,3,29,91,77,CBS_SIMPLE |
 					CBS_OWNERDRAWFIXED | CBS_AUTOHSCROLL | CBS_SORT |
 					CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_VSCROLL |
 					WS_TABSTOP
-	LTEXT           "スタイル(&Y):",IDC_STATIC,102,19,53,8
+	LTEXT           "ｽﾀｲﾙ(&Y):",IDC_STATIC,102,19,53,8
 	COMBOBOX        AFX_IDC_FONTSTYLES,104,29,53,53,CBS_DROPDOWNLIST |
 					CBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
-	LTEXT           "サイズ(&S):",IDC_STATIC,167,19,40,8
+	LTEXT           "ｻｲｽﾞ(&S):",IDC_STATIC,167,19,40,8
 	COMBOBOX        AFX_IDC_FONTSIZES,167,29,36,53,CBS_DROPDOWN | CBS_SORT |
 					CBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
 	GROUPBOX        "文字飾り",IDC_STATIC,104,44,142,24,WS_GROUP
@@ -64,7 +64,7 @@ BEGIN
 					WS_TABSTOP,109,55,65,10
 	CONTROL         "下線(&U)",AFX_IDC_UNDERLINE,"Button",BS_AUTOCHECKBOX |
 					WS_TABSTOP,175,55,65,10
-	GROUPBOX        "サンプル",IDC_STATIC,104,71,142,36,WS_GROUP
+	GROUPBOX        "ｻﾝﾌﾟﾙ",IDC_STATIC,104,71,142,36,WS_GROUP
 	CTEXT           "AaBbYyZz",AFX_IDC_SAMPLEBOX,110,80,130,22,SS_NOPREFIX |
 					NOT WS_VISIBLE
 END
@@ -73,10 +73,10 @@ AFX_IDD_PROPPAGE_COLOR DIALOG DISCARDABLE  0, 0, 250, 62
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "プロパティ名(&N):",IDC_STATIC,3,3,100,8
+	LTEXT           "ﾌﾟﾛﾊﾟﾃｨ名(&N):",IDC_STATIC,3,3,100,8
 	COMBOBOX        AFX_IDC_COLORPROP,3,13,100,54,CBS_DROPDOWNLIST |
 					CBS_SORT | WS_VSCROLL | WS_TABSTOP
-	LTEXT           "システム カラー(&C):",IDC_STATIC,3,29,100,8
+	LTEXT           "ｼｽﾃﾑ ｶﾗｰ(&C):",IDC_STATIC,3,29,100,8
 	COMBOBOX        AFX_IDC_SYSTEMCOLORS,3,39,100,54,CBS_DROPDOWNLIST |
 					CBS_SORT | WS_VSCROLL | WS_TABSTOP
 	CONTROL         "",AFX_IDC_COLOR_BLACK,"Button",BS_OWNERDRAW | WS_GROUP |
@@ -113,12 +113,12 @@ AFX_IDD_PROPPAGE_PICTURE DIALOG DISCARDABLE  0, 0, 250, 62
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "プロパティ名(&N):",IDC_STATIC,3,3,100,8
+	LTEXT           "ﾌﾟﾛﾊﾟﾃｨ名(&N):",IDC_STATIC,3,3,100,8
 	COMBOBOX        AFX_IDC_PROPNAME,3,13,100,30,CBS_DROPDOWNLIST | CBS_SORT |
 					WS_VSCROLL | WS_TABSTOP
 	PUSHBUTTON      "参照(&B)...",AFX_IDC_BROWSE,3,35,54,14
-	PUSHBUTTON      "クリア(&C)",AFX_IDC_CLEAR,61,35,54,14
-	RTEXT           "プレビュー:",IDC_STATIC,107,3,42,16
+	PUSHBUTTON      "ｸﾘｱ(&C)",AFX_IDC_CLEAR,61,35,54,14
+	RTEXT           "ﾌﾟﾚﾋﾞｭｰ:",IDC_STATIC,107,3,42,16
 	CONTROL         "",AFX_IDC_PICTURE,"Static",SS_BLACKFRAME,151,4,93,54
 END
 
@@ -142,30 +142,30 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDS_PROPPAGE_UNKNOWN "(不明)"
-	AFX_IDS_COLOR_DESKTOP   "デスクトップ"
+	AFX_IDS_COLOR_DESKTOP   "ﾃﾞｽｸﾄｯﾌﾟ"
 	AFX_IDS_COLOR_APPWORKSPACE "作業する領域"
-	AFX_IDS_COLOR_WNDBACKGND "ウィンドウの背景"
-	AFX_IDS_COLOR_WNDTEXT   "ウィンドウ内の文字"
-	AFX_IDS_COLOR_MENUBAR   "メニュー バー"
-	AFX_IDS_COLOR_MENUTEXT  "メニューの文字"
-	AFX_IDS_COLOR_ACTIVEBAR "アクティブ タイトル バー"
-	AFX_IDS_COLOR_INACTIVEBAR "非アクティブ タイトル バー"
-	AFX_IDS_COLOR_ACTIVETEXT "アクティブ タイトル バーの文字"
-	AFX_IDS_COLOR_INACTIVETEXT "非アクティブ タイトル バーの文字"
-	AFX_IDS_COLOR_ACTIVEBORDER "アクティブ ウィンドウの境界"
-	AFX_IDS_COLOR_INACTIVEBORDER "非アクティブ ウィンドウの境界"
+	AFX_IDS_COLOR_WNDBACKGND "ｳｨﾝﾄﾞｳの背景"
+	AFX_IDS_COLOR_WNDTEXT   "ｳｨﾝﾄﾞｳ内の文字"
+	AFX_IDS_COLOR_MENUBAR   "ﾒﾆｭｰ ﾊﾞｰ"
+	AFX_IDS_COLOR_MENUTEXT  "ﾒﾆｭｰの文字"
+	AFX_IDS_COLOR_ACTIVEBAR "ｱｸﾃｨﾌﾞ ﾀｲﾄﾙ ﾊﾞｰ"
+	AFX_IDS_COLOR_INACTIVEBAR "非ｱｸﾃｨﾌﾞ ﾀｲﾄﾙ ﾊﾞｰ"
+	AFX_IDS_COLOR_ACTIVETEXT "ｱｸﾃｨﾌﾞ ﾀｲﾄﾙ ﾊﾞｰの文字"
+	AFX_IDS_COLOR_INACTIVETEXT "非ｱｸﾃｨﾌﾞ ﾀｲﾄﾙ ﾊﾞｰの文字"
+	AFX_IDS_COLOR_ACTIVEBORDER "ｱｸﾃｨﾌﾞ ｳｨﾝﾄﾞｳの境界"
+	AFX_IDS_COLOR_INACTIVEBORDER "非ｱｸﾃｨﾌﾞ ｳｨﾝﾄﾞｳの境界"
 END
 #endif // !_AFX_NO_STOCKPPG_RESOURCES
 
 STRINGTABLE DISCARDABLE
 BEGIN
 #ifndef _AFX_NO_STOCKPPG_RESOURCES
-	AFX_IDS_COLOR_WNDFRAME  "ウィンドウの枠"
-	AFX_IDS_COLOR_SCROLLBARS "スクロール バー"
-	AFX_IDS_COLOR_BTNFACE   "ボタンの表面"
-	AFX_IDS_COLOR_BTNSHADOW "ボタンの影"
-	AFX_IDS_COLOR_BTNTEXT   "ボタンの文字"
-	AFX_IDS_COLOR_BTNHIGHLIGHT "反転表示のボタン"
+	AFX_IDS_COLOR_WNDFRAME  "ｳｨﾝﾄﾞｳの枠"
+	AFX_IDS_COLOR_SCROLLBARS "ｽｸﾛｰﾙ ﾊﾞｰ"
+	AFX_IDS_COLOR_BTNFACE   "ﾎﾞﾀﾝの表面"
+	AFX_IDS_COLOR_BTNSHADOW "ﾎﾞﾀﾝの影"
+	AFX_IDS_COLOR_BTNTEXT   "ﾎﾞﾀﾝの文字"
+	AFX_IDS_COLOR_BTNHIGHLIGHT "反転表示のﾎﾞﾀﾝ"
 	AFX_IDS_COLOR_DISABLEDTEXT "淡色表示の文字"
 	AFX_IDS_COLOR_HIGHLIGHT "反転表示"
 	AFX_IDS_COLOR_HIGHLIGHTTEXT "反転表示の文字"
@@ -175,28 +175,28 @@ BEGIN
 	AFX_IDS_BOLDITALIC      "太字斜体"
 	AFX_IDS_SAMPLETEXT      "AaBbYyZz"
 #endif // !_AFX_NO_STOCKPPG_RESOURCES
-	AFX_IDS_DISPLAYSTRING_FONT "(フォント)"
+	AFX_IDS_DISPLAYSTRING_FONT "(ﾌｫﾝﾄ)"
 	AFX_IDS_DISPLAYSTRING_COLOR "(色)"
 END
 
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDS_DISPLAYSTRING_PICTURE "(ピクチャ - %s)"
+	AFX_IDS_DISPLAYSTRING_PICTURE "(ﾋﾟｸﾁｬ - %s)"
 #ifndef _AFX_NO_STOCKPPG_RESOURCES
-	AFX_IDS_PICTUREFILTER   "すべてのピクチャ形式|*.bmp;*.cur;*.dib;*.emf;*.ico;*.wmf|ビットマップ (*.bmp;*.dib)|*.bmp;*.dib|アイコン/カーソル (*.ico;*.cur)|*.ico;*.cur|メタファイル (*.wmf;*.emf)|*.wmf;*.emf|すべてのファイル (*.*)|*.*||"
+	AFX_IDS_PICTUREFILTER   "すべてのﾋﾟｸﾁｬ形式|*.bmp;*.cur;*.dib;*.emf;*.ico;*.wmf|ﾋﾞｯﾄﾏｯﾌﾟ (*.bmp;*.dib)|*.bmp;*.dib|ｱｲｺﾝ/ｶｰｿﾙ (*.ico;*.cur)|*.ico;*.cur|ﾒﾀﾌｧｲﾙ (*.wmf;*.emf)|*.wmf;*.emf|すべてのﾌｧｲﾙ (*.*)|*.*||"
 #endif // !_AFX_NO_STOCKPPG_RESOURCES
 	AFX_IDS_PICTYPE_UNKNOWN "不明"
 	AFX_IDS_PICTYPE_NONE    "なし"
-	AFX_IDS_PICTYPE_BITMAP  "ビットマップ"
-	AFX_IDS_PICTYPE_METAFILE "メタファイル"
-	AFX_IDS_PICTYPE_ICON    "アイコン"
+	AFX_IDS_PICTYPE_BITMAP  "ﾋﾞｯﾄﾏｯﾌﾟ"
+	AFX_IDS_PICTYPE_METAFILE "ﾒﾀﾌｧｲﾙ"
+	AFX_IDS_PICTYPE_ICON    "ｱｲｺﾝ"
 #ifndef _AFX_NO_STOCKPPG_RESOURCES
-	AFX_IDS_COLOR_PPG       "カラー プロパティ ページ"
-	AFX_IDS_COLOR_PPG_CAPTION "カラー"
-	AFX_IDS_FONT_PPG        "フォント プロパティ ページ"
-	AFX_IDS_FONT_PPG_CAPTION "フォント"
-	AFX_IDS_PICTURE_PPG     "ピクチャ プロパティ ページ"
-	AFX_IDS_PICTURE_PPG_CAPTION "ピクチャ"
+	AFX_IDS_COLOR_PPG       "ｶﾗｰ ﾌﾟﾛﾊﾟﾃｨ ﾍﾟｰｼﾞ"
+	AFX_IDS_COLOR_PPG_CAPTION "ｶﾗｰ"
+	AFX_IDS_FONT_PPG        "ﾌｫﾝﾄ ﾌﾟﾛﾊﾟﾃｨ ﾍﾟｰｼﾞ"
+	AFX_IDS_FONT_PPG_CAPTION "ﾌｫﾝﾄ"
+	AFX_IDS_PICTURE_PPG     "ﾋﾟｸﾁｬ ﾌﾟﾛﾊﾟﾃｨ ﾍﾟｰｼﾞ"
+	AFX_IDS_PICTURE_PPG_CAPTION "ﾋﾟｸﾁｬ"
 #endif // !_AFX_NO_STOCKPPG_RESOURCES
 	AFX_IDS_BORDERSTYLE_0   "0 - なし"
 	AFX_IDS_BORDERSTYLE_1   "1 - 固定 (実線)"
@@ -205,22 +205,22 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDS_VERB_EDIT       "編集(&E)"
-	AFX_IDS_VERB_PROPERTIES "プロパティ(&P)..."
+	AFX_IDS_VERB_PROPERTIES "ﾌﾟﾛﾊﾟﾃｨ(&P)..."
 END
 
 #ifndef _AFX_NO_STOCKPPG_RESOURCES
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDP_PICTURECANTOPEN "ピクチャ ファイル %1 を読み込めません。ファイルが存在しないか、読み取れない可能性があります。"
-	AFX_IDP_PICTURECANTLOAD "ピクチャ ファイル %1 を読み込めません。ファイル形式が正しくない可能性があります。"
-	AFX_IDP_PICTURETOOLARGE "ピクチャ ファイル %1 を読み込めません。ファイルが大きすぎます。"
+	AFX_IDP_PICTURECANTOPEN "ﾋﾟｸﾁｬ ﾌｧｲﾙ %1 を読み込めません。ﾌｧｲﾙが存在しないか、読み取れない可能性があります。"
+	AFX_IDP_PICTURECANTLOAD "ﾋﾟｸﾁｬ ﾌｧｲﾙ %1 を読み込めません。 ﾌｧｲﾙ形式が正しくない可能性があります。"
+	AFX_IDP_PICTURETOOLARGE "ﾋﾟｸﾁｬ ﾌｧｲﾙ %1 を読み込めません。 ﾌｧｲﾙが大きすぎます。"
 	AFX_IDP_PICTUREREADFAILED
-							"ピクチャ ファイル %1 を読み込めません。読み込みでエラーが発生しました。"
+							"ﾋﾟｸﾁｬ ﾌｧｲﾙ %1 を読み込めません。 読み込みでｴﾗｰが発生しました。"
 END
 
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDS_PICTUREBROWSETITLE "ピクチャの参照"
+	AFX_IDS_PICTUREBROWSETITLE "ﾋﾟｸﾁｬの参照"
 END
 #endif // !_AFX_NO_STOCKPPG_RESOURCES
 
@@ -228,53 +228,53 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_E_ILLEGALFUNCTIONCALL "関数呼び出しが正しくありません。"
-	AFX_IDP_E_OVERFLOW      "オーバーフローしました。"
-	AFX_IDP_E_OUTOFMEMORY   "メモリが不足しています。"
-	AFX_IDP_E_DIVISIONBYZERO "ゼロで除算しました。"
+	AFX_IDP_E_OVERFLOW      "ｵｰﾊﾞｰﾌﾛｰしました。"
+	AFX_IDP_E_OUTOFMEMORY   "ﾒﾓﾘが不足しています。"
+	AFX_IDP_E_DIVISIONBYZERO "ｾﾞﾛで除算しました。"
 	AFX_IDP_E_OUTOFSTRINGSPACE "文字列領域が不足しています。"
-	AFX_IDP_E_OUTOFSTACKSPACE "スタック領域が不足しています。"
-	AFX_IDP_E_BADFILENAMEORNUMBER "ファイル名または番号が不正です。"
-	AFX_IDP_E_FILENOTFOUND  "ファイルが見つかりません。"
-	AFX_IDP_E_BADFILEMODE   "ファイル モードが不正です。"
-	AFX_IDP_E_FILEALREADYOPEN "ファイルは既に開かれています。"
-	AFX_IDP_E_DEVICEIOERROR "デバイス I/O エラーです。"
-	AFX_IDP_E_FILEALREADYEXISTS "既に同じ名前のファイルが存在しています。"
-	AFX_IDP_E_BADRECORDLENGTH "レコード長が一致しません。"
-	AFX_IDP_E_DISKFULL      "ディスクがいっぱいです。"
-	AFX_IDP_E_BADRECORDNUMBER "レコード番号が不正です。"
-	AFX_IDP_E_BADFILENAME   "ファイル名が正しくありません。"
+	AFX_IDP_E_OUTOFSTACKSPACE "ｽﾀｯｸ領域が不足しています。"
+	AFX_IDP_E_BADFILENAMEORNUMBER "ﾌｧｲﾙ名または番号が不正です。"
+	AFX_IDP_E_FILENOTFOUND  "ﾌｧｲﾙが見つかりません。"
+	AFX_IDP_E_BADFILEMODE   "ﾌｧｲﾙ ﾓｰﾄﾞが不正です。"
+	AFX_IDP_E_FILEALREADYOPEN "ﾌｧｲﾙは既に開かれています。"
+	AFX_IDP_E_DEVICEIOERROR "ﾃﾞﾊﾞｲｽ I/O ｴﾗｰです。"
+	AFX_IDP_E_FILEALREADYEXISTS "既に同じ名前のﾌｧｲﾙが存在しています。"
+	AFX_IDP_E_BADRECORDLENGTH "ﾚｺｰﾄﾞ長が一致しません。"
+	AFX_IDP_E_DISKFULL      "ﾃﾞｨｽｸがいっぱいです。"
+	AFX_IDP_E_BADRECORDNUMBER "ﾚｺｰﾄﾞ番号が不正です。"
+	AFX_IDP_E_BADFILENAME   "ﾌｧｲﾙ名が正しくありません。"
 END
 
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDP_E_TOOMANYFILES  "ファイルが多すぎます。"
-	AFX_IDP_E_DEVICEUNAVAILABLE "デバイスが準備されていません。"
-	AFX_IDP_E_PERMISSIONDENIED "アクセスは拒否されました。"
-	AFX_IDP_E_DISKNOTREADY  "ディスクが準備されていません。"
-	AFX_IDP_E_PATHFILEACCESSERROR "パス名が無効です。"
-	AFX_IDP_E_PATHNOTFOUND  "パスが見つかりません。"
-	AFX_IDP_E_INVALIDPATTERNSTRING "パターン文字列が正しくありません。"
-	AFX_IDP_E_INVALIDUSEOFNULL "null 文字の使い方が正しくありません。"
-	AFX_IDP_E_INVALIDFILEFORMAT "ファイル形式が正しくありません。"
-	AFX_IDP_E_INVALIDPROPERTYVALUE "プロパティの値が正しくありません。"
-	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "配列のインデックスが正しくありません。"
-	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "このプロパティの値は実行時には設定できません。"
-	AFX_IDP_E_SETNOTSUPPORTED "プロパティは読み取り専用です。"
+	AFX_IDP_E_TOOMANYFILES  "ﾌｧｲﾙが多すぎます。"
+	AFX_IDP_E_DEVICEUNAVAILABLE "ﾃﾞﾊﾞｲｽが準備されていません。"
+	AFX_IDP_E_PERMISSIONDENIED "ｱｸｾｽは拒否されました。"
+	AFX_IDP_E_DISKNOTREADY  "ﾃﾞｨｽｸが準備されていません。"
+	AFX_IDP_E_PATHFILEACCESSERROR "ﾊﾟｽ名が無効です。"
+	AFX_IDP_E_PATHNOTFOUND  "ﾊﾟｽが見つかりません。"
+	AFX_IDP_E_INVALIDPATTERNSTRING "ﾊﾟﾀｰﾝ文字列が無効です。"
+	AFX_IDP_E_INVALIDUSEOFNULL "null 文字の使い方が無効です。"
+	AFX_IDP_E_INVALIDFILEFORMAT "ﾌｧｲﾙ形式が無効です。"
+	AFX_IDP_E_INVALIDPROPERTYVALUE "ﾌﾟﾛﾊﾟﾃｨの値が無効です。"
+	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "配列のｲﾝﾃﾞｯｸｽが無効です。"
+	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "このﾌﾟﾛﾊﾟﾃｨの値は実行時には設定できません。"
+	AFX_IDP_E_SETNOTSUPPORTED "ﾌﾟﾛﾊﾟﾃｨは読み取り専用です。"
 	AFX_IDP_E_NEEDPROPERTYARRAYINDEX
-							"プロパティ配列にはインデックスを指定してください。"
-	AFX_IDP_E_SETNOTPERMITTED "このコントロールのプロパティは設定できません。"
-	AFX_IDP_E_GETNOTSUPPORTEDATRUNTIME "このプロパティの値は実行時には取得できません。"
+							"ﾌﾟﾛﾊﾟﾃｨ配列にはｲﾝﾃﾞｯｸｽを指定してください。"
+	AFX_IDP_E_SETNOTPERMITTED "このｺﾝﾄﾛｰﾙのﾌﾟﾛﾊﾟﾃｨは設定できません。"
+	AFX_IDP_E_GETNOTSUPPORTEDATRUNTIME "このﾌﾟﾛﾊﾟﾃｨの値は実行時には取得できません。"
 END
 
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDP_E_GETNOTSUPPORTED "プロパティは書き込み専用です。"
-	AFX_IDP_E_PROPERTYNOTFOUND "プロパティが見つかりません。"
-	AFX_IDP_E_INVALIDCLIPBOARDFORMAT "クリップボードの形式が無効です。"
-	AFX_IDP_E_INVALIDPICTURE "ピクチャが無効です。"
-	AFX_IDP_E_PRINTERERROR  "プリンタのエラーです。"
+	AFX_IDP_E_GETNOTSUPPORTED "ﾌﾟﾛﾊﾟﾃｨは書き込み専用です。"
+	AFX_IDP_E_PROPERTYNOTFOUND "ﾌﾟﾛﾊﾟﾃｨが見つかりません。"
+	AFX_IDP_E_INVALIDCLIPBOARDFORMAT "ｸﾘｯﾌﾟﾎﾞｰﾄﾞの形式が無効です。"
+	AFX_IDP_E_INVALIDPICTURE "ﾋﾟｸﾁｬが無効です。"
+	AFX_IDP_E_PRINTERERROR  "ﾌﾟﾘﾝﾀのｴﾗｰです。"
 	AFX_IDP_E_CANTSAVEFILETOTEMP
-							"保存に必要な一時ファイルを作成できません。"
+							"保存に必要な一時ﾌｧｲﾙを作成できません。"
 	AFX_IDP_E_SEARCHTEXTNOTFOUND "検索文字列が見つかりません。"
 	AFX_IDP_E_REPLACEMENTSTOOLONG "置換文字列が長すぎます。"
 END

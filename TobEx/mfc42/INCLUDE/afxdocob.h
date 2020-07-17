@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1996-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,9 +11,7 @@
 #ifndef __AFXDOCOB_H__
 #define __AFXDOCOB_H__
 
-#pragma once
-
-// these error codes are needed by MFC's IPrint implementation
+//WINBUG: these error codes are needed by MFC's IPrint implementation
 // but aren't available in the SDK headers.  Someday, these #define's
 // can be removed.
 
@@ -38,7 +36,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -69,7 +70,6 @@ class COleCmdUI : public CCmdUI
 {
 public:
 	COleCmdUI(OLECMD* rgCmds, ULONG cCmds, const GUID* m_pGroup);
-	virtual ~COleCmdUI() {}
 	virtual void Enable(BOOL bOn);
 	virtual void SetCheck(int nCheck);
 	virtual void SetText(LPCTSTR lpszText);
@@ -147,7 +147,7 @@ class CDocObjectServer : public CCmdTarget
 
 // Constructors
 public:
-	explicit CDocObjectServer(COleServerDoc* pOwner,
+	CDocObjectServer(COleServerDoc* pOwner,
 			LPOLEDOCUMENTSITE pDocSite = NULL);
 
 // Attributes
@@ -326,6 +326,7 @@ protected:
 	virtual void RecalcLayout(BOOL bNotify = TRUE);
 
 	// Menu Merging support
+	HMENU m_hMenuHelpPopup;
 	virtual BOOL BuildSharedMenu();
 	virtual void DestroySharedMenu();
 
@@ -365,6 +366,7 @@ public:
 protected:
    virtual void OnDoVerb(LONG iVerb);
    virtual void OnHide();
+   virtual void OnOpen();
    virtual void OnShow();
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDocObjectServerItem)
@@ -383,6 +385,9 @@ protected:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXDOCOB_H__

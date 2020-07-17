@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,8 +11,6 @@
 #ifndef __AFXPLEX_H__
 #define __AFXPLEX_H__
 
-#pragma once
-
 #ifndef __AFX_H__
 	#include <afx.h>
 #endif
@@ -21,25 +19,30 @@
 #pragma pack(push, _AFX_PACKING)
 #endif
 
+#ifdef AFX_COLL_SEG
+#pragma code_seg(AFX_COLL_SEG)
+#endif
 
 struct CPlex     // warning variable length structure
 {
 	CPlex* pNext;
-#ifndef _WIN64
 #if (_AFX_PACKING >= 8)
 	DWORD dwReserved[1];    // align on 8 byte boundary
-#endif
 #endif
 	// BYTE data[maxNum*elementSize];
 
 	void* data() { return this+1; }
 
-	static CPlex* PASCAL Create(CPlex*& head, UINT_PTR nMax, UINT_PTR cbElement);
+	static CPlex* PASCAL Create(CPlex*& head, UINT nMax, UINT cbElement);
 			// like 'calloc' but no zero fill
 			// may throw memory exceptions
 
 	void FreeDataChain();       // free this one and links
 };
+
+#ifdef AFX_COLL_SEG
+#pragma code_seg()
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(pop)

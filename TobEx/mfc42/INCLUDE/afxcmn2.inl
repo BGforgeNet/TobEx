@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXCMN.H (via WINCTRL6.CPP)
-
-#pragma once
 
 #ifdef _AFXCMN_INLINE
 
@@ -22,10 +20,8 @@ _AFXCMN_INLINE void CStatusBarCtrl::SetTipText(int nPane, LPCTSTR pszTipText)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, SB_SETTIPTEXT, nPane, (LPARAM)pszTipText); }
 _AFXCMN_INLINE COLORREF CStatusBarCtrl::SetBkColor(COLORREF cr)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, SB_SETBKCOLOR, 0, (LPARAM)cr); }
-_AFXCMN_INLINE BOOL CStatusBarCtrl::SetIcon(int iPart, HICON hIcon)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, SB_SETICON, iPart, (LPARAM)hIcon); }
-_AFXCMN_INLINE HICON CStatusBarCtrl::GetIcon(int iPart) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (HICON) ::SendMessage(m_hWnd, SB_GETICON, iPart, 0L); }
+_AFXCMN_INLINE BOOL CStatusBarCtrl::SetIcon(int nPane, HICON hIcon)
+	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, SB_SETICON, nPane, (LPARAM)hIcon); }
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,13 +29,6 @@ _AFXCMN_INLINE void CSpinButtonCtrl::SetRange32(int nLower, int nUpper)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, UDM_SETRANGE32, (WPARAM) nLower, (LPARAM) nUpper); }
 _AFXCMN_INLINE void CSpinButtonCtrl::GetRange32(int& nLower, int& nUpper) const
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, UDM_GETRANGE32, (WPARAM) &nLower, (LPARAM) &nUpper); }
-
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE int CSpinButtonCtrl::GetPos32(LPBOOL lpbError /*= NULL*/) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, UDM_GETPOS32, 0, (LPARAM)lpbError); }
-_AFXCMN_INLINE int CSpinButtonCtrl::SetPos32(int nPos)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, UDM_SETPOS32, 0, (LPARAM)nPos); }
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -104,11 +93,6 @@ _AFXCMN_INLINE BOOL CToolBarCtrl::MarkButton(int nID, BOOL bHighlight)
 _AFXCMN_INLINE BOOL CToolBarCtrl::MoveButton(UINT nOldPos, UINT nNewPos)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TB_MOVEBUTTON, nOldPos, nNewPos); }
 
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE int CToolBarCtrl::GetString(_In_ int nString, _Out_z_cap_post_count_(cchMaxLen, return + 1) LPTSTR lpstrString, _In_ size_t cchMaxLen) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, TB_GETSTRING, MAKEWPARAM(cchMaxLen, nString), (LPARAM)lpstrString); lpstrString[cchMaxLen]=_T('\0'); }
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE DWORD CListCtrl::SetExtendedStyle(DWORD dwNewStyle)
@@ -121,11 +105,11 @@ _AFXCMN_INLINE void CListCtrl::SetWorkAreas(int nWorkAreas, LPRECT lpRect)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, LVM_SETWORKAREAS, nWorkAreas, (LPARAM) lpRect); }
 _AFXCMN_INLINE int CListCtrl::SubItemHitTest(LPLVHITTESTINFO pInfo)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_SUBITEMHITTEST, 0, (LPARAM) pInfo); }
-_AFXCMN_INLINE HCURSOR CListCtrl::GetHotCursor() const
+_AFXCMN_INLINE HCURSOR CListCtrl::GetHotCursor()
 	{ ASSERT(::IsWindow(m_hWnd)); return (HCURSOR) ::SendMessage(m_hWnd, LVM_GETHOTCURSOR, 0, 0); }
-_AFXCMN_INLINE int CListCtrl::GetHotItem() const
+_AFXCMN_INLINE int CListCtrl::GetHotItem()
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_GETHOTITEM, 0, 0); }
-_AFXCMN_INLINE DWORD CListCtrl::GetExtendedStyle() const
+_AFXCMN_INLINE DWORD CListCtrl::GetExtendedStyle()
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, LVM_GETEXTENDEDLISTVIEWSTYLE, 0, 0); }
 _AFXCMN_INLINE CSize CListCtrl::ApproximateViewRect(CSize sz, int iCount) const
 	{ ASSERT(::IsWindow(m_hWnd)); return CSize((DWORD) ::SendMessage(m_hWnd, LVM_APPROXIMATEVIEWRECT, iCount, MAKELPARAM(sz.cx, sz.cy))); }
@@ -143,7 +127,7 @@ _AFXCMN_INLINE UINT CListCtrl::GetNumberOfWorkAreas() const
 	{ ASSERT(::IsWindow(m_hWnd)); UINT nWorkAreas; ::SendMessage(m_hWnd, LVM_GETNUMBEROFWORKAREAS, 0, (LPARAM)&nWorkAreas); return nWorkAreas; }
 _AFXCMN_INLINE int CListCtrl::SetSelectionMark(int iIndex)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_SETSELECTIONMARK, 0, (LPARAM) iIndex); }
-_AFXCMN_INLINE int CListCtrl::GetSelectionMark() const
+_AFXCMN_INLINE int CListCtrl::GetSelectionMark()
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, LVM_GETSELECTIONMARK, 0, 0); }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -156,38 +140,12 @@ _AFXCMN_INLINE int CHeaderCtrl::SetHotDivider(CPoint pt)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_SETHOTDIVIDER, TRUE, MAKELPARAM(pt.x, pt.y)); }
 _AFXCMN_INLINE int CHeaderCtrl::SetHotDivider(int nIndex)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_SETHOTDIVIDER, FALSE, nIndex); }
-_AFXCMN_INLINE CImageList* CHeaderCtrl::GetImageList(_In_ int nImageList /* = HDSIL_NORMAL */) const
-	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, HDM_GETIMAGELIST, nImageList, 0L)); }
-_AFXCMN_INLINE CImageList* CHeaderCtrl::SetImageList(CImageList* pImageList, _In_ int nImageList /* = HDSIL_NORMAL */)
-	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, HDM_SETIMAGELIST, nImageList, (LPARAM)pImageList->GetSafeHandle())); }
+_AFXCMN_INLINE CImageList* CHeaderCtrl::GetImageList() const
+	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, HDM_GETIMAGELIST, 0, 0L)); }
+_AFXCMN_INLINE CImageList* CHeaderCtrl::SetImageList(CImageList* pImageList)
+	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, HDM_SETIMAGELIST, 0, (LPARAM)pImageList->GetSafeHandle())); }
 _AFXCMN_INLINE CImageList* CHeaderCtrl::CreateDragImage(int nIndex)
 	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, HDM_CREATEDRAGIMAGE, nIndex, 0L)); }
-
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE int CHeaderCtrl::GetBitmapMargin() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_GETBITMAPMARGIN, 0, 0L); }
-_AFXCMN_INLINE int CHeaderCtrl::SetBitmapMargin(int nWidth)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_SETBITMAPMARGIN, nWidth, 0L); }
-_AFXCMN_INLINE int CHeaderCtrl::SetFilterChangeTimeout(DWORD dwTimeOut)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_SETFILTERCHANGETIMEOUT, 0, dwTimeOut); }
-_AFXCMN_INLINE int CHeaderCtrl::EditFilter(int nColumn, BOOL bDiscardChanges)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int)::SendMessage(m_hWnd, HDM_EDITFILTER, nColumn, MAKELPARAM(bDiscardChanges, 0)); }
-_AFXCMN_INLINE BOOL CHeaderCtrl::ClearFilter(int nColumn)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, HDM_CLEARFILTER, nColumn, 0L); }
-_AFXCMN_INLINE BOOL CHeaderCtrl::ClearAllFilters()
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, HDM_CLEARFILTER, (WPARAM)-1, 0L); }
-#endif
-
-#if (_WIN32_WINNT >= 0x600) && defined(UNICODE)
-_AFXCMN_INLINE BOOL CHeaderCtrl::GetItemDropDownRect(int iItem, LPRECT lpRect) const
-	{ ASSERT(::IsWindow(m_hWnd)); return Header_GetItemDropDownRect(m_hWnd, iItem, lpRect); } // HDM_GETITEMDROPDOWNRECT
-_AFXCMN_INLINE BOOL CHeaderCtrl::GetOverflowRect(LPRECT lpRect) const
-	{ ASSERT(::IsWindow(m_hWnd)); return Header_GetOverflowRect(m_hWnd, lpRect); } // HDM_GETOVERFLOWRECT
-_AFXCMN_INLINE int CHeaderCtrl::GetFocusedItem() const
-	{ ASSERT(::IsWindow(m_hWnd)); return Header_GetFocusedItem(m_hWnd); } // HDM_GETFOCUSEDITEM
-_AFXCMN_INLINE BOOL CHeaderCtrl::SetFocusedItem(int iItem)
-	{ ASSERT(::IsWindow(m_hWnd)); return Header_SetFocusedItem(m_hWnd, iItem); } // HDM_SETFOCUSEDITEM
-#endif // _WIN32_WINNT >= 0x600 && defined(UNICODE)
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -224,7 +182,7 @@ _AFXCMN_INLINE BOOL CReBarCtrl::SetBarInfo(REBARINFO* prbi)
 _AFXCMN_INLINE COLORREF CReBarCtrl::SetBkColor(COLORREF clr)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, RB_SETBKCOLOR, 0, (LPARAM)clr); }
 _AFXCMN_INLINE CWnd* CReBarCtrl::SetOwner(CWnd* pWnd)
-	{ ASSERT(::IsWindow(m_hWnd)); CWnd::SetOwner(pWnd);  return CWnd::FromHandle((HWND)::SendMessage(m_hWnd, RB_SETPARENT, (WPARAM)pWnd->m_hWnd, 0L)); }
+	{ ASSERT(::IsWindow(m_hWnd)); return CWnd::FromHandle((HWND)::SendMessage(m_hWnd, RB_SETPARENT, (WPARAM)pWnd->m_hWnd, 0L)); }
 _AFXCMN_INLINE COLORREF CReBarCtrl::SetTextColor(COLORREF clr)
 	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, RB_SETTEXTCOLOR, 0, (LPARAM)clr); }
 _AFXCMN_INLINE void CReBarCtrl::SetToolTips(CToolTipCtrl* pTip)
@@ -245,8 +203,6 @@ _AFXCMN_INLINE void CReBarCtrl::MaximizeBand(UINT uBand)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, RB_MAXIMIZEBAND, uBand, 0L); }
 _AFXCMN_INLINE void CReBarCtrl::MinimizeBand(UINT uBand)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, RB_MINIMIZEBAND, uBand, 0L); }
-_AFXCMN_INLINE void CReBarCtrl::RestoreBand(UINT uBand)
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, RB_MAXIMIZEBAND, uBand, 1L); }
 _AFXCMN_INLINE BOOL CReBarCtrl::SizeToRect(CRect& rect)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, RB_SIZETORECT, 0, (LPARAM)&rect); }
 _AFXCMN_INLINE BOOL CReBarCtrl::ShowBand(UINT uBand, BOOL fShow /*= TRUE*/)
@@ -259,20 +215,6 @@ _AFXCMN_INLINE CPalette* CReBarCtrl::SetPalette(HPALETTE hPal)
 	{ ASSERT(::IsWindow(m_hWnd)); return CPalette::FromHandle((HPALETTE)::SendMessage(m_hWnd, RB_SETPALETTE, 0, (LPARAM)hPal)); }
 _AFXCMN_INLINE BOOL CReBarCtrl::MoveBand(UINT uFrom, UINT uTo)
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, RB_MOVEBAND, uFrom, uTo); }
-
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE void CReBarCtrl::PushChevron(UINT uBand, LPARAM lAppValue)
-	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, RB_PUSHCHEVRON, uBand, lAppValue); }
-#endif
-
-#if (_WIN32_WINNT >= 0x0600) && defined(UNICODE)
-_AFXCMN_INLINE BOOL CReBarCtrl::SetBandWidth(UINT uBand, int cxWidth)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, RB_SETBANDWIDTH, (WPARAM)uBand, (LPARAM)cxWidth); }
-_AFXCMN_INLINE DWORD CReBarCtrl::SetExtendedStyle(DWORD dwMask, DWORD dwStyleEx)
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, RB_SETEXTENDEDSTYLE, dwMask, dwStyleEx); }
-_AFXCMN_INLINE DWORD CReBarCtrl::GetExtendedStyle() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, RB_GETEXTENDEDSTYLE, 0, 0L); }
-#endif // _WIN32_WINNT >= 0x0600 && defined(UNICODE)
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -302,24 +244,7 @@ _AFXCMN_INLINE void CToolTipCtrl::SetTipTextColor(COLORREF clr)
 	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, TTM_SETTIPTEXTCOLOR, clr, 0L); }
 _AFXCMN_INLINE void CToolTipCtrl::Update()
 	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, TTM_UPDATE, 0, 0L); }
-_AFXCMN_INLINE BOOL CToolTipCtrl::GetCurrentTool(LPTOOLINFO lpToolInfo) const
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, TTM_GETCURRENTTOOL, 0, (LPARAM)lpToolInfo); }
 
-#if _WIN32_IE >= 0x0500
-_AFXCMN_INLINE CSize CToolTipCtrl::GetBubbleSize(LPTOOLINFO lpToolInfo) const
-	{ ASSERT(::IsWindow(m_hWnd));  return CSize((DWORD)::SendMessage(m_hWnd, TTM_GETBUBBLESIZE, 0, (LPARAM)lpToolInfo)); }
-_AFXCMN_INLINE BOOL CToolTipCtrl::AdjustRect(LPRECT lprc, BOOL bLarger /*= TRUE*/)
-	{ ASSERT(::IsWindow(m_hWnd));  return (BOOL)::SendMessage(m_hWnd, TTM_ADJUSTRECT, bLarger, (LPARAM)lprc); }
-_AFXCMN_INLINE BOOL CToolTipCtrl::SetTitle(UINT uIcon, LPCTSTR lpstrTitle)
-	{ ASSERT(::IsWindow(m_hWnd));  return (BOOL)::SendMessage(m_hWnd, TTM_SETTITLE, uIcon, (LPARAM)lpstrTitle); }
-#endif
-
-#if (_WIN32_WINNT >= 0x0501) && defined(UNICODE)
-_AFXCMN_INLINE void CToolTipCtrl::Popup()
-	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, TTM_POPUP, 0, 0L); }
-_AFXCMN_INLINE void CToolTipCtrl::GetTitle(PTTGETTITLE pTTGetTitle) const
-	{ ASSERT(::IsWindow(m_hWnd));  ::SendMessage(m_hWnd, TTM_GETTITLE, 0, (LPARAM)pTTGetTitle); }
-#endif
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE CComboBoxEx::CComboBoxEx()
@@ -330,9 +255,9 @@ _AFXCMN_INLINE DWORD CComboBoxEx::SetExtendedStyle(DWORD dwExMask, DWORD dwExSty
 	{ ASSERT(::IsWindow(m_hWnd)); return (DWORD) ::SendMessage(m_hWnd, CBEM_SETEXTENDEDSTYLE, (DWORD) dwExMask, (LPARAM) dwExStyles); }
 _AFXCMN_INLINE BOOL CComboBoxEx::HasEditChanged()
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, CBEM_HASEDITCHANGED, 0, 0); }
-_AFXCMN_INLINE CEdit* CComboBoxEx::GetEditCtrl() const
+_AFXCMN_INLINE CEdit* CComboBoxEx::GetEditCtrl()
 	{ ASSERT(::IsWindow(m_hWnd)); return (CEdit*) CEdit::FromHandle((HWND) ::SendMessage(m_hWnd, CBEM_GETEDITCONTROL, 0, 0)); }
-_AFXCMN_INLINE CComboBox* CComboBoxEx::GetComboBoxCtrl() const
+_AFXCMN_INLINE CComboBox* CComboBoxEx::GetComboBoxCtrl()
 	{ ASSERT(::IsWindow(m_hWnd)); return (CComboBox*) CComboBox::FromHandle((HWND) ::SendMessage(m_hWnd, CBEM_GETCOMBOCONTROL, 0, 0)); }
 _AFXCMN_INLINE CImageList* CComboBoxEx::SetImageList(CImageList* pImageList)
 	{ ASSERT(::IsWindow(m_hWnd)); return CImageList::FromHandle((HIMAGELIST) ::SendMessage(m_hWnd, CBEM_SETIMAGELIST, 0, (LPARAM)pImageList->GetSafeHandle())); }
@@ -362,29 +287,6 @@ _AFXCMN_INLINE int CComboBoxEx::InsertString(int nIndex, LPCTSTR lpszString)
 _AFXCMN_INLINE int CProgressCtrl::SetPos(int nPos)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_SETPOS, nPos, 0L); }
 
-#if (_WIN32_IE >= 0x0400)
-_AFXCMN_INLINE COLORREF CProgressCtrl::SetBarColor(COLORREF clrBar)
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, PBM_SETBARCOLOR, 0, clrBar); }
-#endif	// _WIN32_IE >= 0x0400
-
-#if (_WIN32_WINNT >= 0x0501) && defined(UNICODE)
-_AFXCMN_INLINE BOOL CProgressCtrl::SetMarquee(BOOL fMarqueeMode, int nInterval)
-	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, PBM_SETMARQUEE, (WPARAM)fMarqueeMode, (LPARAM)nInterval); }
-#endif	// _WIN32_WINNT >= 0x0501 && defined(UNICODE)
-
-#if (_WIN32_WINNT >= 0x0600) && defined(UNICODE)
-_AFXCMN_INLINE int CProgressCtrl::GetStep() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_GETSTEP, 0, 0L); }
-_AFXCMN_INLINE COLORREF CProgressCtrl::GetBkColor() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, PBM_GETBKCOLOR, 0, 0L); }
-_AFXCMN_INLINE COLORREF CProgressCtrl::GetBarColor() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (COLORREF) ::SendMessage(m_hWnd, PBM_GETBARCOLOR, 0, 0L); }
-_AFXCMN_INLINE int CProgressCtrl::SetState(int iState)
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_SETSTATE, (WPARAM)iState, 0L); }
-_AFXCMN_INLINE int CProgressCtrl::GetState() const
-	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, PBM_GETSTATE, 0, 0L); }
-#endif	// _WIN32_WINNT >= 0x0600 && defined(UNICODE)
-
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE CIPAddressCtrl::CIPAddressCtrl()
@@ -393,7 +295,7 @@ _AFXCMN_INLINE void CIPAddressCtrl::ClearAddress()
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, IPM_CLEARADDRESS, 0, 0L); }
 _AFXCMN_INLINE BOOL CIPAddressCtrl::IsBlank() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL) ::SendMessage(m_hWnd, IPM_ISBLANK, 0, 0L); }
-_AFXCMN_INLINE int CIPAddressCtrl::GetAddress(DWORD& dwAddress) const
+_AFXCMN_INLINE int CIPAddressCtrl::GetAddress(DWORD& dwAddress)
 	{ ASSERT(::IsWindow(m_hWnd)); return (int) ::SendMessage(m_hWnd, IPM_GETADDRESS, 0, (LPARAM) &dwAddress); }
 _AFXCMN_INLINE void CIPAddressCtrl::SetAddress(DWORD dwAddress)
 	{ ASSERT(::IsWindow(m_hWnd)); ::SendMessage(m_hWnd, IPM_SETADDRESS, 0, (LPARAM) dwAddress); }
@@ -407,11 +309,11 @@ _AFXCMN_INLINE void CIPAddressCtrl::SetFieldRange(int nField, BYTE nLower, BYTE 
 /////////////////////////////////////////////////////////////////////////////
 
 _AFXCMN_INLINE BOOL CImageList::SetImageCount(UINT uNewCount)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_SetImageCount(m_hImageList, uNewCount); }
+	{ ASSERT(m_hImageList != NULL); return ImageList_SetImageCount(m_hImageList, uNewCount); }
 _AFXCMN_INLINE BOOL CImageList::Copy(int iDst, int iSrc, UINT uFlags /* = ILCF_MOVE */)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_Copy(m_hImageList, iDst, m_hImageList, iSrc, uFlags); }
+	{ ASSERT(m_hImageList != NULL); return ImageList_Copy(m_hImageList, iDst, m_hImageList, iSrc, uFlags); }
 _AFXCMN_INLINE BOOL CImageList::Copy(int iDst, CImageList* pSrc, int iSrc, UINT uFlags /* = ILCF_MOVE */)
-	{ ASSERT(m_hImageList != NULL); ASSERT(pSrc != NULL && (HIMAGELIST)*pSrc != NULL); return AfxImageList_Copy(m_hImageList, iDst, *pSrc, iSrc, uFlags); }
+	{ ASSERT(m_hImageList != NULL); ASSERT(pSrc != NULL && (HIMAGELIST)*pSrc != NULL); return ImageList_Copy(m_hImageList, iDst, *pSrc, iSrc, uFlags); }
 
 /////////////////////////////////////////////////////////////////////////////
 

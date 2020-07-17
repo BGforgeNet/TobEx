@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -15,48 +15,16 @@
 	#error MFC requires C++ compilation (use a .cpp suffix)
 #endif
 
-#pragma once
-
 /////////////////////////////////////////////////////////////////////////////
-
-#ifdef _DLL
-#ifndef _AFXDLL
-#error Building MFC application with /MD[d] (CRT dll version) requires MFC shared dll version. Please #define _AFXDLL or do not use /MD[d]
-#endif
-#endif
-
-// Since MFC itself is built with wchar_t as a native type, it will not have
-// the correct type info for types built with wchar_t typedef'd to unsigned
-// short.  Make sure that the user's app builds this type info in this case.
-#ifndef _NATIVE_WCHAR_T_DEFINED
-#define _AFX_FULLTYPEINFO
-#endif
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
- 
-#ifdef __ATLDBGMEM_H__
-#error <atldbgmem.h> cannot be used in MFC projects. See AfxEnableMemoryTracking
 #endif
-
-#if defined(_MFC_DLL_BLD) && defined(_DEBUG)
-#ifndef _CRTDBG_MAP_ALLOC
-#define _CRTDBG_MAP_ALLOC
-#endif
-#endif
-
-#ifndef _INC_NEW
-	#include <new.h>
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
 #endif
 
 #include <afxver_.h>        // Target version control
-
-#ifdef _WIN64
-#ifndef _AFX_NO_DAO_SUPPORT
-#define _AFX_NO_DAO_SUPPORT
-#endif
-#endif
 
 #ifndef _AFX_NOFORCE_LIBS
 
@@ -80,19 +48,19 @@
 #else
 	#ifndef _UNICODE
 		#ifdef _DEBUG
-			#pragma comment(lib, "mfc" _MFC_FILENAME_VER "d.lib")
-			#pragma comment(lib, "mfcs" _MFC_FILENAME_VER "d.lib")
+			#pragma comment(lib, "mfc42d.lib")
+			#pragma comment(lib, "mfcs42d.lib")
 		#else
-			#pragma comment(lib, "mfc" _MFC_FILENAME_VER ".lib")
-			#pragma comment(lib, "mfcs" _MFC_FILENAME_VER ".lib")
+			#pragma comment(lib, "mfc42.lib")
+			#pragma comment(lib, "mfcs42.lib")
 		#endif
 	#else
 		#ifdef _DEBUG
-			#pragma comment(lib, "mfc" _MFC_FILENAME_VER "ud.lib")
-			#pragma comment(lib, "mfcs" _MFC_FILENAME_VER "ud.lib")
+			#pragma comment(lib, "mfc42ud.lib")
+			#pragma comment(lib, "mfcs42ud.lib")
 		#else
-			#pragma comment(lib, "mfc" _MFC_FILENAME_VER "u.lib")
-			#pragma comment(lib, "mfcs" _MFC_FILENAME_VER "u.lib")
+			#pragma comment(lib, "mfc42u.lib")
+			#pragma comment(lib, "mfcs42u.lib")
 		#endif
 	#endif
 #endif
@@ -122,13 +90,11 @@
 #pragma comment(lib, "kernel32.lib")
 #pragma comment(lib, "user32.lib")
 #pragma comment(lib, "gdi32.lib")
-#pragma comment(lib, "msimg32.lib")
 #pragma comment(lib, "comdlg32.lib")
 #pragma comment(lib, "winspool.lib")
 #pragma comment(lib, "advapi32.lib")
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "comctl32.lib")
-#pragma comment(lib, "shlwapi.lib")
 
 // force inclusion of NOLIB.OBJ for /disallowlib directives
 #pragma comment(linker, "/include:__afxForceEXCLUDE")
@@ -145,22 +111,6 @@
 
 #endif //!_AFX_NOFORCE_LIBS
 
-#if !defined( _AFX_NOFORCE_MANIFEST ) && !defined(_VC_NODEFAULTLIB) && defined( _AFXDLL )
-
-#define __MFC_MAKE_STR_HELPER(x) #x
-#define __MFC_MAKE_STR(x) __MFC_MAKE_STR_HELPER(x)
-
-#include <mfcassem.h>
-
-#endif	// !_AFX_NOFORCE_MANIFEST && !_VC_NODEFAULTLIB && _AFXDLL
-
-#ifdef _MANAGED
-
-#ifndef AFX_NO_CLR_COINIT_STA
-#pragma comment(linker, "/CLRTHREADATTRIBUTE:STA")
-#endif 
-
-#endif //_MANAGED
 /////////////////////////////////////////////////////////////////////////////
 // Classes declared in this file
 //   in addition to standard primitive data types and various helper macros
@@ -175,13 +125,15 @@ class CObject;                        // the root of all objects classes
 		class CSimpleException;
 			class CMemoryException;       // out-of-memory exception
 			class CNotSupportedException; // feature not supported exception
-			class CInvalidArgException;	  // one of the parameters to the function is invalid
 
 	class CFile;                      // raw binary file
 		class CStdioFile;             // buffered stdio text/binary file
 		class CMemFile;               // memory based file
 
 // Non CObject classes
+class CString;                        // growable string type
+class CTimeSpan;                      // time/date difference
+class CTime;                          // absolute time/date
 struct CFileStatus;                   // file status information
 struct CMemoryState;                  // diagnostic memory support
 
@@ -212,11 +164,6 @@ class CDumpContext;                   // object diagnostic dumping
 #ifndef _INC_STDARG
 	#include <stdarg.h>
 #endif
-#ifndef _INC_ERRNO 
-#include <errno.h>
-#endif
-
-#include <malloc.h>
 
 #ifndef _AFX_NO_DEBUG_CRT
 #ifndef _INC_CRTDBG
@@ -225,7 +172,11 @@ class CDumpContext;                   // object diagnostic dumping
 #endif // _AFX_NO_DEBUG_CRT
 
 #ifdef _AFX_OLD_EXCEPTIONS
-#error MFC no longer supports setjmp/longjmp exception handling.
+// use setjmp and helper functions instead of C++ keywords
+#ifndef _INC_SETJMP
+	#pragma warning(disable: 4611)
+	#include <setjmp.h>
+#endif
 #endif
 
 #ifdef _AFX_PACKING
@@ -234,9 +185,13 @@ class CDumpContext;                   // object diagnostic dumping
 
 /////////////////////////////////////////////////////////////////////////////
 // Basic types
+
 // abstract iteration position
-struct __POSITION {};
+struct __POSITION { };
 typedef __POSITION* POSITION;
+
+struct _AFX_DOUBLE  { BYTE doubleBits[sizeof(double)]; };
+struct _AFX_FLOAT   { BYTE floatBits[sizeof(float)]; };
 
 // Standard constants
 #undef FALSE
@@ -246,52 +201,6 @@ typedef __POSITION* POSITION;
 #define FALSE   0
 #define TRUE    1
 #define NULL    0
-
-/////////////////////////////////////////////////////////////////////////////
-// _AFX_FUNCNAME definition
-#ifdef UNICODE
-#define _AFX_FUNCNAME(_Name) _Name##W
-#else
-#define _AFX_FUNCNAME(_Name) _Name##A
-#endif
-
-/////////////////////////////////////////////////////////////////////////////
-// Turn off warnings for /W4
-// To resume any of these warning: #pragma warning(default: 4xxx)
-// which should be placed after the AFX include files
-
-#pragma warning(disable: 4505)  // unreferenced local function has been removed
-#pragma warning(disable: 4511)  // private copy constructors are good to have
-#pragma warning(disable: 4512)  // private operator= are good to have
-#pragma warning(disable: 4514)  // unreferenced inlines are common
-#pragma warning(disable: 4710)  // function not inlined
-#pragma warning(disable: 4127)  // constant expression used in macros do while(0);
-
-// warnings specific to _AFXDLL version
-#ifdef _AFXDLL
-#pragma warning(disable: 4275)  // deriving exported class from non-exported
-#pragma warning(disable: 4251)  // using non-exported as public in exported
-#endif
-
-#ifdef _AFX_ALL_WARNINGS
-#pragma warning( push )
-#endif
-
-// warnings generated with common MFC/Windows code
-#pragma warning(disable: 4201)  // nameless unions are part of C++
-#pragma warning(disable: 4191)  // pointer-to-function casting
-// warnings caused by normal optimizations
-#ifndef _DEBUG
-#pragma warning(disable: 4701)  // local variable *may* be used without init
-#pragma warning(disable: 4702)  // unreachable code caused by optimizations
-#pragma warning(disable: 4189)  // initialized but unused variable
-#pragma warning(disable: 4390)  // empty controlled statement
-#endif
-// warnings specific to _AFXDLL version
-#ifdef _AFXDLL
-#pragma warning(disable: 4204)  // non-constant aggregate initializer
-#endif
-#pragma warning(disable: 4263 4264)  // base class method is hidden
 
 /////////////////////////////////////////////////////////////////////////////
 // Diagnostic support
@@ -306,22 +215,26 @@ void AFXAPI AfxAssertValidObject(const CObject* pOb,
 				LPCSTR lpszFileName, int nLine);
 void AFXAPI AfxDump(const CObject* pOb); // Dump an object from CodeView
 
-#include <atltrace.h>
-
-// extern ATL::CTrace TRACE;
-#define TRACE ATLTRACE
-
+#define TRACE              ::AfxTrace
 #define THIS_FILE          __FILE__
+#define ASSERT(f) \
+	do \
+	{ \
+	if (!(f) && AfxAssertFailedLine(THIS_FILE, __LINE__)) \
+		AfxDebugBreak(); \
+	} while (0) \
+
 #define VERIFY(f)          ASSERT(f)
+#define ASSERT_VALID(pOb)  (::AfxAssertValidObject(pOb, THIS_FILE, __LINE__))
 #define DEBUG_ONLY(f)      (f)
 
 // The following trace macros are provided for backward compatiblity
 //  (they also take a fixed number of parameters which provides
 //   some amount of extra error checking)
-#define TRACE0(sz)              TRACE(_T("%s"), _T(sz))
-#define TRACE1(sz, p1)          TRACE(_T(sz), p1)
-#define TRACE2(sz, p1, p2)      TRACE(_T(sz), p1, p2)
-#define TRACE3(sz, p1, p2, p3)  TRACE(_T(sz), p1, p2, p3)
+#define TRACE0(sz)              ::AfxTrace(_T("%s"), _T(sz))
+#define TRACE1(sz, p1)          ::AfxTrace(_T(sz), p1)
+#define TRACE2(sz, p1, p2)      ::AfxTrace(_T(sz), p1, p2)
+#define TRACE3(sz, p1, p2, p3)  ::AfxTrace(_T(sz), p1, p2, p3)
 
 // These AFX_DUMP macros also provided for backward compatibility
 #define AFX_DUMP0(dc, sz)   dc << _T(sz)
@@ -329,13 +242,12 @@ void AFXAPI AfxDump(const CObject* pOb); // Dump an object from CodeView
 
 #else   // _DEBUG
 
+#define ASSERT(f)          ((void)0)
 #define VERIFY(f)          ((void)(f))
+#define ASSERT_VALID(pOb)  ((void)0)
 #define DEBUG_ONLY(f)      ((void)0)
-#pragma warning(push)
-#pragma warning(disable : 4793)
-inline void AFX_CDECL AfxTrace(...) { }
-#pragma warning(pop)
-#define TRACE              __noop
+inline void AFX_CDECL AfxTrace(LPCTSTR, ...) { }
+#define TRACE              1 ? (void)0 : ::AfxTrace
 #define TRACE0(sz)
 #define TRACE1(sz, p1)
 #define TRACE2(sz, p1, p2)
@@ -343,34 +255,44 @@ inline void AFX_CDECL AfxTrace(...) { }
 
 #endif // !_DEBUG
 
-#define ASSERT(f)          DEBUG_ONLY((void) ((f) || !::AfxAssertFailedLine(THIS_FILE, __LINE__) || (AfxDebugBreak(), 0)))
-/* see ATL headers for commentary on this */
-/* We use the name AFXASSUME to avoid name clashes */
-
-#if defined(_PREFAST_) || defined (_DEBUG)
-#define AFXASSUME(cond)			do { bool __afx_condVal=!!(cond); ASSERT(__afx_condVal); __analysis_assume(__afx_condVal); } while(0) 
-#else
-#define AFXASSUME(cond)			((void)0)
-#endif
-
-#define ASSERT_VALID(pOb)  DEBUG_ONLY((::AfxAssertValidObject(pOb, THIS_FILE, __LINE__)))
-
-// Debug ASSERTs then throws. Retail throws if condition not met
-#define ENSURE_THROW(cond, exception)	\
-	do { int __afx_condVal=!!(cond); ASSERT(__afx_condVal); if (!(__afx_condVal)){exception;} } while (false)
-#define ENSURE(cond)		ENSURE_THROW(cond, ::AfxThrowInvalidArgException() )
-#define ENSURE_ARG(cond)	ENSURE_THROW(cond, ::AfxThrowInvalidArgException() )
-
-// Debug ASSERT_VALIDs then throws. Retail throws if pOb is NULL
-#define ENSURE_VALID_THROW(pOb, exception)	\
-	do { ASSERT_VALID(pOb); if (!(pOb)){exception;} } while (false)
-#define ENSURE_VALID(pOb)	ENSURE_VALID_THROW(pOb, ::AfxThrowInvalidArgException() )
-
 #define ASSERT_POINTER(p, type) \
 	ASSERT(((p) != NULL) && AfxIsValidAddress((p), sizeof(type), FALSE))
 
 #define ASSERT_NULL_OR_POINTER(p, type) \
 	ASSERT(((p) == NULL) || AfxIsValidAddress((p), sizeof(type), FALSE))
+
+/////////////////////////////////////////////////////////////////////////////
+// Turn off warnings for /W4
+// To resume any of these warning: #pragma warning(default: 4xxx)
+// which should be placed after the AFX include files
+#ifndef ALL_WARNINGS
+// warnings generated with common MFC/Windows code
+#pragma warning(disable: 4127)  // constant expression for TRACE/ASSERT
+#pragma warning(disable: 4134)  // message map member fxn casts
+#pragma warning(disable: 4201)  // nameless unions are part of C++
+#pragma warning(disable: 4511)  // private copy constructors are good to have
+#pragma warning(disable: 4512)  // private operator= are good to have
+#pragma warning(disable: 4514)  // unreferenced inlines are common
+#pragma warning(disable: 4710)  // private constructors are disallowed
+#pragma warning(disable: 4705)  // statement has no effect in optimized code
+#pragma warning(disable: 4191)  // pointer-to-function casting
+// warnings caused by normal optimizations
+#ifndef _DEBUG
+#pragma warning(disable: 4701)  // local variable *may* be used without init
+#pragma warning(disable: 4702)  // unreachable code caused by optimizations
+#pragma warning(disable: 4791)  // loss of debugging info in release version
+#pragma warning(disable: 4189)  // initialized but unused variable
+#pragma warning(disable: 4390)  // empty controlled statement
+#endif
+// warnings specific to _AFXDLL version
+#ifdef _AFXDLL
+#pragma warning(disable: 4204)  // non-constant aggregate initializer
+#endif
+#ifdef _AFXDLL
+#pragma warning(disable: 4275)  // deriving exported class from non-exported
+#pragma warning(disable: 4251)  // using non-exported as public in exported
+#endif
+#endif //!ALL_WARNINGS
 
 #ifdef _DEBUG
 #define UNUSED(x)
@@ -378,38 +300,6 @@ inline void AFX_CDECL AfxTrace(...) { }
 #define UNUSED(x) x
 #endif
 #define UNUSED_ALWAYS(x) x
-
-#ifdef _DEBUG
-#define REPORT_EXCEPTION(pException, szMsg) \
-	do { \
-		TCHAR szErrorMessage[512]; \
-		if (pException->GetErrorMessage(szErrorMessage, sizeof(szErrorMessage)/sizeof(*szErrorMessage), 0)) \
-			TRACE(traceAppMsg, 0, _T("%s (%s:%d)\n%s\n"), szMsg, _T(__FILE__), __LINE__, szErrorMessage); \
-		else \
-			TRACE(traceAppMsg, 0, _T("%s (%s:%d)\n"), szMsg, _T(__FILE__), __LINE__); \
-		ASSERT(FALSE); \
-	} while (0)
-#else
-#define REPORT_EXCEPTION(pException, szMsg) \
-	do { \
-		CString strMsg; \
-		TCHAR  szErrorMessage[512]; \
-		if (pException->GetErrorMessage(szErrorMessage, sizeof(szErrorMessage)/sizeof(*szErrorMessage), 0)) \
-			strMsg.Format(_T("%s (%s:%d)\n%s"), szMsg, _T(__FILE__), __LINE__, szErrorMessage); \
-		else \
-			strMsg.Format(_T("%s (%s:%d)"), szMsg, _T(__FILE__), __LINE__); \
-		AfxMessageBox(strMsg); \
-	} while (0)
-#endif
-
-#define EXCEPTION_IN_DTOR(pException) \
-	do { \
-		REPORT_EXCEPTION((pException), _T("Exception thrown in destructor")); \
-		delete pException; \
-	} while (0)
-	
-#define AFX_BEGIN_DESTRUCTOR try {
-#define AFX_END_DESTRUCTOR   } catch (CException *pException) { EXCEPTION_IN_DTOR(pException); }
 
 /////////////////////////////////////////////////////////////////////////////
 // Other implementation helpers
@@ -426,11 +316,6 @@ BOOL AFXAPI AfxInitialize(BOOL bDLL = FALSE, DWORD dwVersion = _MFC_VER);
 
 /////////////////////////////////////////////////////////////////////////////
 // Basic object model
-
-// generate static object constructor for class registration
-void AFXAPI AfxClassInit(CRuntimeClass* pNewClass);
-struct AFX_CLASSINIT
-	{ AFX_CLASSINIT(CRuntimeClass* pNewClass) { AfxClassInit(pNewClass); } };
 
 struct CRuntimeClass
 {
@@ -449,82 +334,341 @@ struct CRuntimeClass
 	CObject* CreateObject();
 	BOOL IsDerivedFrom(const CRuntimeClass* pBaseClass) const;
 
-	// dynamic name lookup and creation
-	static CRuntimeClass* PASCAL FromName(LPCSTR lpszClassName);
-	static CRuntimeClass* PASCAL FromName(LPCWSTR lpszClassName);
-	static CObject* PASCAL CreateObject(LPCSTR lpszClassName);
-	static CObject* PASCAL CreateObject(LPCWSTR lpszClassName);
-
 // Implementation
 	void Store(CArchive& ar) const;
 	static CRuntimeClass* PASCAL Load(CArchive& ar, UINT* pwSchemaNum);
 
 	// CRuntimeClass objects linked together in simple list
 	CRuntimeClass* m_pNextClass;       // linked list of registered classes
-	const AFX_CLASSINIT* m_pClassInit;
 };
-
-/////////////////////////////////////////////////////////////////////////////
-// Standard exception throws
-
-void __declspec(noreturn) AFXAPI AfxThrowMemoryException();
-void __declspec(noreturn) AFXAPI AfxThrowNotSupportedException();
-void __declspec(noreturn) AFXAPI AfxThrowInvalidArgException();
-void __declspec(noreturn) AFXAPI AfxThrowArchiveException(int cause,
-	LPCTSTR lpszArchiveName = NULL);
-void __declspec(noreturn) AFXAPI AfxThrowFileException(int cause, LONG lOsError = -1,
-	LPCTSTR lpszFileName = NULL);
-void __declspec(noreturn) AFXAPI AfxThrowOleException(LONG sc);
-
-/////////////////////////////////////////////////////////////////////////////
-// CRT functions
-
-inline errno_t AfxCrtErrorCheck(errno_t error)
-{
-	switch(error)
-	{
-	case ENOMEM:
-		AfxThrowMemoryException();
-		break;
-	case EINVAL:
-	case ERANGE:
-		AfxThrowInvalidArgException();
-		break;
-	case STRUNCATE:
-	case 0:
-		break;
-	default:
-		AfxThrowInvalidArgException();
-		break;
-	}
-	return error;
-}
-
-#define AFX_CRT_ERRORCHECK(expr) \
-	AfxCrtErrorCheck(expr)
-
-inline void __cdecl Afx_clearerr_s(FILE *stream)
-{
-	AFX_CRT_ERRORCHECK(::clearerr_s(stream));
-}
 
 /////////////////////////////////////////////////////////////////////////////
 // Strings
 
 #ifndef _OLEAUTO_H_
+#ifdef OLE2ANSI
+	typedef LPSTR BSTR;
+#else
 	typedef LPWSTR BSTR;// must (semantically) match typedef in oleauto.h
+#endif
+#endif
+
+struct CStringData
+{
+	long nRefs;             // reference count
+	int nDataLength;        // length of data (including terminator)
+	int nAllocLength;       // length of allocation
+	// TCHAR data[nAllocLength]
+
+	TCHAR* data()           // TCHAR* to managed data
+		{ return (TCHAR*)(this+1); }
+};
+
+class CString
+{
+public:
+// Constructors
+
+	// constructs empty CString
+	CString();
+	// copy constructor
+	CString(const CString& stringSrc);
+	// from a single character
+	CString(TCHAR ch, int nRepeat = 1);
+	// from an ANSI string (converts to TCHAR)
+	CString(LPCSTR lpsz);
+	// from a UNICODE string (converts to TCHAR)
+	CString(LPCWSTR lpsz);
+	// subset of characters from an ANSI string (converts to TCHAR)
+	CString(LPCSTR lpch, int nLength);
+	// subset of characters from a UNICODE string (converts to TCHAR)
+	CString(LPCWSTR lpch, int nLength);
+	// from unsigned characters
+	CString(const unsigned char* psz);
+
+// Attributes & Operations
+
+	// get data length
+	int GetLength() const;
+	// TRUE if zero length
+	BOOL IsEmpty() const;
+	// clear contents to empty
+	void Empty();
+
+	// return single character at zero-based index
+	TCHAR GetAt(int nIndex) const;
+	// return single character at zero-based index
+	TCHAR operator[](int nIndex) const;
+	// set a single character at zero-based index
+	void SetAt(int nIndex, TCHAR ch);
+	// return pointer to const string
+	operator LPCTSTR() const;
+
+	// overloaded assignment
+
+	// ref-counted copy from another CString
+	const CString& operator=(const CString& stringSrc);
+	// set string content to single character
+	const CString& operator=(TCHAR ch);
+#ifdef _UNICODE
+	const CString& operator=(char ch);
+#endif
+	// copy string content from ANSI string (converts to TCHAR)
+	const CString& operator=(LPCSTR lpsz);
+	// copy string content from UNICODE string (converts to TCHAR)
+	const CString& operator=(LPCWSTR lpsz);
+	// copy string content from unsigned chars
+	const CString& operator=(const unsigned char* psz);
+
+	// string concatenation
+
+	// concatenate from another CString
+	const CString& operator+=(const CString& string);
+
+	// concatenate a single character
+	const CString& operator+=(TCHAR ch);
+#ifdef _UNICODE
+	// concatenate an ANSI character after converting it to TCHAR
+	const CString& operator+=(char ch);
+#endif
+	// concatenate a UNICODE character after converting it to TCHAR
+	const CString& operator+=(LPCTSTR lpsz);
+
+	friend CString AFXAPI operator+(const CString& string1,
+			const CString& string2);
+	friend CString AFXAPI operator+(const CString& string, TCHAR ch);
+	friend CString AFXAPI operator+(TCHAR ch, const CString& string);
+#ifdef _UNICODE
+	friend CString AFXAPI operator+(const CString& string, char ch);
+	friend CString AFXAPI operator+(char ch, const CString& string);
+#endif
+	friend CString AFXAPI operator+(const CString& string, LPCTSTR lpsz);
+	friend CString AFXAPI operator+(LPCTSTR lpsz, const CString& string);
+
+	// string comparison
+
+	// straight character comparison
+	int Compare(LPCTSTR lpsz) const;
+	// compare ignoring case
+	int CompareNoCase(LPCTSTR lpsz) const;
+	// NLS aware comparison, case sensitive
+	int Collate(LPCTSTR lpsz) const;
+	// NLS aware comparison, case insensitive
+	int CollateNoCase(LPCTSTR lpsz) const;
+
+	// simple sub-string extraction
+
+	// return nCount characters starting at zero-based nFirst
+	CString Mid(int nFirst, int nCount) const;
+	// return all characters starting at zero-based nFirst
+	CString Mid(int nFirst) const;
+	// return first nCount characters in string
+	CString Left(int nCount) const;
+	// return nCount characters from end of string
+	CString Right(int nCount) const;
+
+	//  characters from beginning that are also in passed string
+	CString SpanIncluding(LPCTSTR lpszCharSet) const;
+	// characters from beginning that are not also in passed string
+	CString SpanExcluding(LPCTSTR lpszCharSet) const;
+
+	// upper/lower/reverse conversion
+
+	// NLS aware conversion to uppercase
+	void MakeUpper();
+	// NLS aware conversion to lowercase
+	void MakeLower();
+	// reverse string right-to-left
+	void MakeReverse();
+
+	// trimming whitespace (either side)
+
+	// remove whitespace starting from right edge
+	void TrimRight();
+	// remove whitespace starting from left side
+	void TrimLeft();
+
+	// trimming anything (either side)
+
+	// remove continuous occurrences of chTarget starting from right
+	void TrimRight(TCHAR chTarget);
+	// remove continuous occcurrences of characters in passed string,
+	// starting from right
+	void TrimRight(LPCTSTR lpszTargets);
+	// remove continuous occurrences of chTarget starting from left
+	void TrimLeft(TCHAR chTarget);
+	// remove continuous occcurrences of characters in
+	// passed string, starting from left
+	void TrimLeft(LPCTSTR lpszTargets);
+
+	// advanced manipulation
+
+	// replace occurrences of chOld with chNew
+	int Replace(TCHAR chOld, TCHAR chNew);
+	// replace occurrences of substring lpszOld with lpszNew;
+	// empty lpszNew removes instances of lpszOld
+	int Replace(LPCTSTR lpszOld, LPCTSTR lpszNew);
+	// remove occurrences of chRemove
+	int Remove(TCHAR chRemove);
+	// insert character at zero-based index; concatenates
+	// if index is past end of string
+	int Insert(int nIndex, TCHAR ch);
+	// insert substring at zero-based index; concatenates
+	// if index is past end of string
+	int Insert(int nIndex, LPCTSTR pstr);
+	// delete nCount characters starting at zero-based index
+	int Delete(int nIndex, int nCount = 1);
+
+	// searching
+
+	// find character starting at left, -1 if not found
+	int Find(TCHAR ch) const;
+	// find character starting at right
+	int ReverseFind(TCHAR ch) const;
+	// find character starting at zero-based index and going right
+	int Find(TCHAR ch, int nStart) const;
+	// find first instance of any character in passed string
+	int FindOneOf(LPCTSTR lpszCharSet) const;
+	// find first instance of substring
+	int Find(LPCTSTR lpszSub) const;
+	// find first instance of substring starting at zero-based index
+	int Find(LPCTSTR lpszSub, int nStart) const;
+
+	// simple formatting
+
+	// printf-like formatting using passed string
+	void AFX_CDECL Format(LPCTSTR lpszFormat, ...);
+	// printf-like formatting using referenced string resource
+	void AFX_CDECL Format(UINT nFormatID, ...);
+	// printf-like formatting using variable arguments parameter
+	void FormatV(LPCTSTR lpszFormat, va_list argList);
+
+	// formatting for localization (uses FormatMessage API)
+
+	// format using FormatMessage API on passed string
+	void AFX_CDECL FormatMessage(LPCTSTR lpszFormat, ...);
+	// format using FormatMessage API on referenced string resource
+	void AFX_CDECL FormatMessage(UINT nFormatID, ...);
+
+	// input and output
+#ifdef _DEBUG
+	friend CDumpContext& AFXAPI operator<<(CDumpContext& dc,
+				const CString& string);
+#endif
+	friend CArchive& AFXAPI operator<<(CArchive& ar, const CString& string);
+	friend CArchive& AFXAPI operator>>(CArchive& ar, CString& string);
+
+	// load from string resource
+	BOOL LoadString(UINT nID);
+
+#ifndef _UNICODE
+	// ANSI <-> OEM support (convert string in place)
+
+	// convert string from ANSI to OEM in-place
+	void AnsiToOem();
+	// convert string from OEM to ANSI in-place
+	void OemToAnsi();
+#endif
+
+#ifndef _AFX_NO_BSTR_SUPPORT
+	// OLE BSTR support (use for OLE automation)
+
+	// return a BSTR initialized with this CString's data
+	BSTR AllocSysString() const;
+	// reallocates the passed BSTR, copies content of this CString to it
+	BSTR SetSysString(BSTR* pbstr) const;
+#endif
+
+	// Access to string implementation buffer as "C" character array
+
+	// get pointer to modifiable buffer at least as long as nMinBufLength
+	LPTSTR GetBuffer(int nMinBufLength);
+	// release buffer, setting length to nNewLength (or to first nul if -1)
+	void ReleaseBuffer(int nNewLength = -1);
+	// get pointer to modifiable buffer exactly as long as nNewLength
+	LPTSTR GetBufferSetLength(int nNewLength);
+	// release memory allocated to but unused by string
+	void FreeExtra();
+
+	// Use LockBuffer/UnlockBuffer to turn refcounting off
+
+	// turn refcounting back on
+	LPTSTR LockBuffer();
+	// turn refcounting off
+	void UnlockBuffer();
+
+// Implementation
+public:
+	~CString();
+	int GetAllocLength() const;
+
+protected:
+	LPTSTR m_pchData;   // pointer to ref counted string data
+
+	// implementation helpers
+	CStringData* GetData() const;
+	void Init();
+	void AllocCopy(CString& dest, int nCopyLen, int nCopyIndex, int nExtraLen) const;
+	void AllocBuffer(int nLen);
+	void AssignCopy(int nSrcLen, LPCTSTR lpszSrcData);
+	void ConcatCopy(int nSrc1Len, LPCTSTR lpszSrc1Data, int nSrc2Len, LPCTSTR lpszSrc2Data);
+	void ConcatInPlace(int nSrcLen, LPCTSTR lpszSrcData);
+	void CopyBeforeWrite();
+	void AllocBeforeWrite(int nLen);
+	void Release();
+	static void PASCAL Release(CStringData* pData);
+	static int PASCAL SafeStrlen(LPCTSTR lpsz);
+	static void FASTCALL FreeData(CStringData* pData);
+};
+
+// Compare helpers
+bool AFXAPI operator==(const CString& s1, const CString& s2);
+bool AFXAPI operator==(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator==(LPCTSTR s1, const CString& s2);
+bool AFXAPI operator!=(const CString& s1, const CString& s2);
+bool AFXAPI operator!=(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator!=(LPCTSTR s1, const CString& s2);
+bool AFXAPI operator<(const CString& s1, const CString& s2);
+bool AFXAPI operator<(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator<(LPCTSTR s1, const CString& s2);
+bool AFXAPI operator>(const CString& s1, const CString& s2);
+bool AFXAPI operator>(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator>(LPCTSTR s1, const CString& s2);
+bool AFXAPI operator<=(const CString& s1, const CString& s2);
+bool AFXAPI operator<=(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator<=(LPCTSTR s1, const CString& s2);
+bool AFXAPI operator>=(const CString& s1, const CString& s2);
+bool AFXAPI operator>=(const CString& s1, LPCTSTR s2);
+bool AFXAPI operator>=(LPCTSTR s1, const CString& s2);
+
+// conversion helpers
+int AFX_CDECL _wcstombsz(char* mbstr, const wchar_t* wcstr, size_t count);
+int AFX_CDECL _mbstowcsz(wchar_t* wcstr, const char* mbstr, size_t count);
+
+// Globals
+extern AFX_DATA TCHAR afxChNil;
+#ifdef _AFXDLL
+const CString& AFXAPI AfxGetEmptyString();
+#define afxEmptyString AfxGetEmptyString()
+#else
+extern LPCTSTR _afxPchNil;
+#define afxEmptyString ((CString&)*(CString*)&_afxPchNil)
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
 // class CObject is the root of all compliant objects
 
+#ifdef _AFXDLL
+class CObject
+#else
 class AFX_NOVTABLE CObject
+#endif
 {
 public:
 
 // Object model (types, destruction, allocation)
 	virtual CRuntimeClass* GetRuntimeClass() const;
-	virtual ~CObject() = 0;  // virtual destructors are necessary
+	virtual ~CObject();  // virtual destructors are necessary
 
 	// Diagnostic allocations
 	void* PASCAL operator new(size_t nSize);
@@ -567,20 +711,14 @@ public:
 
 // Implementation
 public:
-	static const CRuntimeClass classCObject;
+	static const AFX_DATA CRuntimeClass classCObject;
 #ifdef _AFXDLL
 	static CRuntimeClass* PASCAL _GetBaseClass();
-	static CRuntimeClass* PASCAL GetThisClass();
 #endif
 };
 
 // Helper macros
-#define _RUNTIME_CLASS(class_name) ((CRuntimeClass*)(&class_name::class##class_name))
-#ifdef _AFXDLL
-#define RUNTIME_CLASS(class_name) (class_name::GetThisClass())
-#else
-#define RUNTIME_CLASS(class_name) _RUNTIME_CLASS(class_name)
-#endif
+#define RUNTIME_CLASS(class_name) ((CRuntimeClass*)(&class_name::class##class_name))
 #define ASSERT_KINDOF(class_name, object) \
 	ASSERT((object)->IsKindOf(RUNTIME_CLASS(class_name)))
 
@@ -594,9 +732,9 @@ CObject* AFX_CDECL AfxDynamicDownCast(CRuntimeClass* pClass, CObject* pObject);
 const CObject* AFX_CDECL AfxStaticDownCast(CRuntimeClass* pClass, const CObject* pObject);
 CObject* AFX_CDECL AfxStaticDownCast(CRuntimeClass* pClass, CObject* pObject);
 #define STATIC_DOWNCAST(class_name, object) \
-	(static_cast<class_name*>(AfxStaticDownCast(RUNTIME_CLASS(class_name), object)))
+	((class_name*)AfxStaticDownCast(RUNTIME_CLASS(class_name), object))
 #else
-#define STATIC_DOWNCAST(class_name, object) (static_cast<class_name*>(object))
+#define STATIC_DOWNCAST(class_name, object) ((class_name*)object)
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -607,27 +745,25 @@ CObject* AFX_CDECL AfxStaticDownCast(CRuntimeClass* pClass, CObject* pObject);
 protected: \
 	static CRuntimeClass* PASCAL _GetBaseClass(); \
 public: \
-	static const CRuntimeClass class##class_name; \
-	static CRuntimeClass* PASCAL GetThisClass(); \
+	static const AFX_DATA CRuntimeClass class##class_name; \
 	virtual CRuntimeClass* GetRuntimeClass() const; \
 
 #define _DECLARE_DYNAMIC(class_name) \
 protected: \
 	static CRuntimeClass* PASCAL _GetBaseClass(); \
 public: \
-	static CRuntimeClass class##class_name; \
-	static CRuntimeClass* PASCAL GetThisClass(); \
+	static AFX_DATA CRuntimeClass class##class_name; \
 	virtual CRuntimeClass* GetRuntimeClass() const; \
 
 #else
 #define DECLARE_DYNAMIC(class_name) \
 public: \
-	static const CRuntimeClass class##class_name; \
+	static const AFX_DATA CRuntimeClass class##class_name; \
 	virtual CRuntimeClass* GetRuntimeClass() const; \
 
 #define _DECLARE_DYNAMIC(class_name) \
 public: \
-	static CRuntimeClass class##class_name; \
+	static AFX_DATA CRuntimeClass class##class_name; \
 	virtual CRuntimeClass* GetRuntimeClass() const; \
 
 #endif
@@ -645,65 +781,67 @@ public: \
 	_DECLARE_DYNCREATE(class_name) \
 	AFX_API friend CArchive& AFXAPI operator>>(CArchive& ar, class_name* &pOb);
 
-#ifdef _AFXDLL
-#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
-	CRuntimeClass* PASCAL class_name::_GetBaseClass() \
-		{ return RUNTIME_CLASS(base_class_name); } \
-	AFX_COMDAT const CRuntimeClass class_name::class##class_name = { \
-		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			&class_name::_GetBaseClass, NULL, class_init }; \
-	CRuntimeClass* PASCAL class_name::GetThisClass() \
-		{ return _RUNTIME_CLASS(class_name); } \
-	CRuntimeClass* class_name::GetRuntimeClass() const \
-		{ return _RUNTIME_CLASS(class_name); }
+// generate static object constructor for class registration
+void AFXAPI AfxClassInit(CRuntimeClass* pNewClass);
+struct AFX_CLASSINIT
+	{ AFX_CLASSINIT(CRuntimeClass* pNewClass) { AfxClassInit(pNewClass); } };
+struct AFX_CLASSINIT_COMPAT
+	{ AFX_CLASSINIT_COMPAT(CRuntimeClass* pNewClass); };
 
-#define _IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
+#ifdef _AFXDLL
+#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
 	CRuntimeClass* PASCAL class_name::_GetBaseClass() \
 		{ return RUNTIME_CLASS(base_class_name); } \
-	AFX_COMDAT CRuntimeClass class_name::class##class_name = { \
+	AFX_COMDAT const AFX_DATADEF CRuntimeClass class_name::class##class_name = { \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			&class_name::_GetBaseClass, NULL, class_init }; \
-	CRuntimeClass* PASCAL class_name::GetThisClass() \
-		{ return _RUNTIME_CLASS(class_name); } \
+			&class_name::_GetBaseClass, NULL }; \
 	CRuntimeClass* class_name::GetRuntimeClass() const \
-		{ return _RUNTIME_CLASS(class_name); }
+		{ return RUNTIME_CLASS(class_name); } \
+
+#define _IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
+	CRuntimeClass* PASCAL class_name::_GetBaseClass() \
+		{ return RUNTIME_CLASS(base_class_name); } \
+	AFX_COMDAT AFX_DATADEF CRuntimeClass class_name::class##class_name = { \
+		#class_name, sizeof(class class_name), wSchema, pfnNew, \
+			&class_name::_GetBaseClass, NULL }; \
+	CRuntimeClass* class_name::GetRuntimeClass() const \
+		{ return RUNTIME_CLASS(class_name); } \
 
 #else
-#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
-	AFX_COMDAT const CRuntimeClass class_name::class##class_name = { \
+#define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
+	AFX_COMDAT const AFX_DATADEF CRuntimeClass class_name::class##class_name = { \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			RUNTIME_CLASS(base_class_name), NULL, class_init }; \
+			RUNTIME_CLASS(base_class_name), NULL }; \
 	CRuntimeClass* class_name::GetRuntimeClass() const \
-		{ return RUNTIME_CLASS(class_name); }
+		{ return RUNTIME_CLASS(class_name); } \
 
-#define _IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew, class_init) \
-	AFX_COMDAT CRuntimeClass class_name::class##class_name = { \
+#define _IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
+	AFX_DATADEF CRuntimeClass class_name::class##class_name = { \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			RUNTIME_CLASS(base_class_name), NULL, class_init }; \
+			RUNTIME_CLASS(base_class_name), NULL }; \
 	CRuntimeClass* class_name::GetRuntimeClass() const \
-		{ return RUNTIME_CLASS(class_name); }
+		{ return RUNTIME_CLASS(class_name); } \
 
 #endif
 
 #define IMPLEMENT_DYNAMIC(class_name, base_class_name) \
-	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, NULL, NULL)
+	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, NULL)
 
 #define IMPLEMENT_DYNCREATE(class_name, base_class_name) \
 	CObject* PASCAL class_name::CreateObject() \
 		{ return new class_name; } \
 	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, \
-		class_name::CreateObject, NULL)
+		class_name::CreateObject)
 
 #define IMPLEMENT_SERIAL(class_name, base_class_name, wSchema) \
 	CObject* PASCAL class_name::CreateObject() \
 		{ return new class_name; } \
-	extern AFX_CLASSINIT _init_##class_name; \
 	_IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, \
-		class_name::CreateObject, &_init_##class_name) \
+		class_name::CreateObject) \
 	AFX_CLASSINIT _init_##class_name(RUNTIME_CLASS(class_name)); \
 	CArchive& AFXAPI operator>>(CArchive& ar, class_name* &pOb) \
 		{ pOb = (class_name*) ar.ReadObject(RUNTIME_CLASS(class_name)); \
-			return ar; }
+			return ar; } \
 
 // optional bit for schema number that enables object versioning
 #define VERSIONABLE_SCHEMA  (0x80000000)
@@ -719,7 +857,11 @@ public: \
 /////////////////////////////////////////////////////////////////////////////
 // Exceptions
 
+#ifdef _AFXDLL
+class CException : public CObject
+#else
 class AFX_NOVTABLE CException : public CObject
+#endif
 {
 	// abstract class for dynamic type checking
 	DECLARE_DYNAMIC(CException)
@@ -727,20 +869,18 @@ class AFX_NOVTABLE CException : public CObject
 public:
 // Constructors
 	CException();   // sets m_bAutoDelete = TRUE
-	explicit CException(BOOL bAutoDelete);   // sets m_bAutoDelete = bAutoDelete
+	CException(BOOL bAutoDelete);   // sets m_bAutoDelete = bAutoDelete
 
 // Operations
 	void Delete();  // use to delete exception in 'catch' block
 
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const ;
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL);
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 	virtual int ReportError(UINT nType = MB_OK, UINT nMessageID = 0);
 
 // Implementation (setting m_bAutoDelete to FALSE is advanced)
 public:
-	virtual ~CException() = 0;
+	virtual ~CException();
 	BOOL m_bAutoDelete;
 #ifdef _DEBUG
 	void PASCAL operator delete(void* pbData);
@@ -752,29 +892,27 @@ protected:
 #endif
 };
 
-#include <afxstr.h>
-
-// ATL Classes
-
+#ifdef _AFXDLL
 class CSimpleException : public CException
+#else
+class AFX_NOVTABLE CSimpleException : public CException
+#endif
 {
-	DECLARE_DYNAMIC(CSimpleException)
-	
 	// base class for resource-critical MFC exceptions
 	// handles ownership and initialization of an error message
 
 public:
 // Constructors
 	CSimpleException();
-	explicit CSimpleException(BOOL bAutoDelete);
+	CSimpleException(BOOL bAutoDelete);
 
 // Operations
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 
 // Implementation (setting m_bAutoDelete to FALSE is advanced)
 public:
-	virtual ~CSimpleException() = 0;
+	virtual ~CSimpleException();
 	BOOL m_bAutoDelete;
 
 	void InitString();      // used during MFC initialization
@@ -791,8 +929,13 @@ protected:
 };
 
 // helper routines for non-C++ EH implementations
+#ifdef _AFX_OLD_EXCEPTIONS
+	BOOL AFXAPI AfxCatchProc(CRuntimeClass* pClass);
+	void AFXAPI AfxThrow(CException* pException);
+#else
 	// for THROW_LAST auto-delete backward compatiblity
 	void AFXAPI AfxThrowLastCleanup();
+#endif
 
 // other out-of-line helper functions
 void AFXAPI AfxTryCleanup();
@@ -805,6 +948,19 @@ void AFXAPI AfxTryCleanup();
 // Placed on frame for EXCEPTION linkage, or CException cleanup
 struct AFX_EXCEPTION_LINK
 {
+#ifdef _AFX_OLD_EXCEPTIONS
+	union
+	{
+		_AFX_JUMPBUF m_jumpBuf;
+		struct
+		{
+			void (PASCAL* pfnCleanup)(AFX_EXCEPTION_LINK* pLink);
+			void* pvData;       // extra data follows
+		} m_callback;       // callback for cleanup (nType != 0)
+	};
+	UINT m_nType;               // 0 for setjmp, !=0 for user extension
+#endif //!_AFX_OLD_EXCEPTIONS
+
 	AFX_EXCEPTION_LINK* m_pLinkPrev;    // previous top, next in handler chain
 	CException* m_pException;   // current exception (NULL in TRY block)
 
@@ -832,10 +988,23 @@ int AFX_CDECL AfxNewHandler(size_t nSize);
 
 void AFXAPI AfxAbort();
 
+#ifdef _AFX_OLD_EXCEPTIONS
+
+// Obsolete and non-portable: setting terminate handler
+//  use CWinApp::ProcessWndProcException for Windows apps instead
+//  can also use set_terminate which is part of C++ standard library
+//      (these are provided for backward compatibility)
+void AFXAPI AfxTerminate();
+typedef void (AFXAPI* AFX_TERM_PROC)();
+AFX_TERM_PROC AFXAPI AfxSetTerminate(AFX_TERM_PROC);
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Exception macros using try, catch and throw
 //  (for backward compatibility to previous versions of MFC)
+
+#ifndef _AFX_OLD_EXCEPTIONS
 
 #define TRY { AFX_EXCEPTION_LINK _afxExceptionLink; try {
 
@@ -867,6 +1036,42 @@ void AFXAPI AfxAbort();
 	{ ASSERT(e->IsKindOf(RUNTIME_CLASS(CException))); \
 		_afxExceptionLink.m_pException = e; } }
 
+#else //_AFX_OLD_EXCEPTIONS
+
+/////////////////////////////////////////////////////////////////////////////
+// Exception macros using setjmp and longjmp
+//  (for portability to compilers with no support for C++ exception handling)
+
+#define TRY \
+	{ AFX_EXCEPTION_LINK _afxExceptionLink; \
+	if (::setjmp(_afxExceptionLink.m_jumpBuf) == 0)
+
+#define CATCH(class, e) \
+	else if (::AfxCatchProc(RUNTIME_CLASS(class))) \
+	{ class* e = (class*)_afxExceptionLink.m_pException;
+
+#define AND_CATCH(class, e) \
+	} else if (::AfxCatchProc(RUNTIME_CLASS(class))) \
+	{ class* e = (class*)_afxExceptionLink.m_pException;
+
+#define END_CATCH \
+	} else { ::AfxThrow(NULL); } }
+
+#define THROW(e) AfxThrow(e)
+#define THROW_LAST() AfxThrow(NULL)
+
+// Advanced macros for smaller code
+#define CATCH_ALL(e) \
+	else { CException* e = _afxExceptionLink.m_pException;
+
+#define AND_CATCH_ALL(e) \
+	} else { CException* e = _afxExceptionLink.m_pException;
+
+#define END_CATCH_ALL } }
+
+#define END_TRY }
+
+#endif //_AFX_OLD_EXCEPTIONS
 
 /////////////////////////////////////////////////////////////////////////////
 // Standard Exception classes
@@ -879,7 +1084,7 @@ public:
 
 // Implementation
 public:
-	explicit CMemoryException(BOOL bAutoDelete);
+	CMemoryException(BOOL bAutoDelete);
 	CMemoryException(BOOL bAutoDelete, UINT nResourceID);
 	virtual ~CMemoryException();
 };
@@ -892,21 +1097,9 @@ public:
 
 // Implementation
 public:
-	explicit CNotSupportedException(BOOL bAutoDelete);
+	CNotSupportedException(BOOL bAutoDelete);
 	CNotSupportedException(BOOL bAutoDelete, UINT nResourceID);
 	virtual ~CNotSupportedException();
-};
-class CInvalidArgException : public CSimpleException
-{
-	DECLARE_DYNAMIC(CInvalidArgException)
-public:
-	CInvalidArgException();
-
-// Implementation
-public:
-	CInvalidArgException(BOOL bAutoDelete);
-	CInvalidArgException(BOOL bAutoDelete, UINT nResourceID);
-	virtual ~CInvalidArgException();
 };
 
 class CArchiveException : public CException
@@ -915,7 +1108,7 @@ class CArchiveException : public CException
 public:
 	enum {
 		none,
-		genericException,
+		generic,
 		readOnly,
 		endOfFile,
 		writeOnly,
@@ -924,13 +1117,8 @@ public:
 		badSchema
 	};
 
-#pragma warning(push)
-#pragma warning(disable:4996)
-	AFX_DEPRECATED("CArchiveException::generic clashes with future language keyword generic and should not be used. Use CArchiveException::genericException instead.") static const int __identifier(generic) = genericException;
-#pragma warning(pop)
-
 // Constructor
-	/* explicit */ CArchiveException(int cause = CArchiveException::none,
+	CArchiveException(int cause = CArchiveException::none,
 		LPCTSTR lpszArchiveName = NULL);
 
 // Attributes
@@ -943,8 +1131,8 @@ public:
 #ifdef _DEBUG
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 };
 
 class CFileException : public CException
@@ -954,7 +1142,7 @@ class CFileException : public CException
 public:
 	enum {
 		none,
-		genericException,
+		generic,
 		fileNotFound,
 		badPath,
 		tooManyOpenFiles,
@@ -970,13 +1158,8 @@ public:
 		endOfFile
 	};
 
-#pragma warning(push)
-#pragma warning(disable:4996)
-	AFX_DEPRECATED("CFileException::generic clashes with future language keyword generic and should not be used. Use CFileException::genericException instead.") static const int __identifier(generic) = genericException;
-#pragma warning(pop)
-
 // Constructor
-	/* explicit */ CFileException(int cause = CFileException::none, LONG lOsError = -1,
+	CFileException(int cause = CFileException::none, LONG lOsError = -1,
 		LPCTSTR lpszArchiveName = NULL);
 
 // Attributes
@@ -999,9 +1182,19 @@ public:
 #ifdef _DEBUG
 	virtual void Dump(CDumpContext&) const;
 #endif
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 };
+
+/////////////////////////////////////////////////////////////////////////////
+// Standard exception throws
+
+void AFXAPI AfxThrowMemoryException();
+void AFXAPI AfxThrowNotSupportedException();
+void AFXAPI AfxThrowArchiveException(int cause,
+	LPCTSTR lpszArchiveName = NULL);
+void AFXAPI AfxThrowFileException(int cause, LONG lOsError = -1,
+	LPCTSTR lpszFileName = NULL);
 
 /////////////////////////////////////////////////////////////////////////////
 // File - raw unbuffered disk file I/O
@@ -1013,23 +1206,19 @@ class CFile : public CObject
 public:
 // Flag values
 	enum OpenFlags {
-		modeRead =         (int) 0x00000,
-		modeWrite =        (int) 0x00001,
-		modeReadWrite =    (int) 0x00002,
-		shareCompat =      (int) 0x00000,
-		shareExclusive =   (int) 0x00010,
-		shareDenyWrite =   (int) 0x00020,
-		shareDenyRead =    (int) 0x00030,
-		shareDenyNone =    (int) 0x00040,
-		modeNoInherit =    (int) 0x00080,
-		modeCreate =       (int) 0x01000,
-		modeNoTruncate =   (int) 0x02000,
-		typeText =         (int) 0x04000, // typeText and typeBinary are
-		typeBinary =       (int) 0x08000, // used in derived classes only
-		osNoBuffer =       (int) 0x10000,
-		osWriteThrough =   (int) 0x20000,
-		osRandomAccess =   (int) 0x40000,
-		osSequentialScan = (int) 0x80000,
+		modeRead =          0x0000,
+		modeWrite =         0x0001,
+		modeReadWrite =     0x0002,
+		shareCompat =       0x0000,
+		shareExclusive =    0x0010,
+		shareDenyWrite =    0x0020,
+		shareDenyRead =     0x0030,
+		shareDenyNone =     0x0040,
+		modeNoInherit =     0x0080,
+		modeCreate =        0x1000,
+		modeNoTruncate =    0x2000,
+		typeText =          0x4000, // typeText and typeBinary are used in
+		typeBinary =   (int)0x8000 // derived classes only
 		};
 
 	enum Attribute {
@@ -1044,18 +1233,18 @@ public:
 
 	enum SeekPosition { begin = 0x0, current = 0x1, end = 0x2 };
 
-	static AFX_DATA const HANDLE hFileNull;
+	enum { hFileNull = -1 };
 
 // Constructors
 	CFile();
-	CFile(HANDLE hFile);
+	CFile(int hFile);
 	CFile(LPCTSTR lpszFileName, UINT nOpenFlags);
 
 // Attributes
-	HANDLE m_hFile;
-	operator HANDLE() const;
+	UINT m_hFile;
+	operator HFILE() const;
 
-	virtual ULONGLONG GetPosition() const;
+	virtual DWORD GetPosition() const;
 	BOOL GetStatus(CFileStatus& rStatus) const;
 	virtual CString GetFileName() const;
 	virtual CString GetFileTitle() const;
@@ -1074,21 +1263,25 @@ public:
 	static void PASCAL SetStatus(LPCTSTR lpszFileName,
 				const CFileStatus& status);
 
-	ULONGLONG SeekToEnd();
+	DWORD SeekToEnd();
 	void SeekToBegin();
+
+	// backward compatible ReadHuge and WriteHuge
+	DWORD ReadHuge(void* lpBuffer, DWORD dwCount);
+	void WriteHuge(const void* lpBuffer, DWORD dwCount);
 
 // Overridables
 	virtual CFile* Duplicate() const;
 
-	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
-	virtual void SetLength(ULONGLONG dwNewLen);
-	virtual ULONGLONG GetLength() const;
+	virtual LONG Seek(LONG lOff, UINT nFrom);
+	virtual void SetLength(DWORD dwNewLen);
+	virtual DWORD GetLength() const;
 
 	virtual UINT Read(void* lpBuf, UINT nCount);
 	virtual void Write(const void* lpBuf, UINT nCount);
 
-	virtual void LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-	virtual void UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
+	virtual void LockRange(DWORD dwPos, DWORD dwCount);
+	virtual void UnlockRange(DWORD dwPos, DWORD dwCount);
 
 	virtual void Abort();
 	virtual void Flush();
@@ -1102,11 +1295,6 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 	enum BufferCommand { bufferRead, bufferWrite, bufferCommit, bufferCheck };
-	enum BufferFlags 
-	{ 
-		bufferDirect = 0x01,
-		bufferBlocking = 0x02
-	};
 	virtual UINT GetBufferPtr(UINT nCommand, UINT nCount = 0,
 		void** ppBufStart = NULL, void** ppBufMax = NULL);
 
@@ -1135,7 +1323,7 @@ public:
 // Operations
 	// reading and writing strings
 	virtual void WriteString(LPCTSTR lpsz);
-	virtual LPTSTR ReadString(_Out_z_cap_(nMax) LPTSTR lpsz, _In_ UINT nMax);
+	virtual LPTSTR ReadString(LPTSTR lpsz, UINT nMax);
 	virtual BOOL ReadString(CString& rString);
 
 // Implementation
@@ -1144,21 +1332,20 @@ public:
 #ifdef _DEBUG
 	void Dump(CDumpContext& dc) const;
 #endif
-	virtual ULONGLONG GetPosition() const;
-   virtual ULONGLONG GetLength() const;
+	virtual DWORD GetPosition() const;
 	virtual BOOL Open(LPCTSTR lpszFileName, UINT nOpenFlags,
 		CFileException* pError = NULL);
 	virtual UINT Read(void* lpBuf, UINT nCount);
 	virtual void Write(const void* lpBuf, UINT nCount);
-	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
+	virtual LONG Seek(LONG lOff, UINT nFrom);
 	virtual void Abort();
 	virtual void Flush();
 	virtual void Close();
 
 	// Unsupported APIs
 	virtual CFile* Duplicate() const;
-	virtual void LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-	virtual void UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
+	virtual void LockRange(DWORD dwPos, DWORD dwCount);
+	virtual void UnlockRange(DWORD dwPos, DWORD dwCount);
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1170,7 +1357,7 @@ class CMemFile : public CFile
 
 public:
 // Constructors
-	/* explicit */ CMemFile(UINT nGrowBytes = 1024);
+	CMemFile(UINT nGrowBytes = 1024);
 	CMemFile(BYTE* lpBuffer, UINT nBufferSize, UINT nGrowBytes = 0);
 
 // Operations
@@ -1179,18 +1366,18 @@ public:
 
 // Advanced Overridables
 protected:
-	virtual BYTE* Alloc(SIZE_T nBytes);
-	virtual BYTE* Realloc(BYTE* lpMem, SIZE_T nBytes);
-	virtual BYTE* Memcpy(BYTE* lpMemTarget, const BYTE* lpMemSource, SIZE_T nBytes);
+	virtual BYTE* Alloc(DWORD nBytes);
+	virtual BYTE* Realloc(BYTE* lpMem, DWORD nBytes);
+	virtual BYTE* Memcpy(BYTE* lpMemTarget, const BYTE* lpMemSource, UINT nBytes);
 	virtual void Free(BYTE* lpMem);
-	virtual void GrowFile(SIZE_T dwNewLen);
+	virtual void GrowFile(DWORD dwNewLen);
 
 // Implementation
 protected:
-	SIZE_T m_nGrowBytes;
-	SIZE_T m_nPosition;
-	SIZE_T m_nBufferSize;
-	SIZE_T m_nFileSize;
+	UINT m_nGrowBytes;
+	DWORD m_nPosition;
+	DWORD m_nBufferSize;
+	DWORD m_nFileSize;
 	BYTE* m_lpBuffer;
 	BOOL m_bAutoDelete;
 
@@ -1200,10 +1387,10 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 	virtual void AssertValid() const;
 #endif
-	virtual ULONGLONG GetPosition() const;
+	virtual DWORD GetPosition() const;
 	BOOL GetStatus(CFileStatus& rStatus) const;
-	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
-	virtual void SetLength(ULONGLONG dwNewLen);
+	virtual LONG Seek(LONG lOff, UINT nFrom);
+	virtual void SetLength(DWORD dwNewLen);
 	virtual UINT Read(void* lpBuf, UINT nCount);
 	virtual void Write(const void* lpBuf, UINT nCount);
 	virtual void Abort();
@@ -1211,20 +1398,15 @@ public:
 	virtual void Close();
 	virtual UINT GetBufferPtr(UINT nCommand, UINT nCount = 0,
 		void** ppBufStart = NULL, void** ppBufMax = NULL);
-	virtual ULONGLONG GetLength() const;
 
 	// Unsupported APIs
 	virtual CFile* Duplicate() const;
-	virtual void LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-	virtual void UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
+	virtual void LockRange(DWORD dwPos, DWORD dwCount);
+	virtual void UnlockRange(DWORD dwPos, DWORD dwCount);
 };
 
 ////////////////////////////////////////////////////////////////////////////
 // Local file searches
-
-#include <atltime.h>
-using ATL::CTime;
-using ATL::CTimeSpan;
 
 class CFileFind : public CObject
 {
@@ -1234,7 +1416,10 @@ public:
 
 // Attributes
 public:
-	ULONGLONG GetLength() const;
+	DWORD GetLength() const;
+#if defined(_X86_) || defined(_ALPHA_)
+	__int64 GetLength64() const;
+#endif
 	virtual CString GetFileName() const;
 	virtual CString GetFilePath() const;
 	virtual CString GetFileTitle() const;
@@ -1274,6 +1459,7 @@ protected:
 	void* m_pFoundInfo;
 	void* m_pNextInfo;
 	HANDLE m_hContext;
+	BOOL m_bGotLast;
 	CString m_strRoot;
 	TCHAR m_chDirSeparator;     // not '\\' for Internet classes
 
@@ -1285,19 +1471,132 @@ protected:
 	DECLARE_DYNAMIC(CFileFind)
 };
 
-// CTimeSpan diagnostics and serialization
-#ifdef _DEBUG
-CDumpContext& AFXAPI operator<<(CDumpContext& dc,CTimeSpan dateSpanSrc);
-#endif
-CArchive& AFXAPI operator<<(CArchive& ar, CTimeSpan dateSpanSrc);
-CArchive& AFXAPI operator>>(CArchive& ar, CTimeSpan& dateSpanSrc);
+/////////////////////////////////////////////////////////////////////////////
+// CTimeSpan and CTime
 
-// CTime diagnostics and serialization
-#ifdef _DEBUG
-CDumpContext& AFXAPI operator<<(CDumpContext& dc, CTime dateSrc);
+class CTimeSpan
+{
+public:
+
+// Constructors
+	CTimeSpan();
+	CTimeSpan(time_t time);
+	CTimeSpan(LONG lDays, int nHours, int nMins, int nSecs);
+
+	CTimeSpan(const CTimeSpan& timeSpanSrc);
+	const CTimeSpan& operator=(const CTimeSpan& timeSpanSrc);
+
+// Attributes
+	// extract parts
+	LONG GetDays() const;   // total # of days
+	LONG GetTotalHours() const;
+	int GetHours() const;
+	LONG GetTotalMinutes() const;
+	int GetMinutes() const;
+	LONG GetTotalSeconds() const;
+	int GetSeconds() const;
+
+// Operations
+	// time math
+	CTimeSpan operator-(CTimeSpan timeSpan) const;
+	CTimeSpan operator+(CTimeSpan timeSpan) const;
+	const CTimeSpan& operator+=(CTimeSpan timeSpan);
+	const CTimeSpan& operator-=(CTimeSpan timeSpan);
+	BOOL operator==(CTimeSpan timeSpan) const;
+	BOOL operator!=(CTimeSpan timeSpan) const;
+	BOOL operator<(CTimeSpan timeSpan) const;
+	BOOL operator>(CTimeSpan timeSpan) const;
+	BOOL operator<=(CTimeSpan timeSpan) const;
+	BOOL operator>=(CTimeSpan timeSpan) const;
+
+#ifdef _UNICODE
+	// for compatibility with MFC 3.x
+	CString Format(LPCSTR pFormat) const;
 #endif
-CArchive& AFXAPI operator<<(CArchive& ar, CTime dateSrc);
-CArchive& AFXAPI operator>>(CArchive& ar, CTime& dateSrc);
+	CString Format(LPCTSTR pFormat) const;
+	CString Format(UINT nID) const;
+
+	// serialization
+#ifdef _DEBUG
+	friend CDumpContext& AFXAPI operator<<(CDumpContext& dc,CTimeSpan timeSpan);
+#endif
+	friend CArchive& AFXAPI operator<<(CArchive& ar, CTimeSpan timeSpan);
+	friend CArchive& AFXAPI operator>>(CArchive& ar, CTimeSpan& rtimeSpan);
+
+private:
+	time_t m_timeSpan;
+	friend class CTime;
+};
+
+class CTime
+{
+public:
+
+// Constructors
+	static CTime PASCAL GetCurrentTime();
+
+	CTime();
+	CTime(time_t time);
+	CTime(int nYear, int nMonth, int nDay, int nHour, int nMin, int nSec,
+		int nDST = -1);
+	CTime(WORD wDosDate, WORD wDosTime, int nDST = -1);
+	CTime(const CTime& timeSrc);
+
+	CTime(const SYSTEMTIME& sysTime, int nDST = -1);
+	CTime(const FILETIME& fileTime, int nDST = -1);
+	const CTime& operator=(const CTime& timeSrc);
+	const CTime& operator=(time_t t);
+
+// Attributes
+	struct tm* GetGmtTm(struct tm* ptm = NULL) const;
+	struct tm* GetLocalTm(struct tm* ptm = NULL) const;
+	BOOL GetAsSystemTime(SYSTEMTIME& timeDest) const;
+
+	time_t GetTime() const;
+	int GetYear() const;
+	int GetMonth() const;       // month of year (1 = Jan)
+	int GetDay() const;         // day of month
+	int GetHour() const;
+	int GetMinute() const;
+	int GetSecond() const;
+	int GetDayOfWeek() const;   // 1=Sun, 2=Mon, ..., 7=Sat
+
+// Operations
+	// time math
+	CTimeSpan operator-(CTime time) const;
+	CTime operator-(CTimeSpan timeSpan) const;
+	CTime operator+(CTimeSpan timeSpan) const;
+	const CTime& operator+=(CTimeSpan timeSpan);
+	const CTime& operator-=(CTimeSpan timeSpan);
+	BOOL operator==(CTime time) const;
+	BOOL operator!=(CTime time) const;
+	BOOL operator<(CTime time) const;
+	BOOL operator>(CTime time) const;
+	BOOL operator<=(CTime time) const;
+	BOOL operator>=(CTime time) const;
+
+	// formatting using "C" strftime
+	CString Format(LPCTSTR pFormat) const;
+	CString FormatGmt(LPCTSTR pFormat) const;
+	CString Format(UINT nFormatID) const;
+	CString FormatGmt(UINT nFormatID) const;
+
+#ifdef _UNICODE
+	// for compatibility with MFC 3.x
+	CString Format(LPCSTR pFormat) const;
+	CString FormatGmt(LPCSTR pFormat) const;
+#endif
+
+	// serialization
+#ifdef _DEBUG
+	friend CDumpContext& AFXAPI operator<<(CDumpContext& dc, CTime time);
+#endif
+	friend CArchive& AFXAPI operator<<(CArchive& ar, CTime time);
+	friend CArchive& AFXAPI operator>>(CArchive& ar, CTime& rtime);
+
+private:
+	time_t m_time;
+};
 
 /////////////////////////////////////////////////////////////////////////////
 // File status
@@ -1307,7 +1606,7 @@ struct CFileStatus
 	CTime m_ctime;          // creation date/time of file
 	CTime m_mtime;          // last modification date/time of file
 	CTime m_atime;          // last access date/time of file
-	ULONGLONG m_size;            // logical size of file in bytes
+	LONG m_size;            // logical size of file in bytes
 	BYTE m_attribute;       // logical OR of CFile::Attribute enum values
 	BYTE _m_padding;        // pad the structure to a WORD
 	TCHAR m_szFullName[_MAX_PATH]; // absolute path name
@@ -1322,13 +1621,9 @@ struct CFileStatus
 
 // Low level sanity checks for memory blocks
 BOOL AFXAPI AfxIsValidAddress(const void* lp,
-			UINT_PTR nBytes, BOOL bReadWrite = TRUE);
+			UINT nBytes, BOOL bReadWrite = TRUE);
 BOOL AFXAPI AfxIsValidString(LPCWSTR lpsz, int nLength = -1);
 BOOL AFXAPI AfxIsValidString(LPCSTR lpsz, int nLength = -1);
-
-// Sanity checks for ATOMs
-BOOL AfxIsValidAtom(ATOM nAtom);
-BOOL AfxIsValidAtom(LPCTSTR psz);
 
 #if defined(_DEBUG) && !defined(_AFX_NO_DEBUG_CRT)
 
@@ -1337,13 +1632,6 @@ void* AFX_CDECL operator new(size_t nSize, LPCSTR lpszFileName, int nLine);
 #define DEBUG_NEW new(THIS_FILE, __LINE__)
 #if _MSC_VER >= 1200
 void AFX_CDECL operator delete(void* p, LPCSTR lpszFileName, int nLine);
-#endif
-
-void * __cdecl operator new[](size_t);
-#if _MSC_VER >= 1210
-void* __cdecl operator new[](size_t nSize, LPCSTR lpszFileName, int nLine);
-void __cdecl operator delete[](void* p, LPCSTR lpszFileName, int nLine);
-void __cdecl operator delete[](void *);
 #endif
 
 void* AFXAPI AfxAllocMemoryDebug(size_t nSize, BOOL bIsObject,
@@ -1364,25 +1652,24 @@ BOOL AFXAPI AfxCheckMemory();
 
 enum AfxMemDF // memory debug/diagnostic flags
 {
-	allocMemDF          = _CRTDBG_ALLOC_MEM_DF,         // turn on debugging allocator
-	delayFreeMemDF      = _CRTDBG_DELAY_FREE_MEM_DF,         // delay freeing memory
-	checkAlwaysMemDF    = _CRTDBG_CHECK_ALWAYS_DF,          // AfxCheckMemory on every alloc/free
-	checkEvery16MemDF	= _CRTDBG_CHECK_EVERY_16_DF,
-	checkEvery128MemDF	= _CRTDBG_CHECK_EVERY_128_DF,
-	checkEvery1024MemDF	= _CRTDBG_CHECK_EVERY_1024_DF,
-	checkDefaultMemDF	= _CRTDBG_CHECK_DEFAULT_DF
+	allocMemDF          = 0x01,         // turn on debugging allocator
+	delayFreeMemDF      = 0x02,         // delay freeing memory
+	checkAlwaysMemDF    = 0x04          // AfxCheckMemory on every alloc/free
 };
 
-#define AfxOutputDebugString TRACE
+#ifdef _UNICODE
+#define AfxOutputDebugString(lpsz) \
+	do \
+	{ \
+		USES_CONVERSION; \
+		_RPT0(_CRT_WARN, W2CA(lpsz)); \
+	} while (0)
+#else
+#define AfxOutputDebugString(lpsz) _RPT0(_CRT_WARN, lpsz)
+#endif
 
 // turn on/off tracking for a short while
 BOOL AFXAPI AfxEnableMemoryTracking(BOOL bTrack);
-
-// Turn on/off the global flag _afxMemoryLeakOverride. if bEnable is TRUE
-// then further calls to AfxEnableMemoryTracking() wont change the current
-// memory tracking state, until AfxEnableMemoryLeakOverride(BOOL bEnable)
-// is called again with bEnable == FALSE.
-BOOL AFXAPI AfxEnableMemoryLeakOverride(BOOL bEnable);
 
 // Advanced initialization: for overriding default diagnostics
 BOOL AFXAPI AfxDiagnosticInit(void);
@@ -1411,10 +1698,10 @@ struct CMemoryState
 	};
 
 	_CrtMemState m_memState;
-	LONG_PTR m_lCounts[nBlockUseMax];
-	LONG_PTR m_lSizes[nBlockUseMax];
-	LONG_PTR m_lHighWaterCount;
-	LONG_PTR m_lTotalCount;
+	LONG m_lCounts[nBlockUseMax];
+	LONG m_lSizes[nBlockUseMax];
+	LONG m_lHighWaterCount;
+	LONG m_lTotalCount;
 
 	CMemoryState();
 
@@ -1442,7 +1729,6 @@ void AFXAPI AfxDoForAllClasses(void (AFX_CDECL *pfn)(const CRuntimeClass* pClass
 #define AfxCheckMemory() TRUE
 #define AfxIsMemoryBlock(p, nBytes) TRUE
 #define AfxEnableMemoryTracking(bTrack) FALSE
-#define AfxEnableMemoryLeakOverride(bEnable) TRUE
 #define AfxOutputDebugString(lpsz) ::OutputDebugString(lpsz)
 
 // diagnostic initialization
@@ -1458,17 +1744,12 @@ BOOL AFXAPI AfxDiagnosticInit(void);
 // Archives for serializing CObject data
 
 // needed for implementation
-template<class TYPE, class ARG_TYPE>
-class CArray;
 class CPtrArray;
 class CMapPtrToPtr;
 class CDocument;
 
 class CArchive
 {
-protected:
-	enum SchemaMapReservedRefs { objTypeArrayRef = 1 };
-	enum LoadArrayObjType{ typeUndefined = 0, typeCRuntimeClass = 1, typeCObject = 2 };	
 public:
 // Flag values
 	enum Mode { store = 0, load = 1, bNoFlushOnDelete = 2, bNoByteSwap = 4 };
@@ -1492,7 +1773,6 @@ public:
 
 // Operations
 	UINT Read(void* lpBuf, UINT nMax);
-	void EnsureRead(void *lpBuf, UINT nCount);
 	void Write(const void* lpBuf, UINT nMax);
 	void Flush();
 	void Close();
@@ -1500,7 +1780,7 @@ public:
 
 	// reading and writing strings
 	void WriteString(LPCTSTR lpsz);
-	LPTSTR ReadString(_Out_z_cap_(nMax+1) LPTSTR lpsz, _In_ UINT nMax);
+	LPTSTR ReadString(LPTSTR lpsz, UINT nMax);
 	BOOL ReadString(CString& rString);
 
 public:
@@ -1518,30 +1798,11 @@ public:
 	CArchive& operator<<(DWORD dw);
 	CArchive& operator<<(float f);
 	CArchive& operator<<(double d);
-	CArchive& operator<<(LONGLONG dwdw);
-	CArchive& operator<<(ULONGLONG dwdw);
 
 	CArchive& operator<<(int i);
 	CArchive& operator<<(short w);
 	CArchive& operator<<(char ch);
-#ifdef _NATIVE_WCHAR_T_DEFINED
-	CArchive& operator<<(wchar_t ch);
-#endif
 	CArchive& operator<<(unsigned u);
-
-	template < typename BaseType , bool t_bMFCDLL>
-	CArchive& operator<<(const ATL::CSimpleStringT<BaseType, t_bMFCDLL>& str);
-
-	template< typename BaseType, class StringTraits >	
-	CArchive& operator<<(const ATL::CStringT<BaseType, StringTraits>& str);
-	
-	template < typename BaseType , bool t_bMFCDLL>
-	CArchive& operator>>(ATL::CSimpleStringT<BaseType, t_bMFCDLL>& str);
-
-	template< typename BaseType, class StringTraits >
-	CArchive& operator>>(ATL::CStringT<BaseType, StringTraits>& str);
-
-	CArchive& operator<<(bool b);
 
 	// extraction operations
 	CArchive& operator>>(BYTE& by);
@@ -1550,17 +1811,11 @@ public:
 	CArchive& operator>>(LONG& l);
 	CArchive& operator>>(float& f);
 	CArchive& operator>>(double& d);
-	CArchive& operator>>(LONGLONG& dwdw);
-	CArchive& operator>>(ULONGLONG& dwdw);
 
 	CArchive& operator>>(int& i);
 	CArchive& operator>>(short& w);
 	CArchive& operator>>(char& ch);
-#ifdef _NATIVE_WCHAR_T_DEFINED
-	CArchive& operator>>(wchar_t& ch);
-#endif
 	CArchive& operator>>(unsigned& u);
-	CArchive& operator>>(bool& b);
 
 	// object read/write
 	CObject* ReadObject(const CRuntimeClass* pClass);
@@ -1578,18 +1833,16 @@ public:
 	void SetStoreParams(UINT nHashSize = 2053, UINT nBlockSize = 128);
 	void SetLoadParams(UINT nGrowBy = 1024);
 
-	void EnsureSchemaMapExists(CArray<LoadArrayObjType, const LoadArrayObjType&>** ppObjTypeArray = NULL);
 // Implementation
 public:
 	BOOL m_bForceFlat;  // for COleClientItem implementation (default TRUE)
 	BOOL m_bDirectBuffer;   // TRUE if m_pFile supports direct buffering
-	BOOL m_bBlocking;  // TRUE if m_pFile can block for unbounded periods of time
 	void FillBuffer(UINT nBytesNeeded);
 	void CheckCount();  // throw exception if m_nMapCount is too large
 
 	// special functions for reading and writing (16-bit compatible) counts
-	DWORD_PTR ReadCount();
-	void WriteCount(DWORD_PTR dwCount);
+	DWORD ReadCount();
+	void WriteCount(DWORD dwCount);
 
 	// public for advanced use
 	UINT m_nObjectSchema;
@@ -1627,16 +1880,16 @@ protected:
 // Diagnostic dumping
 
 // Note: AfxDumpStack is available in release builds, although it is always
-//      statically linked so as to not negatively affect the size of MFCXX.DLL.
+//  statically linked so as to not negatively affect the size of MFC42.DLL.
 
-#define AFX_STACK_DUMP_TARGET_TRACE                     0x0001
+#define AFX_STACK_DUMP_TARGET_TRACE         0x0001
 #define AFX_STACK_DUMP_TARGET_CLIPBOARD 0x0002
-#define AFX_STACK_DUMP_TARGET_BOTH                      0x0003
-#define AFX_STACK_DUMP_TARGET_ODS                       0x0004
+#define AFX_STACK_DUMP_TARGET_BOTH          0x0003
+#define AFX_STACK_DUMP_TARGET_ODS           0x0004
 #ifdef _DEBUG
-#define AFX_STACK_DUMP_TARGET_DEFAULT           AFX_STACK_DUMP_TARGET_TRACE
+#define AFX_STACK_DUMP_TARGET_DEFAULT       AFX_STACK_DUMP_TARGET_TRACE
 #else
-#define AFX_STACK_DUMP_TARGET_DEFAULT           AFX_STACK_DUMP_TARGET_CLIPBOARD
+#define AFX_STACK_DUMP_TARGET_DEFAULT       AFX_STACK_DUMP_TARGET_CLIPBOARD
 #endif
 
 void AFXAPI AfxDumpStack(DWORD dwFlags = AFX_STACK_DUMP_TARGET_DEFAULT);
@@ -1657,50 +1910,17 @@ public:
 #else
 	CDumpContext& operator<<(LPCWSTR lpsz); // automatically thinned
 #endif
-	template< typename BaseType, class StringTraits >
-	CDumpContext& operator<<(const ATL::CStringT<BaseType, 
-		StringTraits>& str)
-	{
-		*this << static_cast< const BaseType* >( str );
-		return *this;
-	}
 	CDumpContext& operator<<(const void* lp);
 	CDumpContext& operator<<(const CObject* pOb);
 	CDumpContext& operator<<(const CObject& ob);
 	CDumpContext& operator<<(BYTE by);
 	CDumpContext& operator<<(WORD w);
-	CDumpContext& DumpAsHex(BYTE b);
-	CDumpContext& DumpAsHex(WORD w);
-#ifdef _WIN64
+	CDumpContext& operator<<(UINT u);
 	CDumpContext& operator<<(LONG l);
 	CDumpContext& operator<<(DWORD dw);
-	CDumpContext& operator<<(int n);
-	CDumpContext& operator<<(UINT u);
-	CDumpContext& DumpAsHex(LONG l);
-	CDumpContext& DumpAsHex(DWORD dw);
-	CDumpContext& DumpAsHex(int n);
-	CDumpContext& DumpAsHex(UINT u);
-#else
-	CDumpContext& operator<<(LONG_PTR l);
-	CDumpContext& operator<<(DWORD_PTR dw);
-	CDumpContext& operator<<(INT_PTR n);
-	CDumpContext& operator<<(UINT_PTR u);
-	CDumpContext& DumpAsHex(LONG_PTR l);
-	CDumpContext& DumpAsHex(DWORD_PTR dw);
-	CDumpContext& DumpAsHex(INT_PTR n);
-	CDumpContext& DumpAsHex(UINT_PTR u);
-#endif
 	CDumpContext& operator<<(float f);
 	CDumpContext& operator<<(double d);
-	CDumpContext& operator<<(LONGLONG n);
-	CDumpContext& operator<<(ULONGLONG n);
-	CDumpContext& DumpAsHex(LONGLONG n);
-	CDumpContext& DumpAsHex(ULONGLONG n);
-	CDumpContext& operator<<(HWND h);
-	CDumpContext& operator<<(HDC h);
-	CDumpContext& operator<<(HMENU h);
-	CDumpContext& operator<<(HACCEL h);
-	CDumpContext& operator<<(HFONT h);
+	CDumpContext& operator<<(int n);
 	void HexDump(LPCTSTR lpszLine, BYTE* pby, int nBytes, int nWidth);
 	void Flush();
 
@@ -1717,21 +1937,13 @@ public:
 	CFile* m_pFile;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-int __cdecl _AfxInitManaged();
-
 #ifdef _DEBUG
 extern AFX_DATA CDumpContext afxDump;
 extern AFX_DATA BOOL afxTraceEnabled;
 #endif
 
-#ifdef _DEBUG
-#define AFXDUMP( exp ) (void)(afxDump<<exp)
-#else
-#define AFXDUMP( exp )
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
+// Special include for Win32s compatibility
 
 #ifdef _AFX_PACKING
 #pragma pack(pop)
@@ -1756,10 +1968,8 @@ extern AFX_DATA BOOL afxTraceEnabled;
 #define _AFX_PUBLIC_INLINE
 #endif
 
-#endif
-
 #include <afx.inl>
-
+#endif
 
 #undef AFX_DATA
 #define AFX_DATA
@@ -1767,9 +1977,8 @@ extern AFX_DATA BOOL afxTraceEnabled;
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
-
-#ifdef _AFX_ALL_WARNINGS
-#pragma warning( pop )
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFX_H__

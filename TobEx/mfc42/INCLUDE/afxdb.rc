@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -32,18 +32,18 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_SQL_CONNECT_FAIL
-		"Failed to connect to datasource."
+		"Attempt to connect to datasource failed"
 	AFX_IDP_SQL_RECORDSET_FORWARD_ONLY
 		"Recordset supports forward movement only."
 	AFX_IDP_SQL_EMPTY_COLUMN_LIST
-		"Failed to open a table - there were no specified columns to retrieve."
+		"Attempt to open a table failed - there were no columns to retrieve were specified."
 	AFX_IDP_SQL_FIELD_SCHEMA_MISMATCH
 		"Unexpected column data types were returned from query."
-	AFX_IDP_SQL_ILLEGAL_MODE "Failed to Update or Delete."
-	AFX_IDP_SQL_MULTIPLE_ROWS_AFFECTED "Updated multiple rows."
+	AFX_IDP_SQL_ILLEGAL_MODE "Attempt to Update or Delete failed."
+	AFX_IDP_SQL_MULTIPLE_ROWS_AFFECTED "Multiple rows were updated."
 	AFX_IDP_SQL_NO_CURRENT_RECORD "Operation failed, no current record."
 	AFX_IDP_SQL_NO_ROWS_AFFECTED
-		"The update or delete operation did not affect any rows."
+		"No rows were affected by the update or delete operation."
 	AFX_IDP_SQL_RECORDSET_READONLY "Recordset is read-only"
 	AFX_IDP_SQL_SQL_NO_TOTAL
 		"ODBC driver doesn't support MFC LongBinary data model."
@@ -72,13 +72,13 @@ BEGIN
 	AFX_IDP_SQL_ROW_FETCH
 		"Error retrieving record."
 	AFX_IDP_SQL_INCORRECT_ODBC
-		"Could not find a required ODBC entry point.  Make sure ODBC is installed correctly."
+		"A required ODBC entry point was not found.  Make sure ODBC is installed correctly."
 	AFX_IDP_SQL_UPDATE_DELETE_FAILED
 		"Update or Delete failed."
 	AFX_IDP_SQL_DYNAMIC_CURSOR_NOT_SUPPORTED
 		"Dynamic cursors not supported by ODBC driver."
 	AFX_IDP_SQL_FIELD_NOT_FOUND
-		"Incorrect field name or field index."
+		"Invalid field name or field index."
 	AFX_IDP_SQL_BOOKMARKS_NOT_SUPPORTED
 		"Bookmarks not supported for ODBC driver."
 	AFX_IDP_SQL_BOOKMARKS_NOT_ENABLED

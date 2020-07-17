@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< Impossible de modifier les ressources MFC standard. >\0"
+"< Cannot change standard MFC resources! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -32,7 +32,7 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_ASK_TO_UPDATE,              "Mettre à jour %1 avant de continuer?"
-	AFX_IDP_FAILED_TO_UPDATE,           "Echec de la sauvegarde de l'objet incorporé OLE dans le conteneur OLE."
+	AFX_IDP_FAILED_TO_UPDATE,           "Impossible de mettre à jour le client."
 
 	AFX_IDP_FAILED_TO_REGISTER,         "Echec de registration. Les fonctionalités ActiveX pourraient ne pas fonctionner correctement."
 	AFX_IDP_FAILED_TO_AUTO_REGISTER,    "La mise à jour du registre du système a échoué. \nEssayez d'utiliser REGEDIT."

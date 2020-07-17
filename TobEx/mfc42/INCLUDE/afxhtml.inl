@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXHTML.H
-
-#pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -70,9 +68,6 @@ _AFXHTML_INLINE void CHtmlView::SetAddressBar(BOOL bNewValue)
 _AFXHTML_INLINE void CHtmlView::SetHeight(long nNewValue)
 	{ ASSERT(m_pBrowserApp != NULL); m_pBrowserApp->put_Height(nNewValue); }
 
-_AFXHTML_INLINE void CHtmlView::SetWidth(long nNewValue)
-	{ ASSERT(m_pBrowserApp != NULL); m_pBrowserApp->put_Width(nNewValue); }
-
 _AFXHTML_INLINE void CHtmlView::PutProperty(LPCTSTR lpszPropertyName, long lValue)
 	{ ASSERT(m_pBrowserApp != NULL); ASSERT(m_pBrowserApp != NULL); PutProperty(lpszPropertyName, COleVariant(lValue, VT_UI4)); }
 
@@ -94,8 +89,6 @@ _AFXHTML_INLINE void CHtmlView::SetLeft(long nNewValue)
 _AFXHTML_INLINE void CHtmlView::SetStatusBar(BOOL bNewValue)
 	{ ASSERT(m_pBrowserApp != NULL); m_pBrowserApp->put_StatusBar((short) (bNewValue ? AFX_OLE_TRUE : AFX_OLE_FALSE)); }
 
-
 #endif //_AFXHTML_INLINE
 
 /////////////////////////////////////////////////////////////////////////////
-

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< Standard-MFC-Ressourcen können nicht geändert werden! >\0"
+"< Cannot change standard MFC resources! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -30,20 +30,17 @@ END
 
 AFX_IDC_MAGNIFY         CURSOR  DISCARDABLE     "res\\magnify.cur"
 
-AFX_IDD_PRINTDLG DIALOG DISCARDABLE  6, 18, 181, 87
-STYLE DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION
+AFX_IDD_PRINTDLG DIALOG DISCARDABLE  6, 18, 133, 95
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | 0x04
 FONT 8, "MS Shell Dlg"
 BEGIN
-    CTEXT           "Drucken",IDC_STATIC,6,7,168,8
-    RTEXT           "Dokument :",IDC_STATIC,6,19,65,8
-    LTEXT           "",AFX_IDC_PRINT_DOCNAME,79,19,95,8
-    RTEXT           "Seite :",IDC_STATIC,6,31,65,8
-    LTEXT           "",AFX_IDC_PRINT_PAGENUM,79,31,95,8
-    RTEXT           "Drucker :",IDC_STATIC,6,43,65,8
-    LTEXT           "",AFX_IDC_PRINT_PRINTERNAME,79,43,95,8
-    RTEXT           "Anschluss :",IDC_STATIC,6,55,65,8
-    LTEXT           "",AFX_IDC_PRINT_PORTNAME,79,55,95,8
-    PUSHBUTTON      "Abbrechen",IDCANCEL,70,67,40,14
+	CTEXT           "Drucke",IDC_STATIC,0,9,133,8
+	CTEXT           "",AFX_IDC_PRINT_DOCNAME,0,19,133,8
+	CTEXT           "auf",IDC_STATIC,0,29,133,8
+	CTEXT           "",AFX_IDC_PRINT_PRINTERNAME,0,39,133,8
+	CTEXT           "",AFX_IDC_PRINT_PORTNAME,0,49,133,8
+	CTEXT           "",AFX_IDC_PRINT_PAGENUM,0,59,133,8
+	PUSHBUTTON      "Abbrechen",IDCANCEL,46,74,40,14
 END
 
 // Preview Toolbar Dialog
@@ -74,7 +71,7 @@ BEGIN
 	AFX_IDS_PRINTDEFAULTEXT,        "prn"           // default extension
 	AFX_IDS_PRINTDEFAULT,           "Ausgabe.prn"    // default file
 	AFX_IDS_PRINTFILTER,
-		"Druckerdateien (*.prn)|*.prn|Alle Dateien (*.*)|*.*||"
+		"Drucker-Dateien (*.prn)|*.prn|Alle Dateien (*.*)|*.*||"
 	AFX_IDS_PRINTCAPTION,           "In Datei drucken" // caption for browse dlg
 	AFX_IDS_PRINTTOFILE,            "in %1"         // to file
 END

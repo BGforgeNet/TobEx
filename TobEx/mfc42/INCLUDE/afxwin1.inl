@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXWIN.H (part 1)
-
-#pragma once
 
 #ifdef _AFXWIN_INLINE
 
@@ -33,37 +31,216 @@ _AFXWIN_INLINE CWnd* AFXAPI AfxGetMainWnd()
 	{ CWinThread* pThread = AfxGetThread();
 		return pThread != NULL ? pThread->GetMainWnd() : NULL; }
 
-_AFXWIN_INLINE BOOL AFXAPI AfxGetAmbientActCtx()
-	{ 	return afxAmbientActCtx; }
-_AFXWIN_INLINE void AFXAPI AfxSetAmbientActCtx(BOOL bSet)
-	{  afxAmbientActCtx = bSet; }
-
-
-
 #ifdef _AFXDLL
 // AFX_MAINTAIN_STATE functions
 _AFXWIN_INLINE AFX_MAINTAIN_STATE::AFX_MAINTAIN_STATE(AFX_MODULE_STATE* pNewState)
 	{  m_pPrevModuleState = AfxSetModuleState(pNewState); }
-#endif
 
 // AFX_MAINTAIN_STATE2 functions
 _AFXWIN_INLINE AFX_MAINTAIN_STATE2::~AFX_MAINTAIN_STATE2()
-{
-#ifdef _AFXDLL
-	// Not a good place to report errors here, so just be safe
-	if(m_pThreadState)
-	{
-		m_pThreadState->m_pModuleState = m_pPrevModuleState;
-	}
+	{  m_pThreadState->m_pModuleState = m_pPrevModuleState; }
 #endif
 
-	if (m_bValidActCtxCookie)
+// CSize
+_AFXWIN_INLINE CSize::CSize()
+	{ /* random filled */ }
+_AFXWIN_INLINE CSize::CSize(int initCX, int initCY)
+	{ cx = initCX; cy = initCY; }
+_AFXWIN_INLINE CSize::CSize(SIZE initSize)
+	{ *(SIZE*)this = initSize; }
+_AFXWIN_INLINE CSize::CSize(POINT initPt)
+	{ *(POINT*)this = initPt; }
+_AFXWIN_INLINE CSize::CSize(DWORD dwSize)
 	{
-		BOOL bRet;
-		bRet = AfxDeactivateActCtx(0, m_ulActCtxCookie);
-		ASSERT(bRet == TRUE);
+		cx = (short)LOWORD(dwSize);
+		cy = (short)HIWORD(dwSize);
 	}
-}
+_AFXWIN_INLINE BOOL CSize::operator==(SIZE size) const
+	{ return (cx == size.cx && cy == size.cy); }
+_AFXWIN_INLINE BOOL CSize::operator!=(SIZE size) const
+	{ return (cx != size.cx || cy != size.cy); }
+_AFXWIN_INLINE void CSize::operator+=(SIZE size)
+	{ cx += size.cx; cy += size.cy; }
+_AFXWIN_INLINE void CSize::operator-=(SIZE size)
+	{ cx -= size.cx; cy -= size.cy; }
+_AFXWIN_INLINE CSize CSize::operator+(SIZE size) const
+	{ return CSize(cx + size.cx, cy + size.cy); }
+_AFXWIN_INLINE CSize CSize::operator-(SIZE size) const
+	{ return CSize(cx - size.cx, cy - size.cy); }
+_AFXWIN_INLINE CSize CSize::operator-() const
+	{ return CSize(-cx, -cy); }
+_AFXWIN_INLINE CPoint CSize::operator+(POINT point) const
+	{ return CPoint(cx + point.x, cy + point.y); }
+_AFXWIN_INLINE CPoint CSize::operator-(POINT point) const
+	{ return CPoint(cx - point.x, cy - point.y); }
+_AFXWIN_INLINE CRect CSize::operator+(const RECT* lpRect) const
+	{ return CRect(lpRect) + *this; }
+_AFXWIN_INLINE CRect CSize::operator-(const RECT* lpRect) const
+	{ return CRect(lpRect) - *this; }
+
+// CPoint
+_AFXWIN_INLINE CPoint::CPoint()
+	{ /* random filled */ }
+_AFXWIN_INLINE CPoint::CPoint(int initX, int initY)
+	{ x = initX; y = initY; }
+#if !defined(_AFX_CORE_IMPL) || !defined(_AFXDLL) || defined(_DEBUG)
+_AFXWIN_INLINE CPoint::CPoint(POINT initPt)
+	{ *(POINT*)this = initPt; }
+#endif
+_AFXWIN_INLINE CPoint::CPoint(SIZE initSize)
+	{ *(SIZE*)this = initSize; }
+_AFXWIN_INLINE CPoint::CPoint(DWORD dwPoint)
+	{
+		x = (short)LOWORD(dwPoint);
+		y = (short)HIWORD(dwPoint);
+	}
+_AFXWIN_INLINE void CPoint::Offset(int xOffset, int yOffset)
+	{ x += xOffset; y += yOffset; }
+_AFXWIN_INLINE void CPoint::Offset(POINT point)
+	{ x += point.x; y += point.y; }
+_AFXWIN_INLINE void CPoint::Offset(SIZE size)
+	{ x += size.cx; y += size.cy; }
+_AFXWIN_INLINE BOOL CPoint::operator==(POINT point) const
+	{ return (x == point.x && y == point.y); }
+_AFXWIN_INLINE BOOL CPoint::operator!=(POINT point) const
+	{ return (x != point.x || y != point.y); }
+_AFXWIN_INLINE void CPoint::operator+=(SIZE size)
+	{ x += size.cx; y += size.cy; }
+_AFXWIN_INLINE void CPoint::operator-=(SIZE size)
+	{ x -= size.cx; y -= size.cy; }
+_AFXWIN_INLINE void CPoint::operator+=(POINT point)
+	{ x += point.x; y += point.y; }
+_AFXWIN_INLINE void CPoint::operator-=(POINT point)
+	{ x -= point.x; y -= point.y; }
+_AFXWIN_INLINE CPoint CPoint::operator+(SIZE size) const
+	{ return CPoint(x + size.cx, y + size.cy); }
+_AFXWIN_INLINE CPoint CPoint::operator-(SIZE size) const
+	{ return CPoint(x - size.cx, y - size.cy); }
+_AFXWIN_INLINE CPoint CPoint::operator-() const
+	{ return CPoint(-x, -y); }
+_AFXWIN_INLINE CPoint CPoint::operator+(POINT point) const
+	{ return CPoint(x + point.x, y + point.y); }
+_AFXWIN_INLINE CSize CPoint::operator-(POINT point) const
+	{ return CSize(x - point.x, y - point.y); }
+_AFXWIN_INLINE CRect CPoint::operator+(const RECT* lpRect) const
+	{ return CRect(lpRect) + *this; }
+_AFXWIN_INLINE CRect CPoint::operator-(const RECT* lpRect) const
+	{ return CRect(lpRect) - *this; }
+
+// CRect
+_AFXWIN_INLINE CRect::CRect()
+	{ /* random filled */ }
+_AFXWIN_INLINE CRect::CRect(int l, int t, int r, int b)
+	{ left = l; top = t; right = r; bottom = b; }
+_AFXWIN_INLINE CRect::CRect(const RECT& srcRect)
+	{ ::CopyRect(this, &srcRect); }
+_AFXWIN_INLINE CRect::CRect(LPCRECT lpSrcRect)
+	{ ::CopyRect(this, lpSrcRect); }
+_AFXWIN_INLINE CRect::CRect(POINT point, SIZE size)
+	{ right = (left = point.x) + size.cx; bottom = (top = point.y) + size.cy; }
+_AFXWIN_INLINE CRect::CRect(POINT topLeft, POINT bottomRight)
+	{ left = topLeft.x; top = topLeft.y;
+		right = bottomRight.x; bottom = bottomRight.y; }
+_AFXWIN_INLINE int CRect::Width() const
+	{ return right - left; }
+_AFXWIN_INLINE int CRect::Height() const
+	{ return bottom - top; }
+_AFXWIN_INLINE CSize CRect::Size() const
+	{ return CSize(right - left, bottom - top); }
+_AFXWIN_INLINE CPoint& CRect::TopLeft()
+	{ return *((CPoint*)this); }
+_AFXWIN_INLINE CPoint& CRect::BottomRight()
+	{ return *((CPoint*)this+1); }
+_AFXWIN_INLINE const CPoint& CRect::TopLeft() const
+	{ return *((CPoint*)this); }
+_AFXWIN_INLINE const CPoint& CRect::BottomRight() const
+	{ return *((CPoint*)this+1); }
+_AFXWIN_INLINE CPoint CRect::CenterPoint() const
+	{ return CPoint((left+right)/2, (top+bottom)/2); }
+_AFXWIN_INLINE void CRect::SwapLeftRight()
+	{ SwapLeftRight(LPRECT(this)); }
+_AFXWIN_INLINE void CRect::SwapLeftRight(LPRECT lpRect)
+	{ LONG temp = lpRect->left; lpRect->left = lpRect->right; lpRect->right = temp; }
+_AFXWIN_INLINE CRect::operator LPRECT()
+	{ return this; }
+_AFXWIN_INLINE CRect::operator LPCRECT() const
+	{ return this; }
+_AFXWIN_INLINE BOOL CRect::IsRectEmpty() const
+	{ return ::IsRectEmpty(this); }
+_AFXWIN_INLINE BOOL CRect::IsRectNull() const
+	{ return (left == 0 && right == 0 && top == 0 && bottom == 0); }
+_AFXWIN_INLINE BOOL CRect::PtInRect(POINT point) const
+	{ return ::PtInRect(this, point); }
+_AFXWIN_INLINE void CRect::SetRect(int x1, int y1, int x2, int y2)
+	{ ::SetRect(this, x1, y1, x2, y2); }
+_AFXWIN_INLINE void CRect::SetRect(POINT topLeft, POINT bottomRight)
+	{ ::SetRect(this, topLeft.x, topLeft.y, bottomRight.x, bottomRight.y); }
+_AFXWIN_INLINE void CRect::SetRectEmpty()
+	{ ::SetRectEmpty(this); }
+_AFXWIN_INLINE void CRect::CopyRect(LPCRECT lpSrcRect)
+	{ ::CopyRect(this, lpSrcRect); }
+_AFXWIN_INLINE BOOL CRect::EqualRect(LPCRECT lpRect) const
+	{ return ::EqualRect(this, lpRect); }
+_AFXWIN_INLINE void CRect::InflateRect(int x, int y)
+	{ ::InflateRect(this, x, y); }
+_AFXWIN_INLINE void CRect::InflateRect(SIZE size)
+	{ ::InflateRect(this, size.cx, size.cy); }
+_AFXWIN_INLINE void CRect::DeflateRect(int x, int y)
+	{ ::InflateRect(this, -x, -y); }
+_AFXWIN_INLINE void CRect::DeflateRect(SIZE size)
+	{ ::InflateRect(this, -size.cx, -size.cy); }
+_AFXWIN_INLINE void CRect::OffsetRect(int x, int y)
+	{ ::OffsetRect(this, x, y); }
+_AFXWIN_INLINE void CRect::OffsetRect(POINT point)
+	{ ::OffsetRect(this, point.x, point.y); }
+_AFXWIN_INLINE void CRect::OffsetRect(SIZE size)
+	{ ::OffsetRect(this, size.cx, size.cy); }
+_AFXWIN_INLINE BOOL CRect::IntersectRect(LPCRECT lpRect1, LPCRECT lpRect2)
+	{ return ::IntersectRect(this, lpRect1, lpRect2);}
+_AFXWIN_INLINE BOOL CRect::UnionRect(LPCRECT lpRect1, LPCRECT lpRect2)
+	{ return ::UnionRect(this, lpRect1, lpRect2); }
+_AFXWIN_INLINE void CRect::operator=(const RECT& srcRect)
+	{ ::CopyRect(this, &srcRect); }
+_AFXWIN_INLINE BOOL CRect::operator==(const RECT& rect) const
+	{ return ::EqualRect(this, &rect); }
+_AFXWIN_INLINE BOOL CRect::operator!=(const RECT& rect) const
+	{ return !::EqualRect(this, &rect); }
+_AFXWIN_INLINE void CRect::operator+=(POINT point)
+	{ ::OffsetRect(this, point.x, point.y); }
+_AFXWIN_INLINE void CRect::operator+=(SIZE size)
+	{ ::OffsetRect(this, size.cx, size.cy); }
+_AFXWIN_INLINE void CRect::operator+=(LPCRECT lpRect)
+	{ InflateRect(lpRect); }
+_AFXWIN_INLINE void CRect::operator-=(POINT point)
+	{ ::OffsetRect(this, -point.x, -point.y); }
+_AFXWIN_INLINE void CRect::operator-=(SIZE size)
+	{ ::OffsetRect(this, -size.cx, -size.cy); }
+_AFXWIN_INLINE void CRect::operator-=(LPCRECT lpRect)
+	{ DeflateRect(lpRect); }
+_AFXWIN_INLINE void CRect::operator&=(const RECT& rect)
+	{ ::IntersectRect(this, this, &rect); }
+_AFXWIN_INLINE void CRect::operator|=(const RECT& rect)
+	{ ::UnionRect(this, this, &rect); }
+_AFXWIN_INLINE CRect CRect::operator+(POINT pt) const
+	{ CRect rect(*this); ::OffsetRect(&rect, pt.x, pt.y); return rect; }
+_AFXWIN_INLINE CRect CRect::operator-(POINT pt) const
+	{ CRect rect(*this); ::OffsetRect(&rect, -pt.x, -pt.y); return rect; }
+_AFXWIN_INLINE CRect CRect::operator+(SIZE size) const
+	{ CRect rect(*this); ::OffsetRect(&rect, size.cx, size.cy); return rect; }
+_AFXWIN_INLINE CRect CRect::operator-(SIZE size) const
+	{ CRect rect(*this); ::OffsetRect(&rect, -size.cx, -size.cy); return rect; }
+_AFXWIN_INLINE CRect CRect::operator+(LPCRECT lpRect) const
+	{ CRect rect(this); rect.InflateRect(lpRect); return rect; }
+_AFXWIN_INLINE CRect CRect::operator-(LPCRECT lpRect) const
+	{ CRect rect(this); rect.DeflateRect(lpRect); return rect; }
+_AFXWIN_INLINE CRect CRect::operator&(const RECT& rect2) const
+	{ CRect rect; ::IntersectRect(&rect, this, &rect2);
+		return rect; }
+_AFXWIN_INLINE CRect CRect::operator|(const RECT& rect2) const
+	{ CRect rect; ::UnionRect(&rect, this, &rect2);
+		return rect; }
+_AFXWIN_INLINE BOOL CRect::SubtractRect(LPCRECT lpRectSrc1, LPCRECT lpRectSrc2)
+	{ return ::SubtractRect(this, lpRectSrc1, lpRectSrc2); }
 
 // CArchive output helpers
 _AFXWIN_INLINE CArchive& AFXAPI operator<<(CArchive& ar, SIZE size)
@@ -73,11 +250,11 @@ _AFXWIN_INLINE CArchive& AFXAPI operator<<(CArchive& ar, POINT point)
 _AFXWIN_INLINE CArchive& AFXAPI operator<<(CArchive& ar, const RECT& rect)
 	{ ar.Write(&rect, sizeof(RECT)); return ar; }
 _AFXWIN_INLINE CArchive& AFXAPI operator>>(CArchive& ar, SIZE& size)
-	{ ar.EnsureRead(&size, sizeof(SIZE)); return ar; }
+	{ ar.Read(&size, sizeof(SIZE)); return ar; }
 _AFXWIN_INLINE CArchive& AFXAPI operator>>(CArchive& ar, POINT& point)
-	{ ar.EnsureRead(&point, sizeof(POINT)); return ar; }
+	{ ar.Read(&point, sizeof(POINT)); return ar; }
 _AFXWIN_INLINE CArchive& AFXAPI operator>>(CArchive& ar, RECT& rect)
-	{ ar.EnsureRead(&rect, sizeof(RECT)); return ar; }
+	{ ar.Read(&rect, sizeof(RECT)); return ar; }
 
 // exception support
 _AFXWIN_INLINE CResourceException::CResourceException()
@@ -101,21 +278,9 @@ _AFXWIN_INLINE HGDIOBJ CGdiObject::GetSafeHandle() const
 _AFXWIN_INLINE CGdiObject::CGdiObject()
 	{ m_hObject = NULL; }
 _AFXWIN_INLINE CGdiObject::~CGdiObject()
-{
-    AFX_BEGIN_DESTRUCTOR
-
-        DeleteObject(); 
-
-    AFX_END_DESTRUCTOR
-}
-
-_AFXWIN_INLINE int CGdiObject::_AFX_FUNCNAME(GetObject)(int nCount, LPVOID lpObject) const
-	{ ASSERT(m_hObject != NULL); return ::GetObject(m_hObject, nCount, lpObject); }
-#pragma push_macro("GetObject")
-#undef GetObject
+	{ DeleteObject(); }
 _AFXWIN_INLINE int CGdiObject::GetObject(int nCount, LPVOID lpObject) const
-	{ return _AFX_FUNCNAME(GetObject)(nCount, lpObject); }
-#pragma pop_macro("GetObject")
+	{ ASSERT(m_hObject != NULL); return ::GetObject(m_hObject, nCount, lpObject); }
 _AFXWIN_INLINE BOOL CGdiObject::CreateStockObject(int nIndex)
 	{ return (m_hObject = ::GetStockObject(nIndex)) != NULL; }
 _AFXWIN_INLINE BOOL CGdiObject::UnrealizeObject()
@@ -222,13 +387,11 @@ _AFXWIN_INLINE DWORD CBitmap::GetBitmapBits(DWORD dwCount, LPVOID lpBits) const
 _AFXWIN_INLINE BOOL CBitmap::LoadBitmap(LPCTSTR lpszResourceName)
 	{ return Attach(::LoadBitmap(AfxFindResourceHandle(
 		lpszResourceName, RT_BITMAP), lpszResourceName));}
-#ifndef _AFX_NO_AFXCMN_SUPPORT
 _AFXWIN_INLINE BOOL CBitmap::LoadMappedBitmap(UINT nIDBitmap, UINT nFlags,
 	LPCOLORMAP lpColorMap, int nMapSize)
-	{ return Attach(::AfxCreateMappedBitmap(AfxFindResourceHandle(
+	{ return Attach(::CreateMappedBitmap(AfxFindResourceHandle(
 		MAKEINTRESOURCE(nIDBitmap), RT_BITMAP), nIDBitmap, (WORD)nFlags,
 		lpColorMap, nMapSize)); }
-#endif
 _AFXWIN_INLINE CSize CBitmap::SetBitmapDimension(int nWidth, int nHeight)
 	{
 		SIZE size;
@@ -323,12 +486,12 @@ _AFXWIN_INLINE void CRgn::SetRectRgn(int x1, int y1, int x2, int y2)
 _AFXWIN_INLINE void CRgn::SetRectRgn(LPCRECT lpRect)
 	{ ASSERT(m_hObject != NULL); ::SetRectRgn((HRGN)m_hObject, lpRect->left, lpRect->top,
 		lpRect->right, lpRect->bottom); }
-_AFXWIN_INLINE int CRgn::CombineRgn(const CRgn* pRgn1, const CRgn* pRgn2, int nCombineMode)
+_AFXWIN_INLINE int CRgn::CombineRgn(CRgn* pRgn1, CRgn* pRgn2, int nCombineMode)
 	{ ASSERT(m_hObject != NULL); return ::CombineRgn((HRGN)m_hObject, (HRGN)pRgn1->GetSafeHandle(),
 		(HRGN)pRgn2->GetSafeHandle(), nCombineMode); }
-_AFXWIN_INLINE int CRgn::CopyRgn(const CRgn* pRgnSrc)
+_AFXWIN_INLINE int CRgn::CopyRgn(CRgn* pRgnSrc)
 	{ ASSERT(m_hObject != NULL); return ::CombineRgn((HRGN)m_hObject, (HRGN)pRgnSrc->GetSafeHandle(), NULL, RGN_COPY); }
-_AFXWIN_INLINE BOOL CRgn::EqualRgn(const CRgn* pRgn) const
+_AFXWIN_INLINE BOOL CRgn::EqualRgn(CRgn* pRgn) const
 	{ ASSERT(m_hObject != NULL); return ::EqualRgn((HRGN)m_hObject, (HRGN)pRgn->GetSafeHandle()); }
 _AFXWIN_INLINE int CRgn::OffsetRgn(int x, int y)
 	{ ASSERT(m_hObject != NULL); return ::OffsetRgn((HRGN)m_hObject, x, y); }
@@ -418,10 +581,6 @@ _AFXWIN_INLINE COLORREF CDC::GetTextColor() const
 	{ ASSERT(m_hAttribDC != NULL); return ::GetTextColor(m_hAttribDC); }
 _AFXWIN_INLINE int CDC::GetMapMode() const
 	{ ASSERT(m_hAttribDC != NULL); return ::GetMapMode(m_hAttribDC); }
-_AFXWIN_INLINE int CDC::GetGraphicsMode() const
-	{ ASSERT(m_hAttribDC != NULL); return ::GetGraphicsMode(m_hAttribDC); }
-_AFXWIN_INLINE BOOL CDC::GetWorldTransform(XFORM* pXform) const
-	{ ASSERT(m_hAttribDC != NULL); return ::GetWorldTransform(m_hAttribDC,pXform); }
 
 _AFXWIN_INLINE CPoint CDC::GetViewportOrg() const
 	{
@@ -504,7 +663,7 @@ _AFXWIN_INLINE BOOL CDC::Arc(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
 	{ ASSERT(m_hDC != NULL); return ::Arc(m_hDC, lpRect->left, lpRect->top,
 		lpRect->right, lpRect->bottom, ptStart.x, ptStart.y,
 		ptEnd.x, ptEnd.y); }
-_AFXWIN_INLINE BOOL CDC::Polyline(const POINT* lpPoints, int nCount)
+_AFXWIN_INLINE BOOL CDC::Polyline(LPPOINT lpPoints, int nCount)
 	{ ASSERT(m_hDC != NULL); return ::Polyline(m_hDC, lpPoints, nCount); }
 _AFXWIN_INLINE void CDC::FillRect(LPCRECT lpRect, CBrush* pBrush)
 	{ ASSERT(m_hDC != NULL); ::FillRect(m_hDC, lpRect, (HBRUSH)pBrush->GetSafeHandle()); }
@@ -516,6 +675,7 @@ _AFXWIN_INLINE BOOL CDC::DrawIcon(int x, int y, HICON hIcon)
 	{ ASSERT(m_hDC != NULL); return ::DrawIcon(m_hDC, x, y, hIcon); }
 _AFXWIN_INLINE BOOL CDC::DrawIcon(POINT point, HICON hIcon)
 	{ ASSERT(m_hDC != NULL); return ::DrawIcon(m_hDC, point.x, point.y, hIcon); }
+#if (WINVER >= 0x400)
 _AFXWIN_INLINE BOOL CDC::DrawState(CPoint pt, CSize size, HBITMAP hBitmap, UINT nFlags, HBRUSH hBrush)
 	{ ASSERT(m_hDC != NULL); return ::DrawState(m_hDC, hBrush,
 		NULL, (LPARAM)hBitmap, 0, pt.x, pt.y, size.cx, size.cy, nFlags|DST_BITMAP); }
@@ -544,6 +704,7 @@ _AFXWIN_INLINE BOOL CDC::DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags)
 	{ ASSERT(m_hDC != NULL); return ::DrawEdge(m_hDC, lpRect, nEdge, nFlags); }
 _AFXWIN_INLINE BOOL CDC::DrawFrameControl(LPRECT lpRect, UINT nType, UINT nState)
 	{ ASSERT(m_hDC != NULL); return ::DrawFrameControl(m_hDC, lpRect, nType, nState); }
+#endif
 
 _AFXWIN_INLINE BOOL CDC::Chord(int x1, int y1, int x2, int y2, int x3, int y3,
 	int x4, int y4)
@@ -565,9 +726,9 @@ _AFXWIN_INLINE BOOL CDC::Pie(LPCRECT lpRect, POINT ptStart, POINT ptEnd)
 	{ ASSERT(m_hDC != NULL); return ::Pie(m_hDC, lpRect->left, lpRect->top,
 		lpRect->right, lpRect->bottom, ptStart.x, ptStart.y,
 		ptEnd.x, ptEnd.y); }
-_AFXWIN_INLINE BOOL CDC::Polygon(const POINT* lpPoints, int nCount)
+_AFXWIN_INLINE BOOL CDC::Polygon(LPPOINT lpPoints, int nCount)
 	{ ASSERT(m_hDC != NULL); return ::Polygon(m_hDC, lpPoints, nCount); }
-_AFXWIN_INLINE BOOL CDC::PolyPolygon(const POINT* lpPoints, const INT* lpPolyCounts, int nCount)
+_AFXWIN_INLINE BOOL CDC::PolyPolygon(LPPOINT lpPoints, LPINT lpPolyCounts, int nCount)
 	{ ASSERT(m_hDC != NULL); return ::PolyPolygon(m_hDC, lpPoints, lpPolyCounts, nCount); }
 _AFXWIN_INLINE BOOL CDC::Rectangle(int x1, int y1, int x2, int y2)
 	{ ASSERT(m_hDC != NULL); return ::Rectangle(m_hDC, x1, y1, x2, y2); }
@@ -605,7 +766,7 @@ _AFXWIN_INLINE BOOL CDC::ExtFloodFill(int x, int y, COLORREF crColor, UINT nFill
 _AFXWIN_INLINE BOOL CDC::TextOut(int x, int y, LPCTSTR lpszString, int nCount)
 	{ ASSERT(m_hDC != NULL); return ::TextOut(m_hDC, x, y, lpszString, nCount); }
 _AFXWIN_INLINE BOOL CDC::TextOut(int x, int y, const CString& str)
-	{ ASSERT(m_hDC != NULL); return TextOut(x, y, (LPCTSTR)str, (int)str.GetLength()); } // call virtual
+	{ ASSERT(m_hDC != NULL); return TextOut(x, y, (LPCTSTR)str, str.GetLength()); } // call virtual
 _AFXWIN_INLINE BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 	LPCTSTR lpszString, UINT nCount, LPINT lpDxWidths)
 	{ ASSERT(m_hDC != NULL); return ::ExtTextOut(m_hDC, x, y, nOptions, lpRect,
@@ -613,52 +774,25 @@ _AFXWIN_INLINE BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 _AFXWIN_INLINE BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 	const CString& str, LPINT lpDxWidths)
 	{ ASSERT(m_hDC != NULL); return ::ExtTextOut(m_hDC, x, y, nOptions, lpRect,
-		str, (UINT)str.GetLength(), lpDxWidths); }
+		str, str.GetLength(), lpDxWidths); }
 _AFXWIN_INLINE CSize CDC::TabbedTextOut(int x, int y, LPCTSTR lpszString, int nCount,
 	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin)
 	{ ASSERT(m_hDC != NULL); return ::TabbedTextOut(m_hDC, x, y, lpszString, nCount,
 		nTabPositions, lpnTabStopPositions, nTabOrigin); }
 _AFXWIN_INLINE CSize CDC::TabbedTextOut(int x, int y, const CString& str,
 	int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin)
-	{ ASSERT(m_hDC != NULL); return ::TabbedTextOut(m_hDC, x, y, str, (int)str.GetLength(),
+	{ ASSERT(m_hDC != NULL); return ::TabbedTextOut(m_hDC, x, y, str, str.GetLength(),
 		nTabPositions, lpnTabStopPositions, nTabOrigin); }
-_AFXWIN_INLINE int CDC::_AFX_FUNCNAME(DrawText)(LPCTSTR lpszString, int nCount, LPRECT lpRect,
+_AFXWIN_INLINE int CDC::DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect,
 		UINT nFormat)
 	{ ASSERT(m_hDC != NULL);
 		return ::DrawText(m_hDC, lpszString, nCount, lpRect, nFormat); }
-_AFXWIN_INLINE int CDC::_AFX_FUNCNAME(DrawText)(const CString& str, LPRECT lpRect, UINT nFormat)
-	{ ASSERT(m_hDC != NULL);
-		// these flags would modify the string
-		ASSERT((nFormat & (DT_END_ELLIPSIS | DT_MODIFYSTRING)) != (DT_END_ELLIPSIS | DT_MODIFYSTRING));
-		ASSERT((nFormat & (DT_PATH_ELLIPSIS | DT_MODIFYSTRING)) != (DT_PATH_ELLIPSIS | DT_MODIFYSTRING));
-		return _AFX_FUNCNAME(DrawText)((LPCTSTR)str, (int)str.GetLength(), lpRect, nFormat); }
-
-_AFXWIN_INLINE int CDC::_AFX_FUNCNAME(DrawTextEx)(LPTSTR lpszString, int nCount, LPRECT lpRect,
-		UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
-	{ ASSERT(m_hDC != NULL);
-		return ::DrawTextEx(m_hDC, lpszString, nCount, lpRect, nFormat, lpDTParams); }
-_AFXWIN_INLINE int CDC::_AFX_FUNCNAME(DrawTextEx)(const CString& str, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
-	{ ASSERT(m_hDC != NULL);
-		// these flags would modify the string
-		ASSERT((nFormat & (DT_END_ELLIPSIS | DT_MODIFYSTRING)) != (DT_END_ELLIPSIS | DT_MODIFYSTRING));
-		ASSERT((nFormat & (DT_PATH_ELLIPSIS | DT_MODIFYSTRING)) != (DT_PATH_ELLIPSIS | DT_MODIFYSTRING));
-		return _AFX_FUNCNAME(DrawTextEx)(const_cast<LPTSTR>((LPCTSTR)str), (int)str.GetLength(), lpRect, nFormat, lpDTParams); }
-
-#pragma push_macro("DrawText")
-#pragma push_macro("DrawTextEx")
-#undef DrawText
-#undef DrawTextEx
-_AFXWIN_INLINE int CDC::DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect, UINT nFormat)
-	{ return _AFX_FUNCNAME(DrawText)(lpszString, nCount, lpRect, nFormat); }
 _AFXWIN_INLINE int CDC::DrawText(const CString& str, LPRECT lpRect, UINT nFormat)
-	{ return _AFX_FUNCNAME(DrawText)(str, lpRect, nFormat); }
-_AFXWIN_INLINE int CDC::DrawTextEx(LPTSTR lpszString, int nCount, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
-	{ return _AFX_FUNCNAME(DrawTextEx)(lpszString, nCount, lpRect, nFormat, lpDTParams); }
-_AFXWIN_INLINE int CDC::DrawTextEx(const CString& str, LPRECT lpRect, UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
-	{ return _AFX_FUNCNAME(DrawTextEx)(str, lpRect, nFormat, lpDTParams); }
-#pragma pop_macro("DrawText")
-#pragma pop_macro("DrawTextEx")
-
+	{ ASSERT(m_hDC != NULL);
+		// these flags would modify the string
+		ASSERT((nFormat & (DT_END_ELLIPSIS | DT_MODIFYSTRING)) != (DT_END_ELLIPSIS | DT_MODIFYSTRING));
+		ASSERT((nFormat & (DT_PATH_ELLIPSIS | DT_MODIFYSTRING)) != (DT_PATH_ELLIPSIS | DT_MODIFYSTRING));
+		return DrawText((LPCTSTR)str, str.GetLength(), lpRect, nFormat); }
 _AFXWIN_INLINE CSize CDC::GetTextExtent(LPCTSTR lpszString, int nCount) const
 	{
 		ASSERT(m_hAttribDC != NULL);
@@ -670,7 +804,7 @@ _AFXWIN_INLINE CSize CDC::GetTextExtent(const CString& str) const
 	{
 		ASSERT(m_hAttribDC != NULL);
 		SIZE size;
-		VERIFY(::GetTextExtentPoint32(m_hAttribDC, str, (int)str.GetLength(), &size));
+		VERIFY(::GetTextExtentPoint32(m_hAttribDC, str, str.GetLength(), &size));
 		return size;
 	}
 
@@ -685,7 +819,7 @@ _AFXWIN_INLINE CSize CDC::GetOutputTextExtent(const CString& str) const
 	{
 		ASSERT(m_hDC != NULL);
 		SIZE size;
-		VERIFY(::GetTextExtentPoint32(m_hDC, str, (int)str.GetLength(), &size));
+		VERIFY(::GetTextExtentPoint32(m_hDC, str, str.GetLength(), &size));
 		return size;
 	}
 
@@ -696,7 +830,7 @@ _AFXWIN_INLINE CSize CDC::GetTabbedTextExtent(LPCTSTR lpszString, int nCount,
 _AFXWIN_INLINE  CSize CDC::GetTabbedTextExtent(const CString& str,
 		int nTabPositions, LPINT lpnTabStopPositions) const
 	{ ASSERT(m_hAttribDC != NULL); return ::GetTabbedTextExtent(m_hAttribDC,
-		str, (int)str.GetLength(), nTabPositions, lpnTabStopPositions); }
+		str, str.GetLength(), nTabPositions, lpnTabStopPositions); }
 _AFXWIN_INLINE CSize CDC::GetOutputTabbedTextExtent(LPCTSTR lpszString, int nCount,
 	int nTabPositions, LPINT lpnTabStopPositions) const
 	{ ASSERT(m_hDC != NULL); return ::GetTabbedTextExtent(m_hDC, lpszString, nCount,
@@ -704,7 +838,7 @@ _AFXWIN_INLINE CSize CDC::GetOutputTabbedTextExtent(LPCTSTR lpszString, int nCou
 _AFXWIN_INLINE  CSize CDC::GetOutputTabbedTextExtent(const CString& str,
 		int nTabPositions, LPINT lpnTabStopPositions) const
 	{ ASSERT(m_hDC != NULL); return ::GetTabbedTextExtent(m_hDC,
-		str, (int)str.GetLength(), nTabPositions, lpnTabStopPositions); }
+		str, str.GetLength(), nTabPositions, lpnTabStopPositions); }
 _AFXWIN_INLINE BOOL CDC::GrayString(CBrush* pBrush,
 	BOOL (CALLBACK* lpfnOutput)(HDC, LPARAM, int),
 		LPARAM lpData, int nCount,
@@ -713,19 +847,14 @@ _AFXWIN_INLINE BOOL CDC::GrayString(CBrush* pBrush,
 		(GRAYSTRINGPROC)lpfnOutput, lpData, nCount, x, y, nWidth, nHeight); }
 _AFXWIN_INLINE UINT CDC::GetTextAlign() const
 	{ ASSERT(m_hAttribDC != NULL); return ::GetTextAlign(m_hAttribDC); }
-_AFXWIN_INLINE int CDC::GetTextFace(_In_ int nCount, _Out_z_cap_post_count_(nCount, return) LPTSTR lpszFacename) const
+_AFXWIN_INLINE int CDC::GetTextFace(int nCount, LPTSTR lpszFacename) const
 	{ ASSERT(m_hAttribDC != NULL); return ::GetTextFace(m_hAttribDC, nCount, lpszFacename); }
 _AFXWIN_INLINE  int CDC::GetTextFace(CString& rString) const
 	{ ASSERT(m_hAttribDC != NULL); int nResult = ::GetTextFace(m_hAttribDC,
 		256, rString.GetBuffer(256)); rString.ReleaseBuffer();
 		return nResult; }
-_AFXWIN_INLINE BOOL CDC::_AFX_FUNCNAME(GetTextMetrics)(LPTEXTMETRIC lpMetrics) const
-	{ ASSERT(m_hAttribDC != NULL); return ::GetTextMetrics(m_hAttribDC, lpMetrics); }
-#pragma push_macro("GetTextMetrics")
-#undef GetTextMetrics
 _AFXWIN_INLINE BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const
-	{ return _AFX_FUNCNAME(GetTextMetrics)(lpMetrics); }
-#pragma pop_macro("GetTextMetrics")
+	{ ASSERT(m_hAttribDC != NULL); return ::GetTextMetrics(m_hAttribDC, lpMetrics); }
 _AFXWIN_INLINE BOOL CDC::GetOutputTextMetrics(LPTEXTMETRIC lpMetrics) const
 	{ ASSERT(m_hDC != NULL); return ::GetTextMetrics(m_hDC, lpMetrics); }
 _AFXWIN_INLINE int CDC::GetTextCharacterExtra() const
@@ -734,15 +863,6 @@ _AFXWIN_INLINE BOOL CDC::GetCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpB
 	{ ASSERT(m_hAttribDC != NULL); return ::GetCharWidth(m_hAttribDC, nFirstChar, nLastChar, lpBuffer); }
 _AFXWIN_INLINE BOOL CDC::GetOutputCharWidth(UINT nFirstChar, UINT nLastChar, LPINT lpBuffer) const
 	{ ASSERT(m_hDC != NULL); return ::GetCharWidth(m_hDC, nFirstChar, nLastChar, lpBuffer); }
-_AFXWIN_INLINE DWORD CDC::GetFontLanguageInfo() const
-	{ ASSERT(m_hDC != NULL); return ::GetFontLanguageInfo(m_hDC); }
-
-_AFXWIN_INLINE DWORD CDC::GetCharacterPlacement(LPCTSTR lpString, int nCount, int nMaxExtent, LPGCP_RESULTS lpResults, DWORD dwFlags) const
-	{ ASSERT(m_hDC != NULL); return ::GetCharacterPlacement(m_hDC, lpString, nCount, nMaxExtent, lpResults, dwFlags); }
-_AFXWIN_INLINE DWORD CDC::GetCharacterPlacement(CString& str, int nMaxExtent, LPGCP_RESULTS lpResults, DWORD dwFlags) const
-	{ ASSERT(m_hDC != NULL); return ::GetCharacterPlacement(m_hDC, (LPCTSTR)str, str.GetLength(), nMaxExtent, lpResults, dwFlags); }
-
-
 _AFXWIN_INLINE CSize CDC::GetAspectRatioFilter() const
 	{
 		ASSERT(m_hAttribDC != NULL);
@@ -835,8 +955,8 @@ _AFXWIN_INLINE BOOL CDC::PolyBezier(const POINT* lpPoints, int nCount)
 
 _AFXWIN_INLINE int CDC::DrawEscape(int nEscape, int nInputSize, LPCSTR lpszInputData)
 	{ ASSERT(m_hDC != NULL); return ::DrawEscape(m_hDC, nEscape, nInputSize, lpszInputData); }
-_AFXWIN_INLINE int CDC::Escape(_In_ int nEscape, _In_ int nInputSize, _In_bytecount_(nInputSize) LPCSTR lpszInputData,
-		_In_ int nOutputSize, _Out_bytecap_(nOutputSize) LPSTR lpszOutputData)
+_AFXWIN_INLINE int CDC::Escape(int nEscape, int nInputSize, LPCSTR lpszInputData,
+		int nOutputSize, LPSTR lpszOutputData)
 	{ ASSERT(m_hDC != NULL); return ::ExtEscape(m_hDC, nEscape, nInputSize, lpszInputData,
 		nOutputSize, lpszOutputData); }
 
@@ -878,60 +998,6 @@ _AFXWIN_INLINE BOOL CDC::AddMetaFileComment(UINT nDataSize, const BYTE* pComment
 _AFXWIN_INLINE BOOL CDC::PlayMetaFile(HENHMETAFILE hEnhMF, LPCRECT lpBounds)
 	{ ASSERT(m_hDC != NULL); return ::PlayEnhMetaFile(m_hDC, hEnhMF, lpBounds); }
 
-/////////////////////////////////////////////////////////////////////////////
-// CImageList
-
-_AFXWIN_INLINE CImageList::operator HIMAGELIST() const
-	{ return m_hImageList;}
-_AFXWIN_INLINE HIMAGELIST CImageList::GetSafeHandle() const
-	{ return (this == NULL) ? NULL : m_hImageList; }
-_AFXWIN_INLINE int CImageList::GetImageCount() const
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_GetImageCount(m_hImageList); }
-_AFXWIN_INLINE int CImageList::Add(CBitmap* pbmImage, CBitmap* pbmMask)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_Add(m_hImageList, (HBITMAP)pbmImage->GetSafeHandle(), (HBITMAP)pbmMask->GetSafeHandle()); }
-_AFXWIN_INLINE int CImageList::Add(CBitmap* pbmImage, COLORREF crMask)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_AddMasked(m_hImageList, (HBITMAP)pbmImage->GetSafeHandle(), crMask); }
-_AFXWIN_INLINE BOOL CImageList::Remove(int nImage)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_Remove(m_hImageList, nImage); }
-_AFXWIN_INLINE BOOL CImageList::Replace(int nImage, CBitmap* pbmImage, CBitmap* pbmMask)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_Replace(m_hImageList, nImage, (HBITMAP)pbmImage->GetSafeHandle(), (HBITMAP)pbmMask->GetSafeHandle()); }
-_AFXWIN_INLINE int CImageList::Add(HICON hIcon)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_AddIcon(m_hImageList, hIcon); }
-_AFXWIN_INLINE int CImageList::Replace(int nImage, HICON hIcon)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_ReplaceIcon(m_hImageList, nImage, hIcon); }
-_AFXWIN_INLINE HICON CImageList::ExtractIcon(int nImage)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_ExtractIcon(NULL, m_hImageList, nImage); }
-_AFXWIN_INLINE BOOL CImageList::Draw(CDC* pDC, int nImage, POINT pt, UINT nStyle)
-	{ ASSERT(m_hImageList != NULL); ASSERT(pDC != NULL); return AfxImageList_Draw(m_hImageList, nImage, pDC->GetSafeHdc(), pt.x, pt.y, nStyle); }
-_AFXWIN_INLINE BOOL CImageList::DrawEx(CDC* pDC, int nImage, POINT pt, SIZE sz, COLORREF clrBk, COLORREF clrFg, UINT nStyle)
-	{ ASSERT(m_hImageList != NULL); ASSERT(pDC != NULL); return AfxImageList_DrawEx(m_hImageList, nImage, pDC->GetSafeHdc(), pt.x, pt.y, sz.cx, sz.cy, clrBk, clrFg, nStyle); }
-_AFXWIN_INLINE COLORREF CImageList::SetBkColor(COLORREF cr)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_SetBkColor(m_hImageList, cr); }
-_AFXWIN_INLINE COLORREF CImageList::GetBkColor() const
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_GetBkColor(m_hImageList); }
-_AFXWIN_INLINE BOOL CImageList::SetOverlayImage(int nImage, int nOverlay)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_SetOverlayImage(m_hImageList, nImage, nOverlay); }
-_AFXWIN_INLINE BOOL CImageList::GetImageInfo(int nImage, IMAGEINFO* pImageInfo) const
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_GetImageInfo(m_hImageList, nImage, pImageInfo); }
-_AFXWIN_INLINE BOOL CImageList::BeginDrag(int nImage, CPoint ptHotSpot)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_BeginDrag(m_hImageList, nImage, ptHotSpot.x, ptHotSpot.y); }
-_AFXWIN_INLINE void PASCAL CImageList::EndDrag()
-	{ AfxImageList_EndDrag(); }
-_AFXWIN_INLINE BOOL PASCAL CImageList::DragMove(CPoint pt)
-	{ return AfxImageList_DragMove(pt.x, pt.y); }
-_AFXWIN_INLINE BOOL CImageList::SetDragCursorImage(int nDrag, CPoint ptHotSpot)
-	{ ASSERT(m_hImageList != NULL); return AfxImageList_SetDragCursorImage(m_hImageList, nDrag, ptHotSpot.x, ptHotSpot.y); }
-_AFXWIN_INLINE BOOL PASCAL CImageList::DragShowNolock(BOOL bShow)
-	{return AfxImageList_DragShowNolock(bShow);}
-_AFXWIN_INLINE CImageList* PASCAL CImageList::GetDragImage(LPPOINT lpPoint, LPPOINT lpPointHotSpot)
-	{return CImageList::FromHandle(AfxImageList_GetDragImage(lpPoint, lpPointHotSpot));}
-_AFXWIN_INLINE BOOL PASCAL CImageList::DragEnter(CWnd* pWndLock, CPoint point)
-	{ return AfxImageList_DragEnter(pWndLock->GetSafeHwnd(), point.x, point.y); }
-_AFXWIN_INLINE BOOL PASCAL CImageList::DragLeave(CWnd* pWndLock)
-	{ return AfxImageList_DragLeave(pWndLock->GetSafeHwnd()); }
-
-/////////////////////////////////////////////////////////////////////////////	
-
 // CMenu
 _AFXWIN_INLINE CMenu::CMenu()
 	{ m_hMenu = NULL; }
@@ -944,19 +1010,18 @@ _AFXWIN_INLINE BOOL CMenu::CreatePopupMenu()
 _AFXWIN_INLINE CMenu::operator HMENU() const
 	{ ASSERT(this == NULL || m_hMenu == NULL || ::IsMenu(m_hMenu));
 		return this == NULL ? NULL : m_hMenu; }
-_AFXWIN_INLINE BOOL CMenu::operator==(const CMenu& menu) const
+_AFXWIN_INLINE CMenu::operator==(const CMenu& menu) const
 	{ return ((HMENU) menu) == m_hMenu; }
-_AFXWIN_INLINE BOOL CMenu::operator!=(const CMenu& menu) const
+_AFXWIN_INLINE CMenu::operator!=(const CMenu& menu) const
 	{ return ((HMENU) menu) != m_hMenu; }
 _AFXWIN_INLINE HMENU CMenu::GetSafeHmenu() const
 	{ ASSERT(this == NULL || m_hMenu == NULL || ::IsMenu(m_hMenu));
 		return this == NULL ? NULL : m_hMenu; }
 _AFXWIN_INLINE BOOL CMenu::DeleteMenu(UINT nPosition, UINT nFlags)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::DeleteMenu(m_hMenu, nPosition, nFlags); }
-
-_AFXWIN_INLINE BOOL CMenu::AppendMenu(UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNewItem)
+_AFXWIN_INLINE BOOL CMenu::AppendMenu(UINT nFlags, UINT nIDNewItem, LPCTSTR lpszNewItem)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::AppendMenu(m_hMenu, nFlags, nIDNewItem, lpszNewItem); }
-_AFXWIN_INLINE BOOL CMenu::AppendMenu(UINT nFlags, UINT_PTR nIDNewItem, const CBitmap* pBmp)
+_AFXWIN_INLINE BOOL CMenu::AppendMenu(UINT nFlags, UINT nIDNewItem, const CBitmap* pBmp)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::AppendMenu(m_hMenu, nFlags | MF_BITMAP, nIDNewItem,
 		(LPCTSTR)pBmp->GetSafeHandle()); }
 _AFXWIN_INLINE UINT CMenu::CheckMenuItem(UINT nIDCheckItem, UINT nCheck)
@@ -973,28 +1038,26 @@ _AFXWIN_INLINE UINT CMenu::GetMenuItemID(int nPos) const
 	{ ASSERT(::IsMenu(m_hMenu)); return ::GetMenuItemID(m_hMenu, nPos); }
 _AFXWIN_INLINE UINT CMenu::GetMenuState(UINT nID, UINT nFlags) const
 	{ ASSERT(::IsMenu(m_hMenu)); return ::GetMenuState(m_hMenu, nID, nFlags); }
-_AFXWIN_INLINE int CMenu::GetMenuString(_In_ UINT nIDItem, _Out_z_cap_(nMaxCount) LPTSTR lpString, _In_ int nMaxCount, _In_ UINT nFlags) const
+_AFXWIN_INLINE int CMenu::GetMenuString(UINT nIDItem, LPTSTR lpString, int nMaxCount, UINT nFlags) const
 	{ ASSERT(::IsMenu(m_hMenu)); return ::GetMenuString(m_hMenu, nIDItem, lpString, nMaxCount, nFlags); }
-_AFXWIN_INLINE BOOL CMenu::GetMenuItemInfo(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
+_AFXWIN_INLINE int CMenu::GetMenuString(UINT nIDItem, CString& rString, UINT nFlags) const
+	{ ASSERT(::IsMenu(m_hMenu)); int nResult = ::GetMenuString(m_hMenu, nIDItem,
+		rString.GetBuffer(256), 256, nFlags); rString.ReleaseBuffer();
+		return nResult; }
+_AFXWIN_INLINE BOOL CMenu::GetMenuItemInfo(UINT nIDItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
 	{ ASSERT(::IsMenu(m_hMenu)); ASSERT_POINTER(lpMenuItemInfo, MENUITEMINFO);
-		return ::GetMenuItemInfo(m_hMenu, uItem, fByPos, lpMenuItemInfo); }
-_AFXWIN_INLINE BOOL CMenu::SetMenuItemInfo(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
-	{ ASSERT(::IsMenu(m_hMenu)); ASSERT_POINTER(lpMenuItemInfo, MENUITEMINFO);
-		return ::SetMenuItemInfo(m_hMenu, uItem, fByPos, lpMenuItemInfo); }
+		return ::GetMenuItemInfo(m_hMenu, nIDItem, fByPos, lpMenuItemInfo); }
 _AFXWIN_INLINE CMenu* CMenu::GetSubMenu(int nPos) const
 	{ ASSERT(::IsMenu(m_hMenu)); return CMenu::FromHandle(::GetSubMenu(m_hMenu, nPos)); }
-_AFXWIN_INLINE BOOL CMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem,
+_AFXWIN_INLINE BOOL CMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT nIDNewItem,
 		LPCTSTR lpszNewItem)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::InsertMenu(m_hMenu, nPosition, nFlags, nIDNewItem, lpszNewItem); }
-_AFXWIN_INLINE BOOL CMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, const CBitmap* pBmp)
+_AFXWIN_INLINE BOOL CMenu::InsertMenu(UINT nPosition, UINT nFlags, UINT nIDNewItem, const CBitmap* pBmp)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::InsertMenu(m_hMenu, nPosition, nFlags | MF_BITMAP, nIDNewItem,
 		(LPCTSTR)pBmp->GetSafeHandle()); }
-_AFXWIN_INLINE BOOL CMenu::InsertMenuItem(UINT uItem, LPMENUITEMINFO lpMenuItemInfo, BOOL fByPos)
-	{ ASSERT(::IsMenu(m_hMenu)); ASSERT_POINTER(lpMenuItemInfo, MENUITEMINFO);
-		return ::InsertMenuItem(m_hMenu, uItem, fByPos, lpMenuItemInfo); }
-_AFXWIN_INLINE BOOL CMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, LPCTSTR lpszNewItem)
+_AFXWIN_INLINE BOOL CMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT nIDNewItem, LPCTSTR lpszNewItem)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::ModifyMenu(m_hMenu, nPosition, nFlags, nIDNewItem, lpszNewItem); }
-_AFXWIN_INLINE BOOL CMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT_PTR nIDNewItem, const CBitmap* pBmp)
+_AFXWIN_INLINE BOOL CMenu::ModifyMenu(UINT nPosition, UINT nFlags, UINT nIDNewItem, const CBitmap* pBmp)
 	{ ASSERT(::IsMenu(m_hMenu)); return ::ModifyMenu(m_hMenu, nPosition, nFlags | MF_BITMAP, nIDNewItem,
 		(LPCTSTR)pBmp->GetSafeHandle()); }
 _AFXWIN_INLINE BOOL CMenu::RemoveMenu(UINT nPosition, UINT nFlags)

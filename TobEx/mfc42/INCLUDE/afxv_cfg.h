@@ -1,7 +1,7 @@
 // afxv_cfg.h - target configuration control for non-Microsoft compilers
 //
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the

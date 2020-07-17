@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -44,7 +44,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -276,7 +279,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 // DocItem support
 
+#ifdef _AFXDLL
 class CDocItem : public CCmdTarget
+#else
+class AFX_NOVTABLE CDocItem : public CCmdTarget
+#endif
 {
 	DECLARE_SERIAL(CDocItem)
 
@@ -377,7 +384,7 @@ public:
 	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
 	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
 	virtual void OnCloseDocument();
-	void CommitItems(BOOL bSuccess, LPSTORAGE pNewStorage = NULL);    // called during File.Save & File.Save As
+	void CommitItems(BOOL bSuccess);    // called during File.Save & File.Save As
 
 	// minimal linking protocol
 	virtual LPMONIKER GetMoniker(OLEGETMONIKER nAssign);
@@ -433,7 +440,7 @@ class COleClientItem : public CDocItem
 
 // Constructors
 public:
-	/* explicit */ COleClientItem(COleDocument* pContainerDoc = NULL);
+	COleClientItem(COleDocument* pContainerDoc = NULL);
 
 	// create from the clipboard
 	BOOL CreateFromClipboard(OLERENDER render = OLERENDER_DRAW,
@@ -656,8 +663,6 @@ public:
 	COleFrameHook* m_pInPlaceDoc;   // doc window when in-place (may be NULL)
 	HWND m_hWndServer;  // HWND of in-place server window
 
-	DWORD m_dwFrameMenuBarVisibility; // visibility of the frame window menu bar
-
 public:
 	virtual ~COleClientItem();
 	virtual void Serialize(CArchive& ar);
@@ -672,9 +677,7 @@ public:
 	virtual BOOL FreezeLink();  // converts to static: for edit links dialog
 
 	DWORD GetNewItemNumber();   // generates new item number
-	_AFX_INSECURE_DEPRECATE("COleClientItem::GetItemName(TCHAR *) is insecure. Instead use COleClientItem::GetItemName(TCHAR *, UINT *size)")
-	void GetItemName(_Out_ _Pre_notnull_ _Post_z_ LPTSTR lpszItemName) const; // gets readable item name
-	void GetItemName(_Out_z_cap_(cchItemName)  _Pre_notnull_ _Post_z_ LPTSTR lpszItemName, UINT cchItemName) const;
+	void GetItemName(LPTSTR lpszItemName) const; // gets readable item name
 
 	void UpdateItemType();  // update m_nItemType
 
@@ -769,7 +772,7 @@ class COleDocObjectItem : public COleClientItem
 
 // Constructors
 public:
-	/* explicit */ COleDocObjectItem(COleDocument* pContainerDoc = NULL);
+	COleDocObjectItem(COleDocument* pContainerDoc = NULL);
 
 //Overridables
 public:
@@ -781,7 +784,6 @@ public:
 
 // Operations
 public:
-	static HRESULT DoDefaultPrinting(CView *pCaller, CPrintInfo *pInfo);
 	static BOOL OnPreparePrinting(CView* pCaller, CPrintInfo* pInfo,
 		BOOL bPrintAll = TRUE);
 	static void OnPrint(CView* pCaller, CPrintInfo* pInfo,
@@ -790,14 +792,7 @@ public:
 	HRESULT ExecCommand(DWORD nCmdID,
 		DWORD nCmdExecOpt = OLECMDEXECOPT_DONTPROMPTUSER,
 		const GUID* pguidCmdGroup = NULL);
-	HRESULT QueryCommand(ULONG nCmdID,
-			DWORD* pdwStatus,
-			OLECMDTEXT* pCmdText=NULL,
-			const GUID* pguidCmdGroup=NULL);
 
-	//command routing of OLE commands
-	DECLARE_OLECMD_MAP()
-	BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 // Implementation
 public:
 	virtual ~COleDocObjectItem();
@@ -823,7 +818,11 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 // COleServerItem - IOleObject & IDataObject OLE component
 
+#ifdef _AFXDLL
+class COleServerItem : public CDocItem
+#else
 class AFX_NOVTABLE COleServerItem : public CDocItem
+#endif
 {
 	DECLARE_DYNAMIC(COleServerItem)
 protected:
@@ -950,14 +949,14 @@ public:
 	LPOLEADVISEHOLDER m_lpOleAdviseHolder;  // may be NULL
 	LPDATAADVISEHOLDER m_lpDataAdviseHolder;    // may be NULL
 
-	virtual ~COleServerItem() = 0;
+	virtual ~COleServerItem();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
 	// implementation helpers
-	void NotifyClient(OLE_NOTIFICATION wNotification, DWORD_PTR dwParam);
+	void NotifyClient(OLE_NOTIFICATION wNotification, DWORD dwParam);
 	LPDATAOBJECT GetDataObject();
 	LPOLEOBJECT GetOleObject();
 	LPMONIKER GetMoniker(OLEGETMONIKER nAssign);
@@ -1002,7 +1001,7 @@ public:
 		STDMETHOD(Update)();
 		STDMETHOD(IsUpToDate)();
 		STDMETHOD(GetUserClassID)(LPCLSID);
-		STDMETHOD(GetUserType)(DWORD, _Deref_out_z_ LPOLESTR*);
+		STDMETHOD(GetUserType)(DWORD, LPOLESTR*);
 		STDMETHOD(SetExtent)(DWORD, LPSIZEL);
 		STDMETHOD(GetExtent)(DWORD, LPSIZEL);
 		STDMETHOD(Advise)(LPADVISESINK, LPDWORD);
@@ -1130,7 +1129,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 // COleServerDoc - registered server document containing COleServerItems
 
+#ifdef _AFXDLL
+class COleServerDoc : public COleLinkingDoc
+#else
 class AFX_NOVTABLE COleServerDoc : public COleLinkingDoc
+#endif
 {
 	DECLARE_DYNAMIC(COleServerDoc)
 
@@ -1203,22 +1206,20 @@ protected:
 public:
 	virtual void OnDeactivate();
 	virtual void OnDeactivateUI(BOOL bUndoable);
-	virtual void OnDocWindowActivate(BOOL bActivate);
-	virtual void OnShowControlBars(CFrameWnd* pFrameWnd, BOOL bShow);
 
 protected:
 	virtual void OnSetItemRects(LPCRECT lpPosRect, LPCRECT lpClipRect);
 	virtual BOOL OnReactivateAndUndo();
 
 	virtual void OnFrameWindowActivate(BOOL bActivate);
-
+	virtual void OnDocWindowActivate(BOOL bActivate);
+	virtual void OnShowControlBars(CFrameWnd* pFrameWnd, BOOL bShow);
 	virtual COleIPFrameWnd* CreateInPlaceFrame(CWnd* pParentWnd);
 	virtual void DestroyInPlaceFrame(COleIPFrameWnd* pFrameWnd);
 public:
 	virtual void OnResizeBorder(LPCRECT lpRectBorder,
 		LPOLEINPLACEUIWINDOW lpUIWindow, BOOL bFrame);
 
-	LPOLECLIENTSITE GetClientSite() const;
 // Implementation
 protected:
 	LPOLECLIENTSITE m_lpClientSite;     // for embedded item
@@ -1235,7 +1236,7 @@ protected:
 	CDocObjectServer* m_pDocObjectServer;  // if DocObject, ptr to doc site
 
 public:
-	virtual ~COleServerDoc() = 0;
+	virtual ~COleServerDoc();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -1263,7 +1264,7 @@ protected:
 	virtual void OnSaveEmbedding(LPSTORAGE lpStorage);
 
 	// Implementation helpers
-	void NotifyAllItems(OLE_NOTIFICATION wNotification, DWORD_PTR dwParam);
+	void NotifyAllItems(OLE_NOTIFICATION wNotification, DWORD dwParam);
 	BOOL SaveModifiedPrompt();
 	void ConnectView(CWnd* pParentWnd, CView* pView);
 	void UpdateUsingHostObj(UINT nIDS, CCmdUI* pCmdUI);
@@ -1395,11 +1396,6 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-	CFrameWnd* GetDocFrame();
-	CFrameWnd* GetMainFrame();
-	HRESULT GetInPlaceFrame(LPOLEINPLACEUIWINDOW *ppUIWindow);
-	HRESULT GetInPlaceDocFrame(LPOLEINPLACEUIWINDOW *ppUIWindow);
-	void SetPreviewMode(BOOL bNewMode);
 
 protected:
 	// in-place state
@@ -1415,8 +1411,6 @@ protected:
 	CRect m_rectPos;            // client area rect of the item
 	CRect m_rectClip;           // area to which frame should be clipped
 	BOOL m_bInsideRecalc;
-	BOOL m_bPreviewMode;
-	HMENU m_hMenuHelpPopup;
 
 	HMENU _m_Reserved;
 
@@ -1458,7 +1452,7 @@ class COleResizeBar : public CControlBar
 // Constructors
 public:
 	COleResizeBar();
-	virtual BOOL Create(CWnd* pParentWnd, DWORD dwStyle = WS_CHILD | WS_VISIBLE,
+	BOOL Create(CWnd* pParentWnd, DWORD dwStyle = WS_CHILD | WS_VISIBLE,
 		UINT nID = AFX_IDW_RESIZE_BAR);
 
 // Implementation
@@ -1488,12 +1482,9 @@ class COleStreamFile : public CFile
 {
 	DECLARE_DYNAMIC(COleStreamFile)
 
-private:
-   using CFile::Open;
-
 // Constructors and Destructors
 public:
-	/* explicit */ COleStreamFile(LPSTREAM lpStream = NULL);
+	COleStreamFile(LPSTREAM lpStream = NULL);
 
 // Operations
 	// Note: OpenStream and CreateStream can accept eith STGM_ flags or
@@ -1526,19 +1517,19 @@ public:
 
 	// attributes for implementation
 	BOOL GetStatus(CFileStatus& rStatus) const;
-	virtual ULONGLONG GetPosition() const;
+	virtual DWORD GetPosition() const;
 
 	virtual const CString GetStorageName() const;
 
 	// overrides for implementation
 	virtual CFile* Duplicate() const;
-	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
-	virtual void SetLength(ULONGLONG dwNewLen);
-	virtual ULONGLONG GetLength() const;
+	virtual LONG Seek(LONG lOff, UINT nFrom);
+	virtual void SetLength(DWORD dwNewLen);
+	virtual DWORD GetLength() const;
 	virtual UINT Read(void* lpBuf, UINT nCount);
 	virtual void Write(const void* lpBuf, UINT nCount);
-	virtual void LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-	virtual void UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
+	virtual void LockRange(DWORD dwPos, DWORD dwCount);
+	virtual void UnlockRange(DWORD dwPos, DWORD dwCount);
 	virtual void Abort();
 	virtual void Flush();
 	virtual void Close();
@@ -1554,9 +1545,6 @@ protected:
 class CMonikerFile: public COleStreamFile
 {
 	DECLARE_DYNAMIC(CMonikerFile)
-
-private:
-   using COleStreamFile::Open;
 
 public:
 	CMonikerFile();
@@ -1633,9 +1621,6 @@ class _AfxBindStatusCallback; // Forward declaration
 class CAsyncMonikerFile: public CMonikerFile
 {
 	DECLARE_DYNAMIC(CAsyncMonikerFile)
-
-private:
-   using CMonikerFile::Open;
 
 public:
 	CAsyncMonikerFile();
@@ -1965,9 +1950,8 @@ LPCTSTR AFXAPI AfxGetIIDString(REFIID iid);
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
-
-#ifdef _M_CEE
-    #include <afxpriv.h>
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXOLE_H__

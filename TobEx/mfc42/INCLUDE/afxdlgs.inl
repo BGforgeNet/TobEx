@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXDLGS.H
-
-#pragma once
 
 #ifdef _AFXDLGS_INLINE
 
@@ -68,24 +66,6 @@ _AFXDLGS_INLINE HDC CPrintDialog::GetPrinterDC() const
 		ASSERT(m_pd.Flags & PD_RETURNDC);
 		return m_pd.hDC; }
 
-// CPrintDialogEx
-#if WINVER >= 0x0500
-_AFXDLGS_INLINE BOOL CPrintDialogEx::PrintSelection() const
-	{ return m_pdex.Flags & PD_SELECTION ? TRUE : FALSE; }
-_AFXDLGS_INLINE BOOL CPrintDialogEx::PrintRange() const
-	{ return m_pdex.Flags & PD_PAGENUMS ? TRUE : FALSE; }
-_AFXDLGS_INLINE BOOL CPrintDialogEx::PrintCurrentPage() const
-	{ return m_pdex.Flags & PD_CURRENTPAGE ? TRUE : FALSE; }
-_AFXDLGS_INLINE BOOL CPrintDialogEx::PrintAll() const
-	{ return !PrintRange() && !PrintSelection() && !PrintCurrentPage() ? TRUE : FALSE; }
-_AFXDLGS_INLINE BOOL CPrintDialogEx::PrintCollate() const
-	{ return m_pdex.Flags & PD_COLLATE ? TRUE : FALSE; }
-_AFXDLGS_INLINE HDC CPrintDialogEx::GetPrinterDC() const
-	{ ASSERT_VALID(this);
-		ASSERT(m_pdex.Flags & PD_RETURNDC);
-		return m_pdex.hDC; }
-#endif //(WINVER >= 0x0500)
-
 // CFindReplaceDialog
 _AFXDLGS_INLINE BOOL CFindReplaceDialog::IsTerminating() const
 	{ return m_fr.Flags & FR_DIALOGTERM ? TRUE : FALSE ; }
@@ -107,15 +87,8 @@ _AFXDLGS_INLINE BOOL CFindReplaceDialog::ReplaceAll() const
 	{ return m_fr.Flags & FR_REPLACEALL ? TRUE : FALSE; }
 
 // CPropertySheet
-_AFXDLGS_INLINE void CPropertySheet::MapDialogRect(LPRECT lpRect) const
-	{ ASSERT(::IsWindow(m_hWnd)); ::MapDialogRect(m_hWnd, lpRect); }
 _AFXDLGS_INLINE CPropertyPage* CPropertySheet::GetPage(int nPage) const
-{ 
-	CPropertyPage *pPage=STATIC_DOWNCAST(CPropertyPage, (CObject*)m_pages[nPage]); 
-	ENSURE(pPage);
-	return pPage;
-}
-
+	{ return STATIC_DOWNCAST(CPropertyPage, (CObject*)m_pages[nPage]); }
 _AFXDLGS_INLINE void CPropertySheet::SetWizardMode()
 	{ m_psh.dwFlags |= PSH_WIZARD; }
 _AFXDLGS_INLINE void CPropertySheet::SetFinishText(LPCTSTR lpszText)
@@ -125,17 +98,15 @@ _AFXDLGS_INLINE void CPropertySheet::SetWizardButtons(DWORD dwFlags)
 _AFXDLGS_INLINE CTabCtrl* CPropertySheet::GetTabControl() const
 	{ ASSERT(::IsWindow(m_hWnd)); return (CTabCtrl*)CWnd::FromHandle(
 		(HWND)::SendMessage(m_hWnd, PSM_GETTABCONTROL, 0, 0)); }
-_AFXDLGS_INLINE void CPropertySheet::PressButton(int nButton)
-{
-	ASSERT(::IsWindow(m_hWnd));
-	if (nButton == PSBTN_FINISH)
-		m_nModalResult = ID_WIZFINISH;
-	::SendMessage(m_hWnd, PSM_PRESSBUTTON, nButton, 0);
-}
+_AFXDLGS_INLINE BOOL CPropertySheet::PressButton(int nButton)
+	{ ASSERT(::IsWindow(m_hWnd)); return (BOOL)::SendMessage(m_hWnd, PSM_PRESSBUTTON, nButton, 0); }
 _AFXDLGS_INLINE BOOL CPropertySheet::IsWizard() const
-		{ return (m_psh.dwFlags & (PSH_WIZARD | PSH_WIZARD97)) != 0; }
-_AFXDLGS_INLINE BOOL CPropertySheet::IsModeless() const
-		{ return m_bModeless; }
+		{ return ((((CPropertySheet*)this)->GetPropSheetHeader()->dwFlags & (PSH_WIZARD | PSH_WIZARD97)) != 0); }
+
+// CPropertySheetEx
+_AFXDLGS_INLINE void CPropertySheetEx::SetWizardMode()
+	{ m_psh.dwFlags |= PSH_WIZARD; }
+
 // CPageSetupDialog
 _AFXDLGS_INLINE CSize CPageSetupDialog::GetPaperSize() const
 	{ return CSize(m_psd.ptPaperSize.x, m_psd.ptPaperSize.y); }

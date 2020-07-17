@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -17,13 +17,6 @@
 #ifndef __AFXPRIV_H__
 #define __AFXPRIV_H__
 
-#pragma once
-
-#ifdef _DEBUG
-// Special _CLIENT_BLOCK type to identifiy CObjects.
-#define _AFX_CLIENT_BLOCK (_CLIENT_BLOCK|(0xc0<<16))
-#endif
-
 #ifndef __AFXADV_H__
 	#include <afxadv.h>
 #endif
@@ -38,7 +31,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -138,7 +134,7 @@ class CDockContext;                     // for dragging control bars
 									//  lParam[0] = hWnd getting WM_ACTIVATE
 									//  lParam[1] = hWndOther
 
-#define WM_RESERVED_036F	0x036F  // was WM_QUERY3DCONTROLS (now not used)
+#define WM_QUERY3DCONTROLS  0x036F  // lResult != 0 if 3D controls wanted
 
 // Note: Messages 0x0370, 0x0371, and 0x372 were incorrectly used by
 //  some versions of Windows.  To remain compatible, MFC does not
@@ -155,11 +151,11 @@ class CDockContext;                     // for dragging control bars
 // same as WM_SETMESSAGESTRING except not popped if IsTracking()
 #define WM_POPMESSAGESTRING 0x0375
 
-// WM_HELPPROMPTADDR is used internally to get the address of 
-//	m_dwPromptContext from the associated frame window. This is used
-//	during message boxes to setup for F1 help while that msg box is
-//	displayed. lResult is the address of m_dwPromptContext.
-#define WM_HELPPROMPTADDR	0x0376
+// WM_HELPPROMPTADDR is used internally to get the address of
+//  m_dwPromptContext from the associated frame window. This is used
+//  during message boxes to setup for F1 help while that msg box is
+//  displayed. lResult is the address of m_dwPromptContext.
+#define WM_HELPPROMPTADDR   0x0376
 
 // Constants used in DLGINIT resources for OLE control containers
 // NOTE: These are NOT real Windows messages they are simply tags
@@ -179,10 +175,10 @@ class CDockContext;                     // for dragging control bars
 #define WM_RESERVED_037E    0x037E
 
 // WM_FORWARDMSG - used by ATL to forward a message to another window for processing
-//	WPARAM - DWORD dwUserData - defined by user
-//	LPARAM - LPMSG pMsg - a pointer to the MSG structure
-//	return value - 0 if the message was not processed, nonzero if it was
-#define WM_FORWARDMSG		0x037F
+//  WPARAM - DWORD dwUserData - defined by user
+//  LPARAM - LPMSG pMsg - a pointer to the MSG structure
+//  return value - 0 if the message was not processed, nonzero if it was
+#define WM_FORWARDMSG       0x037F
 
 // like ON_MESSAGE but no return value
 #define ON_MESSAGE_VOID(message, memberFxn) \
@@ -229,6 +225,7 @@ public:
 	virtual void Close();
 	virtual BOOL Open(LPCTSTR lpszFileName, UINT nOpenFlags,
 		CFileException* pError = NULL);
+	static CString GetTempName(LPCTSTR pstrOriginalFile, BOOL bCreate);
 
 protected:
 	CString m_strMirrorName;
@@ -293,26 +290,8 @@ public:
 				LPCTSTR lpszString, UINT nCount, LPINT lpDxWidths);
 	virtual CSize TabbedTextOut(int x, int y, LPCTSTR lpszString, int nCount,
 				int nTabPositions, LPINT lpnTabStopPositions, int nTabOrigin);
-	virtual int _AFX_FUNCNAME(DrawText)(LPCTSTR lpszString, int nCount, LPRECT lpRect,
+	virtual int DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect,
 				UINT nFormat);
-	virtual int _AFX_FUNCNAME(DrawTextEx)(_In_count_(nCount) LPTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat, LPDRAWTEXTPARAMS lpDTParams);
-#pragma push_macro("DrawText")
-#pragma push_macro("DrawTextEx")
-#undef DrawText
-#undef DrawTextEx
-	int DrawText(LPCTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat)
-	{
-		return _AFX_FUNCNAME(DrawText)(lpszString, nCount, lpRect, nFormat);
-	}
-	int DrawTextEx(_In_count_(nCount) LPTSTR lpszString, int nCount, LPRECT lpRect,
-				UINT nFormat, LPDRAWTEXTPARAMS lpDTParams)
-	{
-		return _AFX_FUNCNAME(DrawTextEx)(lpszString, nCount, lpRect, nFormat, lpDTParams);
-	}
-#pragma pop_macro("DrawText")
-#pragma pop_macro("DrawTextEx")
 	virtual BOOL GrayString(CBrush* pBrush,
 				BOOL (CALLBACK* lpfnOutput)(HDC, LPARAM, int),
 					LPARAM lpData, int nCount,
@@ -328,9 +307,9 @@ protected:
 	void MirrorFont();
 	void MirrorAttributes();
 
-	CSize ComputeDeltas(int& x, _In_z_ LPCTSTR lpszString, UINT& nCount, _In_ BOOL bTabbed,
-					_In_ UINT nTabStops, _In_count_(nTabStops) LPINT lpnTabStops, _In_ int nTabOrigin,
-					_Pre_notnull_ _Post_z_ LPTSTR lpszOutputString, int* pnDxWidths, int& nRightFixup);
+	CSize ComputeDeltas(int& x, LPCTSTR lpszString, UINT& nCount, BOOL bTabbed,
+					UINT nTabStops, LPINT lpnTabStops, int nTabOrigin,
+					LPTSTR lpszOutputString, int* pnDxWidths, int& nRightFixup);
 
 protected:
 	int m_nScaleNum;    // Scale ratio Numerator
@@ -390,7 +369,6 @@ protected:
 public:
 	virtual ~CPreviewView();
 	virtual void OnPrepareDC(CDC* pDC, CPrintInfo* pInfo = NULL);
-	IOleInPlaceUIWindow *m_pIPUIWindow;
 #ifdef _DEBUG
 	void AssertValid() const;
 	void Dump(CDumpContext& dc) const;
@@ -461,27 +439,25 @@ protected:
 };
 
 // Zoom States
-#define _AFX_ZOOM_OUT    0
-#define _AFX_ZOOM_MIDDLE 1
-#define _AFX_ZOOM_IN     2
-
-#ifndef _AFX_USE_OLD_ZOOM
-#define _AFX_USE_OLD_ZOOM 1
-#endif
-
-#if _AFX_USE_OLD_ZOOM
-#define ZOOM_OUT    _AFX_ZOOM_OUT
-#define ZOOM_MIDDLE _AFX_ZOOM_MIDDLE
-#define ZOOM_IN     _AFX_ZOOM_IN
-#endif
+#define ZOOM_OUT    0
+#define ZOOM_MIDDLE 1
+#define ZOOM_IN     2
 
 /////////////////////////////////////////////////////////////////////////////
 // mirroring support
 
-// some mirroring stuff will be in wingdi.h someday
-#ifndef LAYOUT_LTR
-#define LAYOUT_LTR								 0x00000000	
+//WINBUG: some mirroring stuff will be in wingdi.h someday
+#ifndef LAYOUT_RTL
+#define LAYOUT_LTR                               0x00000000
+#define LAYOUT_RTL                         0x00000001
+#define NOMIRRORBITMAP                     0x80000000
 #endif
+
+//WINBUG: some mirroring stuff will be in winuser.h someday
+#ifndef WS_EX_LAYOUTRTL
+#define WS_EX_LAYOUTRTL                    0x00400000L
+#endif
+
 
 /////////////////////////////////////////////////////////////////////////////
 // toolbar docking support
@@ -490,7 +466,7 @@ class CDockContext
 {
 public:
 // Construction
-	explicit CDockContext(CControlBar* pBar);
+	CDockContext(CControlBar* pBar);
 
 // Attributes
 	CPoint m_ptLast;            // last mouse position during drag
@@ -542,7 +518,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CDockContext();
+	~CDockContext();
 	BOOL Track();
 	void DrawFocusRect(BOOL bRemoveRect = FALSE);
 		// draws the correct outline
@@ -575,7 +551,7 @@ public:
 	DWORD m_dwMRUFloatStyle; // most recent floating orientation
 	CPoint m_ptMRUFloatPos; // most recent floating position
 
-	CUIntArray m_arrBarID;   // bar IDs for bars contained within this one
+	CPtrArray m_arrBarID;   // bar IDs for bars contained within this one
 	CControlBar* m_pBar;    // bar which this refers to (transient)
 
 	void Serialize(CArchive& ar, CDockState* pDockState);
@@ -592,8 +568,8 @@ class CDockBar : public CControlBar
 
 // Construction
 public:
-	/* explicit */ CDockBar(BOOL bFloating = FALSE);   // TRUE if attached to CMiniDockFrameWnd
-	virtual BOOL Create(CWnd* pParentWnd, DWORD dwStyle, UINT nID);
+	CDockBar(BOOL bFloating = FALSE);   // TRUE if attached to CMiniDockFrameWnd
+	BOOL Create(CWnd* pParentWnd, DWORD dwStyle, UINT nID);
 
 // Attributes
 	BOOL m_bFloating;
@@ -640,7 +616,6 @@ protected:
 	afx_msg void OnNcPaint();
 	afx_msg void OnWindowPosChanging(LPWINDOWPOS lpWndPos);
 	afx_msg void OnPaint();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg LRESULT OnSizeParent(WPARAM, LPARAM);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -682,7 +657,7 @@ class COleCntrFrameWnd : public CFrameWnd
 {
 // Constructor
 public:
-	explicit COleCntrFrameWnd(COleIPFrameWnd* pInPlaceFrame);
+	COleCntrFrameWnd(COleIPFrameWnd* pInPlaceFrame);
 
 // Implementation
 protected:
@@ -707,8 +682,8 @@ class CDialogTemplate
 {
 // Constructors
 public:
-	/* explicit */ CDialogTemplate(const DLGTEMPLATE* pTemplate = NULL);
-	explicit CDialogTemplate(HGLOBAL hGlobal);
+	CDialogTemplate(const DLGTEMPLATE* pTemplate = NULL);
+	CDialogTemplate(HGLOBAL hGlobal);
 
 // Attributes
 	BOOL HasFont() const;
@@ -748,56 +723,6 @@ struct AFX_NOTIFY
 	NMHDR* pNMHDR;
 };
 
-
-////////////////////////////////////////////////////////////////////////////
-// other global state
-class CPushRoutingFrame
-{
-protected:
-	CFrameWnd* pOldRoutingFrame;
-	_AFX_THREAD_STATE* pThreadState;
-   CPushRoutingFrame* pOldPushRoutingFrame;
-
-public:
-	explicit CPushRoutingFrame(CFrameWnd* pNewRoutingFrame)
-	{ 
-		pThreadState = AfxGetThreadState();
-	  pOldPushRoutingFrame = pThreadState->m_pPushRoutingFrame;
-		pOldRoutingFrame = pThreadState->m_pRoutingFrame;
-		pThreadState->m_pRoutingFrame = pNewRoutingFrame;
-	  pThreadState->m_pPushRoutingFrame = this;
-	}
-	~CPushRoutingFrame()
-	{ 
-	  if (pThreadState != NULL)
-	  {
-		 ASSERT( pThreadState->m_pPushRoutingFrame == this );
-		 pThreadState->m_pRoutingFrame = pOldRoutingFrame;
-		 pThreadState->m_pPushRoutingFrame = pOldPushRoutingFrame;
-	  }
-   }
-   void Pop()
-   {
-	  ENSURE( pThreadState != NULL );
-	  ASSERT( pThreadState->m_pPushRoutingFrame == this );
-	  pThreadState->m_pRoutingFrame = pOldRoutingFrame;
-	  pThreadState->m_pPushRoutingFrame = pOldPushRoutingFrame;
-	  pThreadState = NULL;
-   }
-};
-
-class CChevronOwnerDrawMenu : public CMenu
-{
-public:
-	CChevronOwnerDrawMenu();
-
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-	virtual void MeasureItem(LPMEASUREITEMSTRUCT lpMeasureItemStruct);
-
-private:
-	CFont m_MenuFont;
-};
-
 /////////////////////////////////////////////////////////////////////////////
 // Global implementation helpers
 
@@ -812,16 +737,7 @@ void AFXAPI AfxResetMsgCache();
 
 // string helpers
 void AFXAPI AfxSetWindowText(HWND hWndCtrl, LPCTSTR lpszNew);
-int AFXAPI AfxLoadString(_In_ UINT nIDS, _Out_z_cap_post_count_(nMaxBuf, return + 1) LPSTR lpszBuf, _In_ UINT nMaxBuf = 256);
-int AFXAPI AfxLoadString(_In_ UINT nIDS, _Out_z_cap_post_count_(nMaxBuf, return + 1) LPWSTR lpszBuf, _In_ UINT nMaxBuf = 256);
-
-// registry helpers
-LONG AFXAPI AfxRegCreateKey(  HKEY hKey,  LPCTSTR lpSubKey,  PHKEY phkResult);
-LONG AFXAPI AfxRegOpenKey(  HKEY hKey,  LPCTSTR lpSubKey,  PHKEY phkResult);
-LONG AFXAPI AfxRegOpenKeyEx(  HKEY hKey,  LPCTSTR lpSubKey,  DWORD ulOptions,  REGSAM samDesired,  PHKEY phkResult);
-LONG AFXAPI AfxRegQueryValue(  HKEY hKey,  LPCTSTR lpSubKey,  LPTSTR lpValue,  PLONG lpcbValue);
-LONG AFXAPI AfxRegSetValue(  HKEY hKey,  LPCTSTR lpSubKey,  DWORD dwType,  LPCTSTR lpData,  DWORD cbData);
-LONG AFXAPI AfxRegDeleteKey(  HKEY hKey,  LPCTSTR lpSubKey);
+int AFXAPI AfxLoadString(UINT nIDS, LPTSTR lpszBuf, UINT nMaxBuf = 256);
 
 HDC AFXAPI AfxCreateDC(HGLOBAL hDevNames, HGLOBAL hDevMode);
 
@@ -830,6 +746,11 @@ void AFXAPI AfxGetModuleShortFileName(HINSTANCE hInst, CString& strShortName);
 // Failure dialog helpers
 void AFXAPI AfxFailMaxChars(CDataExchange* pDX, int nChars);
 void AFXAPI AfxFailRadio(CDataExchange* pDX);
+
+// DLL load helpers
+HINSTANCE AFXAPI AfxLoadDll(HINSTANCE* volatile hInst, LPCSTR lpszDLL);
+HINSTANCE AFXAPI AfxLoadDll(HINSTANCE* volatile hInst, LPCSTR lpszDLL,
+	FARPROC* pProcPtrs, LPCSTR lpszProcName);
 
 #ifndef __AFXCONV_H__
 #include <afxconv.h>
@@ -846,6 +767,9 @@ void AFXAPI AfxFailRadio(CDataExchange* pDX);
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFXPRIV_H__

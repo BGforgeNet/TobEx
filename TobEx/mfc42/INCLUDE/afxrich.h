@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,8 +14,6 @@
 #ifdef _AFX_NO_RICHEDIT_SUPPORT
 	#error Windows RichEdit classes not supported in this library variant.
 #endif
-
-#pragma once
 
 #ifndef __AFXWIN_H__
 	#include <afxwin.h>
@@ -39,7 +37,10 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -100,10 +101,10 @@ public:
 	CRect GetPageRect() const;
 
 	//formatting
-	CHARFORMAT2& GetCharFormatSelection();
-	PARAFORMAT2& GetParaFormatSelection();
-	void SetCharFormat(CHARFORMAT2 cf);
-	BOOL SetParaFormat(PARAFORMAT2& pf);
+	CHARFORMAT& GetCharFormatSelection();
+	PARAFORMAT& GetParaFormatSelection();
+	void SetCharFormat(CHARFORMAT cf);
+	BOOL SetParaFormat(PARAFORMAT& pf);
 	CRichEditCntrItem* GetSelectedItem() const;
 	CRichEditCntrItem* GetInPlaceActiveItem() const;
 
@@ -113,8 +114,6 @@ public:
 
 	// other attributes
 	long GetTextLength() const;
-	long GetTextLengthEx(DWORD dwFlags, UINT uCodePage = -1) const;
-
 	static BOOL AFX_CDECL IsRichEditFormat(CLIPFORMAT cf);
 	BOOL CanPaste() const;
 
@@ -123,10 +122,9 @@ public:
 	void AdjustDialogPosition(CDialog* pDlg);
 	HRESULT InsertItem(CRichEditCntrItem* pItem);
 	void InsertFileAsObject(LPCTSTR lpszFileName);
-	BOOL FindText(LPCTSTR lpszFind, BOOL bCase = TRUE, BOOL bWord = TRUE,
-		BOOL bNext = TRUE);
+	BOOL FindText(LPCTSTR lpszFind, BOOL bCase = TRUE, BOOL bWord = TRUE);
 	BOOL FindTextSimple(LPCTSTR lpszFind, BOOL bCase = TRUE,
-		BOOL bWord = TRUE, BOOL bNext = TRUE);
+		BOOL bWord = TRUE);
 	long PrintInsideRect(CDC* pDC, RECT& rectLayout, long nIndexStart,
 		long nIndexStop, BOOL bOutput);
 	long PrintPage(CDC* pDC, long nIndexStart, long nIndexStop);
@@ -151,8 +149,6 @@ protected:
 	virtual void OnTextNotFound(LPCTSTR lpszFind);
 	virtual void OnPrinterChanged(const CDC& dcPrinter);
 	virtual void WrapChanged();
-	virtual void OnActivateView(BOOL bActivate, CView* pActivateView,
-					CView* pDeactiveView);
 
 // Advanced
 	virtual BOOL OnPasteNativeObject(LPSTORAGE lpStg);
@@ -178,7 +174,7 @@ public:
 	HRESULT GetWindowContext(LPOLEINPLACEFRAME* lplpFrame,
 		LPOLEINPLACEUIWINDOW* lplpDoc, LPOLEINPLACEFRAMEINFO lpFrameInfo);
 	HRESULT ShowContainerUI(BOOL b);
-	static DWORD CALLBACK EditStreamCallBack(DWORD_PTR dwCookie,
+	static DWORD CALLBACK EditStreamCallBack(DWORD dwCookie,
 		LPBYTE pbBuff, LONG cb, LONG *pcb);
 #ifdef _DEBUG
 	virtual void AssertValid() const;
@@ -194,8 +190,8 @@ protected:
 	CRect m_rectMargin;
 	CSize m_sizePaper;
 	CDWordArray m_aPageStart;    // array of starting pages
-	PARAFORMAT2 m_paraformat;
-	CHARFORMAT2 m_charformat;
+	PARAFORMAT m_paraformat;
+	CHARFORMAT m_charformat;
 	BOOL m_bSyncCharFormat;
 	BOOL m_bSyncParaFormat;
 
@@ -221,13 +217,11 @@ protected:
 	afx_msg void OnUpdateNeedText(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNeedFind(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateEditUndo(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateEditRedo(CCmdUI* pCmdUI);
 	afx_msg void OnEditCut();
 	afx_msg void OnEditCopy();
 	afx_msg void OnEditPaste();
 	afx_msg void OnEditClear();
 	afx_msg void OnEditUndo();
-	afx_msg void OnEditRedo();
 	afx_msg void OnEditSelectAll();
 	afx_msg void OnEditFind();
 	afx_msg void OnEditReplace();
@@ -258,7 +252,7 @@ protected:
 	afx_msg void OnUpdateEditPasteSpecial(CCmdUI* pCmdUI);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnDropFiles(HDROP hDropInfo);
-	afx_msg void OnDevModeChange(_In_z_ LPTSTR lpDeviceName);
+	afx_msg void OnDevModeChange(LPTSTR lpDeviceName);
 	//}}AFX_MSG
 	afx_msg LRESULT OnFindReplaceCmd(WPARAM, LPARAM lParam);
 	afx_msg void OnSelChange(NMHDR* pNMHDR, LRESULT* pResult);
@@ -289,7 +283,11 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // CRichEditDoc
 
+#ifdef _AFXDLL
+class CRichEditDoc : public COleServerDoc
+#else
 class AFX_NOVTABLE CRichEditDoc : public COleServerDoc
+#endif
 {
 protected: // create from serialization only
 	CRichEditDoc();
@@ -311,7 +309,6 @@ protected:
 	void DeleteUnmarkedItems() const;
 	void UpdateObjectCache();
 public:
-	virtual ~CRichEditDoc() = 0 { }
 	BOOL m_bUpdateObjectCache;
 	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU);
 	virtual void SetTitle(LPCTSTR lpszTitle);
@@ -341,7 +338,7 @@ class CRichEditCntrItem : public COleClientItem
 
 // Constructors
 public:
-	/* explicit */ CRichEditCntrItem(REOBJECT* preo = NULL, CRichEditDoc* pContainer = NULL);
+	CRichEditCntrItem(REOBJECT* preo = NULL, CRichEditDoc* pContainer = NULL);
 		// Note: pContainer is allowed to be NULL to enable IMPLEMENT_SERIAL.
 		//  IMPLEMENT_SERIAL requires the class have a constructor with
 		//  zero arguments.  Normally, OLE items are constructed with a
@@ -396,6 +393,9 @@ protected:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXRICH_H__

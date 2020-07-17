@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -20,13 +20,14 @@
 #include <objbase.h>
 #endif
 
-#pragma once
-
 /////////////////////////////////////////////////////////////////////////////
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +41,6 @@
 #pragma pack(push, _AFX_PACKING)
 #endif
 
-#include <malloc.h>
 #ifndef ASSERT
 #ifndef _INC_CRTDBG
 #include <crtdbg.h>
@@ -58,8 +58,10 @@ public:
 	// the scope of this template.
 	typedef _Interface Interface;
 
-	// To avoid conversion difficulties this function should be used
-	// to obtain the CLSID.
+	// When the compiler supports references in template params,
+	// _CLSID will be changed to a reference.  To avoid conversion
+	// difficulties this function should be used to obtain the
+	// CLSID.
 	static const IID& GetIID()
 		{ ASSERT(_IID != NULL); return *_IID; }
 
@@ -87,10 +89,10 @@ public:
 	}
 
 	// Calls CoCreateClass with the provided CLSID.
-	_CIP(const CLSID& clsidObject, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
+	_CIP(const CLSID& clsid, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
 		: _pInterface(NULL)
 	{
-		CreateObject(clsidObject, dwClsContext);
+		CreateObject(clsid, dwClsContext);
 	}
 
 	// Calls CoCreateClass with the provided CLSID retrieved from
@@ -121,9 +123,9 @@ public:
 
 	// Releases any current interface and loads the class with the
 	// provided CLSID.
-	_CIP& operator=(const CLSID& clsidOther)
+	_CIP& operator=(const CLSID& clsid)
 	{
-		CreateObject(clsidOther);
+		CreateObject(clsid);
 		return *this;
 	}
 
@@ -154,7 +156,7 @@ public:
 		if (bAddRef)
 		{
 			ASSERT(pInterface != NULL);
-			_AddRef();
+			pInterface->AddRef();
 		}
 	}
 
@@ -195,14 +197,7 @@ public:
 	// Allows this class to be used as the interface itself.
 	// Also provides simple assertion verification.
 	Interface* operator->() const
-	{
-		ASSERT(_pInterface != NULL);
-		if (_pInterface == NULL)
-		{
-			AfxThrowInvalidArgException();
-		}
-		return _pInterface;
-	}
+		{ ASSERT(_pInterface != NULL); return _pInterface; }
 
 	// This operator is provided so that simple boolean expressions will
 	// work.  For example: "if (p) ...".
@@ -210,17 +205,23 @@ public:
 	operator BOOL() const
 		{ return _pInterface != NULL; }
 
+	// Returns TRUE if the interface is NULL.
+	// This operator will be removed when support for type bool
+	// is added to the compiler.
+	BOOL operator!()
+		{ return _pInterface == NULL; }
+
 	// Provides assertion verified, Release()ing of this interface.
 	void Release()
 	{
 		ASSERT(_pInterface != NULL);
-		_Release();
+		_pInterface->Release();
 		_pInterface = NULL;
 	}
 
 	// Provides assertion verified AddRef()ing of this interface.
 	void AddRef()
-		{ ASSERT(_pInterface != NULL); _AddRef(); }
+		{ ASSERT(_pInterface != NULL); _pInterface->AddRef(); }
 
 	// Another way to get the interface pointer without casting.
 	Interface* GetInterfacePtr() const
@@ -229,10 +230,10 @@ public:
 	// Loads an interface for the provided CLSID.
 	// Returns an HRESULT.  Any previous interface is released.
 	HRESULT CreateObject(
-		const CLSID& clsidObject, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
+		const CLSID& clsid, DWORD dwClsContext = CLSCTX_INPROC_SERVER)
 	{
 		_Release();
-		HRESULT hr = CoCreateInstance(clsidObject, NULL, dwClsContext,
+		HRESULT hr = CoCreateInstance(clsid, NULL, dwClsContext,
 			GetIID(), reinterpret_cast<void**>(&_pInterface));
 		ASSERT(SUCCEEDED(hr));
 		return hr;
@@ -244,18 +245,16 @@ public:
 		LPOLESTR clsidString, DWORD dwClsContext=CLSCTX_INPROC_SERVER)
 	{
 		ASSERT(clsidString != NULL);
-		if (clsidString == NULL)
-			return E_INVALIDARG;
-		CLSID clsidObject;
+		CLSID clsid;
 		HRESULT hr;
 		if (clsidString[0] == '{')
-			hr = CLSIDFromString(clsidString, &clsidObject);
+			hr = CLSIDFromString(clsidString, &clsid);
 		else
-			hr = CLSIDFromProgID(clsidString, &clsidObject);
+			hr = CLSIDFromProgID(clsidString, &clsid);
 		ASSERT(SUCCEEDED(hr));
 		if (FAILED(hr))
 			return hr;
-		return CreateObject(clsidObject, dwClsContext);
+		return CreateObject(clsid, dwClsContext);
 	}
 
 	// Performs a QI on pUnknown for the interface type returned
@@ -307,13 +306,13 @@ private:
 }; // class _CIP
 
 template<class _Interface, const IID* _IID>
-_CIP<_Interface, _IID>::_CIP()
+_CIP<_Interface, _IID>::_CIP<_Interface, _IID>()
 	: _pInterface(NULL)
 {
 }
 
 template<class _Interface, const IID* _IID>
-_CIP<_Interface, _IID>::~_CIP()
+_CIP<_Interface, _IID>::~_CIP<_Interface, _IID>()
 {
 	// If we still have an interface then Release() it.  The interface
 	// may be NULL if Detach() has previosly been called, or if it was
@@ -471,6 +470,9 @@ public:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFXCOM_H__

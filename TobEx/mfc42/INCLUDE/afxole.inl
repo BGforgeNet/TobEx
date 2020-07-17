@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -9,8 +9,6 @@
 // Microsoft Foundation Classes product.
 
 // Inlines for AFXOLE.H
-
-// more than one _INLINE type; can't use #pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 // General OLE inlines (CDocItem, COleDocument)
@@ -103,18 +101,12 @@ _AFXDISP_INLINE COleVariant::COleVariant(BYTE nSrc)
 	{ vt = VT_UI1; bVal = nSrc; }
 _AFXDISP_INLINE COleVariant::COleVariant(const COleCurrency& curSrc)
 	{ vt = VT_CY; cyVal = curSrc.m_cur; }
-#if (_WIN32_WINNT >= 0x0501) || defined(_ATL_SUPPORT_VT_I8)
-_AFXDISP_INLINE COleVariant::COleVariant(LONGLONG nSrc)
-	{ vt = VT_I8; llVal = nSrc; }
-_AFXDISP_INLINE COleVariant::COleVariant(ULONGLONG nSrc)
-	{ vt = VT_UI8; ullVal = nSrc; }
-#endif
 _AFXDISP_INLINE COleVariant::COleVariant(float fltSrc)
 	{ vt = VT_R4; fltVal = fltSrc; }
 _AFXDISP_INLINE COleVariant::COleVariant(double dblSrc)
 	{ vt = VT_R8; dblVal = dblSrc; }
 _AFXDISP_INLINE COleVariant::COleVariant(const COleDateTime& dateSrc)
-	{ vt = VT_DATE; date = dateSrc; }
+	{ vt = VT_DATE; date = dateSrc.m_dt; }
 _AFXDISP_INLINE COleVariant::COleVariant(const CByteArray& arrSrc)
 	{ vt = VT_EMPTY; *this = arrSrc; }
 _AFXDISP_INLINE COleVariant::COleVariant(const CLongBinary& lbSrc)
@@ -155,6 +147,125 @@ _AFXDISP_INLINE BOOL COleCurrency::operator!=(const COleCurrency& cur) const
 		m_cur.Lo != cur.m_cur.Lo); }
 _AFXDISP_INLINE COleCurrency::operator CURRENCY() const
 	{ return m_cur; }
+
+// COleDateTime
+_AFXDISP_INLINE COleDateTime::COleDateTime()
+	{ m_dt = 0; SetStatus(valid); }
+_AFXDISP_INLINE COleDateTime::COleDateTime(const COleDateTime& dateSrc)
+	{ m_dt = dateSrc.m_dt; m_status = dateSrc.m_status; }
+_AFXDISP_INLINE COleDateTime::COleDateTime(const VARIANT& varSrc)
+	{ *this = varSrc; }
+_AFXDISP_INLINE COleDateTime::COleDateTime(DATE dtSrc)
+	{ m_dt = dtSrc; SetStatus(valid); }
+_AFXDISP_INLINE COleDateTime::COleDateTime(time_t timeSrc)
+	{ *this = timeSrc; }
+_AFXDISP_INLINE COleDateTime::COleDateTime(const SYSTEMTIME& systimeSrc)
+	{ *this = systimeSrc; }
+_AFXDISP_INLINE COleDateTime::COleDateTime(const FILETIME& filetimeSrc)
+	{ *this = filetimeSrc; }
+_AFXDISP_INLINE COleDateTime::COleDateTime(int nYear, int nMonth, int nDay,
+	int nHour, int nMin, int nSec)
+	{ SetDateTime(nYear, nMonth, nDay, nHour, nMin, nSec); }
+_AFXDISP_INLINE COleDateTime::COleDateTime(WORD wDosDate, WORD wDosTime)
+	{ m_status = DosDateTimeToVariantTime(wDosDate, wDosTime, &m_dt) ?
+		valid : invalid; }
+_AFXDISP_INLINE const COleDateTime& COleDateTime::operator=(const COleDateTime& dateSrc)
+	{ m_dt = dateSrc.m_dt; m_status = dateSrc.m_status; return *this; }
+_AFXDISP_INLINE COleDateTime::DateTimeStatus COleDateTime::GetStatus() const
+	{ return m_status; }
+_AFXDISP_INLINE void COleDateTime::SetStatus(DateTimeStatus status)
+	{ m_status = status; }
+_AFXDISP_INLINE BOOL COleDateTime::operator==(const COleDateTime& date) const
+	{ return (m_status == date.m_status && m_dt == date.m_dt); }
+_AFXDISP_INLINE BOOL COleDateTime::operator!=(const COleDateTime& date) const
+	{ return (m_status != date.m_status || m_dt != date.m_dt); }
+_AFXDISP_INLINE const COleDateTime& COleDateTime::operator+=(
+	const COleDateTimeSpan dateSpan)
+	{ *this = *this + dateSpan; return *this; }
+_AFXDISP_INLINE const COleDateTime& COleDateTime::operator-=(
+	const COleDateTimeSpan dateSpan)
+	{ *this = *this - dateSpan; return *this; }
+_AFXDISP_INLINE COleDateTime::operator DATE() const
+	{ return m_dt; }
+_AFXDISP_INLINE int COleDateTime::SetDate(int nYear, int nMonth, int nDay)
+	{ return SetDateTime(nYear, nMonth, nDay, 0, 0, 0); }
+_AFXDISP_INLINE int COleDateTime::SetTime(int nHour, int nMin, int nSec)
+	// Set date to zero date - 12/30/1899
+	{ return SetDateTime(1899, 12, 30, nHour, nMin, nSec); }
+
+// COleDateTimeSpan
+_AFXDISP_INLINE COleDateTimeSpan::COleDateTimeSpan()
+	{ m_span = 0; SetStatus(valid); }
+_AFXDISP_INLINE COleDateTimeSpan::COleDateTimeSpan(double dblSpanSrc)
+	{ m_span = dblSpanSrc; SetStatus(valid); }
+_AFXDISP_INLINE COleDateTimeSpan::COleDateTimeSpan(
+	const COleDateTimeSpan& dateSpanSrc)
+	{ m_span = dateSpanSrc.m_span; m_status = dateSpanSrc.m_status; }
+_AFXDISP_INLINE COleDateTimeSpan::COleDateTimeSpan(
+	long lDays, int nHours, int nMins, int nSecs)
+	{ SetDateTimeSpan(lDays, nHours, nMins, nSecs); }
+_AFXDISP_INLINE COleDateTimeSpan::DateTimeSpanStatus COleDateTimeSpan::GetStatus() const
+	{ return m_status; }
+_AFXDISP_INLINE void COleDateTimeSpan::SetStatus(DateTimeSpanStatus status)
+	{ m_status = status; }
+_AFXDISP_INLINE double COleDateTimeSpan::GetTotalDays() const
+	{ ASSERT(GetStatus() == valid); return m_span; }
+_AFXDISP_INLINE double COleDateTimeSpan::GetTotalHours() const
+	{ ASSERT(GetStatus() == valid);
+		long lReturns = (long)(m_span * 24 + AFX_OLE_DATETIME_HALFSECOND);
+		return lReturns;
+	}
+_AFXDISP_INLINE double COleDateTimeSpan::GetTotalMinutes() const
+	{ ASSERT(GetStatus() == valid);
+		long lReturns = (long)(m_span * 24 * 60 + AFX_OLE_DATETIME_HALFSECOND);
+		return lReturns;
+	}
+_AFXDISP_INLINE double COleDateTimeSpan::GetTotalSeconds() const
+	{ ASSERT(GetStatus() == valid);
+		long lReturns = (long)(m_span * 24 * 60 * 60 + AFX_OLE_DATETIME_HALFSECOND);
+		return lReturns;
+	}
+
+_AFXDISP_INLINE long COleDateTimeSpan::GetDays() const
+	{ ASSERT(GetStatus() == valid); return (long)m_span; }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator==(
+	const COleDateTimeSpan& dateSpan) const
+	{ return (m_status == dateSpan.m_status &&
+		m_span == dateSpan.m_span); }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator!=(
+	const COleDateTimeSpan& dateSpan) const
+	{ return (m_status != dateSpan.m_status ||
+		m_span != dateSpan.m_span); }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator<(
+	const COleDateTimeSpan& dateSpan) const
+	{ ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return m_span < dateSpan.m_span; }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator>(
+	const COleDateTimeSpan& dateSpan) const
+	{ ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return m_span > dateSpan.m_span; }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator<=(
+	const COleDateTimeSpan& dateSpan) const
+	{ ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return m_span <= dateSpan.m_span; }
+_AFXDISP_INLINE BOOL COleDateTimeSpan::operator>=(
+	const COleDateTimeSpan& dateSpan) const
+	{ ASSERT(GetStatus() == valid);
+		ASSERT(dateSpan.GetStatus() == valid);
+		return m_span >= dateSpan.m_span; }
+_AFXDISP_INLINE const COleDateTimeSpan& COleDateTimeSpan::operator+=(
+	const COleDateTimeSpan dateSpan)
+	{ *this = *this + dateSpan; return *this; }
+_AFXDISP_INLINE const COleDateTimeSpan& COleDateTimeSpan::operator-=(
+	const COleDateTimeSpan dateSpan)
+	{ *this = *this - dateSpan; return *this; }
+_AFXDISP_INLINE COleDateTimeSpan COleDateTimeSpan::operator-() const
+	{ return -this->m_span; }
+_AFXDISP_INLINE COleDateTimeSpan::operator double() const
+	{ return m_span; }
 
 // COleSafeArray
 _AFXDISP_INLINE COleSafeArray::COleSafeArray()
@@ -309,32 +420,6 @@ _AFXOLESVR_INLINE BOOL COleServerDoc::IsDocObject() const
 	{ ASSERT_VALID(this); return m_pDocObjectServer != NULL; }
 _AFXOLESVR_INLINE BOOL COleServerDoc::IsInPlaceActive() const
 	{ ASSERT_VALID(this); return m_pInPlaceFrame != NULL; }
-_AFXOLESVR_INLINE LPOLECLIENTSITE COleServerDoc::GetClientSite() const
-	{ ASSERT_VALID(this); return m_lpClientSite; }
-
-// COleIPFrameWnd
-_AFXOLESVR_INLINE CFrameWnd* COleIPFrameWnd::GetDocFrame() { return (CFrameWnd*)m_pDocFrame; }
-_AFXOLESVR_INLINE CFrameWnd* COleIPFrameWnd::GetMainFrame() { return (CFrameWnd*)m_pMainFrame; }
-_AFXOLESVR_INLINE HRESULT COleIPFrameWnd::GetInPlaceFrame(LPOLEINPLACEUIWINDOW *ppUIWindow)
-{
-	HRESULT hr = E_UNEXPECTED;
-	if (m_pMainFrame && m_lpFrame)
-	{
-		hr = m_lpFrame->QueryInterface(IID_IOleInPlaceUIWindow, (void**)ppUIWindow);
-	}
-	return hr;
-}
-_AFXOLESVR_INLINE HRESULT COleIPFrameWnd::GetInPlaceDocFrame(LPOLEINPLACEUIWINDOW *ppUIWindow)
-{
-	HRESULT hr = E_UNEXPECTED;
-	if (m_pDocFrame && m_lpDocFrame)
-	{
-		hr = m_lpDocFrame->QueryInterface(IID_IOleInPlaceUIWindow, (void**)ppUIWindow);
-	}
-	return hr;
-}
-_AFXOLESVR_INLINE void COleIPFrameWnd::SetPreviewMode(BOOL bNewMode) { m_bPreviewMode = bNewMode; }
-
 #endif //_AFXOLESVR_INLINE
 
 /////////////////////////////////////////////////////////////////////////////

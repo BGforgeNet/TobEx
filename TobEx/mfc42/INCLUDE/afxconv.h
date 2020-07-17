@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -14,8 +14,6 @@
 #ifndef _OBJBASE_H_
 #include <objbase.h>
 #endif
-
-#pragma once
 
 /////////////////////////////////////////////////////////////////////////////
 // Global UNICODE<>ANSI translation helpers
@@ -35,8 +33,8 @@ LPTEXTMETRICA AFXAPI AfxTextMetricW2A(LPTEXTMETRICA lptmA, LPTEXTMETRICW lptmW);
 
 #endif //_WINGDI
 
-LPWSTR AFXAPI AfxA2WHelper(_Out_z_cap_(nChars) LPWSTR lpw, _In_z_ LPCSTR lpa, _In_ int nChars);
-LPSTR AFXAPI AfxW2AHelper(_Out_z_cap_(nChars) LPSTR lpa, _In_z_ LPCWSTR lpw, _In_ int nChars);
+LPWSTR AFXAPI AfxA2WHelper(LPWSTR lpw, LPCSTR lpa, int nChars);
+LPSTR AFXAPI AfxW2AHelper(LPSTR lpa, LPCWSTR lpw, int nChars);
 
 #ifndef ATLA2WHELPER
 #define ATLA2WHELPER AfxA2WHelper
@@ -50,6 +48,11 @@ LPSTR AFXAPI AfxW2AHelper(_Out_z_cap_(nChars) LPSTR lpa, _In_z_ LPCWSTR lpw, _In
 	AFX_INLINE LPOLESTR TASKSTRINGT2OLE(LPOLESTR lp) { return lp; }
 	AFX_INLINE LPTSTR TASKSTRINGOLE2T(LPOLESTR lp) { return lp; }
 	AFX_INLINE BSTR BSTR2TBSTR(BSTR bstr) { return bstr;}
+#elif defined(OLE2ANSI)
+// in these cases the default (TCHAR) is the same as OLECHAR
+	AFX_INLINE LPOLESTR TASKSTRINGT2OLE(LPOLESTR lp) { return lp; }
+	AFX_INLINE LPTSTR TASKSTRINGOLE2T(LPOLESTR lp) { return lp; }
+	AFX_INLINE BSTR BSTR2TBSTR(BSTR bstr) { return bstr; }
 #else
 	#define TASKSTRINGT2OLE(lpa)    AfxTaskStringA2W(lpa)
 	#define TASKSTRINGOLE2T(lpo) AfxTaskStringW2A(lpo)

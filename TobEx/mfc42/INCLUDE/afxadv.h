@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -21,11 +21,12 @@
 	#include <afxwin.h>
 #endif
 
-#pragma once
-
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -58,7 +59,7 @@ class CSharedFile : public CMemFile
 
 public:
 // Constructors
-	/* explicit */ CSharedFile(UINT nAllocFlags = GMEM_MOVEABLE,
+	CSharedFile(UINT nAllocFlags = GMEM_DDESHARE|GMEM_MOVEABLE,
 		UINT nGrowBytes = 4096);
 
 // Attributes
@@ -69,8 +70,8 @@ public:
 public:
 	virtual ~CSharedFile();
 protected:
-	virtual BYTE* Alloc(SIZE_T nBytes);
-	virtual BYTE* Realloc(BYTE* lpMem, SIZE_T nBytes);
+	virtual BYTE* Alloc(DWORD nBytes);
+	virtual BYTE* Realloc(BYTE* lpMem, DWORD nBytes);
 	virtual void Free(BYTE* lpMem);
 
 	UINT m_nAllocFlags;
@@ -98,7 +99,7 @@ public:
 // Operations
 	virtual void Remove(int nIndex);
 	virtual void Add(LPCTSTR lpszPathName);
-	virtual BOOL GetDisplayName(CString& strName, int nIndex,
+	BOOL GetDisplayName(CString& strName, int nIndex,
 		LPCTSTR lpszCurDir, int nCurDir, BOOL bAtLeastName = TRUE) const;
 	virtual void UpdateMenu(CCmdUI* pCmdUI);
 	virtual void ReadList();    // reads from registry or ini file
@@ -119,7 +120,7 @@ public:
 AFX_INLINE int CRecentFileList::GetSize() const
 	{ return m_nSize; }
 AFX_INLINE CString& CRecentFileList::operator[](int nIndex)
-{ ENSURE_ARG(nIndex >=0 && nIndex < m_nSize); return m_arrNames[nIndex]; }
+	{ ASSERT(nIndex < m_nSize); return m_arrNames[nIndex]; }
 
 /////////////////////////////////////////////////////////////////////////////
 // CDockState - used for docking serialization
@@ -170,6 +171,9 @@ public:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFXADV_H__

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -15,8 +15,6 @@
 	#error Database classes not supported in this library variant.
 #endif
 
-#pragma once
-
 #ifndef __AFXEXT_H__
 	#include <afxext.h>
 #endif
@@ -27,6 +25,7 @@
 
 // include standard SQL/ODBC "C" APIs
 #ifndef __SQL
+	#define SQL_NOUNICODEMAP
 	#include <sql.h>        // core
 #endif
 #ifndef __SQLEXT
@@ -35,12 +34,25 @@
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 #ifndef _AFX_NOFORCE_LIBS
 
 /////////////////////////////////////////////////////////////////////////////
 // Win32 libraries
+
+#ifdef _AFXDLL
+	#if defined(_DEBUG) && !defined(_AFX_MONOLITHIC)
+		#ifndef _UNICODE
+			#pragma comment(lib, "mfcd42d.lib")
+		#else
+			#pragma comment(lib, "mfcd42ud.lib")
+		#endif
+	#endif
+#endif
 
 #pragma comment(lib, "odbc32.lib")
 #pragma comment(lib, "odbccp32.lib")
@@ -116,8 +128,8 @@ struct CODBCParamInfo;
 #define MAX_TNAME_LEN    64     // Max size of table names
 #define MAX_FNAME_LEN    256    // Max size of field names
 #define MAX_DBNAME_LEN   32     // Max size of a database name
-#define MAX_DNAME_LEN    256    // Max size of Recordset names
-#define MAX_CONNECT_LEN  1024   // Max size of Connect string
+#define MAX_DNAME_LEN    256        // Max size of Recordset names
+#define MAX_CONNECT_LEN  512        // Max size of Connect string
 #define MAX_CURSOR_NAME  18     // Max size of a cursor name
 #define DEFAULT_FIELD_TYPE SQL_TYPE_NULL // pick "C" data type to match SQL data type
 
@@ -181,15 +193,15 @@ public:
 
 // Implementation (use AfxThrowDBException to create)
 public:
-	/* explicit */ CDBException(RETCODE nRetCode = SQL_SUCCESS);
+	CDBException(RETCODE nRetCode = SQL_SUCCESS);
 
 	virtual void BuildErrorString(CDatabase* pdb, HSTMT hstmt,
 		BOOL bTrace = TRUE);
 	void Empty();
 	virtual ~CDBException();
 
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpszError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpszError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 
 #ifdef _DEBUG
 	void TraceErrorMessage(LPCTSTR szTrace) const;
@@ -259,7 +271,6 @@ public:
 public:
 	// set special options
 	virtual void OnSetOptions(HSTMT hstmt);
-	virtual void BindParameters(HSTMT hstmt);
 
 // Implementation
 public:
@@ -276,13 +287,19 @@ public:
 	virtual BOOL Check(RETCODE nRetCode) const;
 	BOOL PASCAL CheckHstmt(RETCODE, HSTMT hstmt) const;
 
-	void  ReplaceBrackets(_Inout_z_ LPTSTR lpchSQL);
-	BOOL  m_bStripTrailingSpaces;
-	BOOL  m_bIncRecordCountOnAdd;
-	BOOL  m_bAddForUpdate;
-	TCHAR m_chIDQuoteChar;
+	// Note: CDatabase::BindParameters is now documented and is no longer
+	//  officially 'implementation.'  Feel free to use it.  It stays here
+	//  because moving it would break binary compatibility.
+	virtual void BindParameters(HSTMT hstmt);
 
-	void SetSynchronousMode(BOOL bSynchronous); // Obsolete, does nothing
+	void ReplaceBrackets(LPTSTR lpchSQL);
+	BOOL m_bStripTrailingSpaces;
+	BOOL m_bIncRecordCountOnAdd;
+	BOOL m_bAddForUpdate;
+	char m_chIDQuoteChar;
+	char m_reserved1[3];        // pad to even 4 bytes
+
+	void SetSynchronousMode(BOOL bSynchronous); // Obsolete, doe nothing
 
 protected:
 	CString m_strConnect;
@@ -370,13 +387,13 @@ public:
 	CFieldExchange(UINT nOperation, CRecordset* prs, void* pvField = NULL);
 
 	void Default(LPCTSTR szName,
-		void* pv, LONG_PTR* plLength, int nCType, SQLULEN cbValue, SQLULEN cbPrecision);
+		void* pv, LONG* plLength, int nCType, UINT cbValue, UINT cbPrecision);
 
 	// long binary helpers
-	SQLLEN GetLongBinarySize(int nField);
-	void GetLongBinaryData(int nField, CLongBinary& lb, SQLLEN* plSize);
-	BYTE* ReallocLongBinary(CLongBinary& lb, SQLLEN lSizeRequired,
-		SQLLEN lReallocSize);
+	long GetLongBinarySize(int nField);
+	void GetLongBinaryData(int nField, CLongBinary& lb, long* plSize);
+	BYTE* ReallocLongBinary(CLongBinary& lb, long lSizeRequired,
+		long lReallocSize);
 
 	// Current type of field
 	UINT m_nFieldType;
@@ -391,8 +408,8 @@ public:
 	UINT m_nParams;     // count of fields for various operations
 	UINT m_nParamFields;    // count of fields for various operations
 	HSTMT m_hstmt;      // For SQLBindParameter on update statement
-	SQLLEN m_lDefaultLBFetchSize;     // For fetching CLongBinary data of unknown len
-	SQLLEN m_lDefaultLBReallocSize;   // For fetching CLongBinary data of unknown len
+	long m_lDefaultLBFetchSize;     // For fetching CLongBinary data of unknown len
+	long m_lDefaultLBReallocSize;   // For fetching CLongBinary data of unknown len
 
 #ifdef _DEBUG
 	CDumpContext* m_pdcDump;
@@ -410,26 +427,21 @@ HENV AFXAPI AfxGetHENV();
 
 void AFXAPI AfxStoreField(CRecordset& rs, UINT nField, void* pvField);
 void AFXAPI AfxLoadField(CRecordset& rs, UINT nField,
-	void* pvField, LONG_PTR* plLength);
+	void* pvField, long* plLength);
 BOOL AFXAPI AfxCompareValueByRef(void* pvData, void* pvCache, int nDataType);
 void AFXAPI AfxCopyValueByRef(void* pvCache, void* pvData,
-	LONG_PTR* plLength, int nDataType);
+	long* plLength, int nDataType);
 
 /////////////////////////////////////////////////////////////////////////////
 // Standard Recordset Field Exchange routines
 
 // text data
-void AFXAPI RFX_Text(CFieldExchange* pFX, LPCTSTR szName, CStringW &value,
-	// Default max length for char and varchar, default datasource type
-	int nMaxLength = 255, int nColumnType = SQL_VARCHAR, short nScale = 0);
-void AFXAPI RFX_Text(CFieldExchange* pFX, LPCTSTR szName, CStringA &value,
+void AFXAPI RFX_Text(CFieldExchange* pFX, LPCTSTR szName, CString& value,
 	// Default max length for char and varchar, default datasource type
 	int nMaxLength = 255, int nColumnType = SQL_VARCHAR, short nScale = 0);
 
-void AFXAPI RFX_Text(_In_ CFieldExchange* pFX, _In_z_ LPCTSTR szName, _Out_cap_(nMaxLength) _Pre_notnull_ _Post_z_ LPWSTR value,
-	_In_ int nMaxLength, _In_ int nColumnType = SQL_VARCHAR, _In_ short nScale = 0);
-void AFXAPI RFX_Text(_In_ CFieldExchange* pFX, _In_ LPCTSTR szName, _Out_cap_(nMaxLength) _Pre_notnull_ _Post_z_ LPSTR value,
-	_In_ int nMaxLength, _In_ int nColumnType = SQL_VARCHAR, _In_ short nScale = 0);
+void AFXAPI RFX_Text(CFieldExchange* pFX, LPCTSTR szName, LPTSTR value,
+	int nMaxLength, int nColumnType = SQL_VARCHAR, short nScale = 0);
 
 // boolean data
 void AFXAPI RFX_Bool(CFieldExchange* pFX, LPCTSTR szName, BOOL& value);
@@ -439,7 +451,6 @@ void AFXAPI RFX_Long(CFieldExchange* pFX, LPCTSTR szName, long& value);
 void AFXAPI RFX_Int(CFieldExchange* pFX, LPCTSTR szName, int& value);
 void AFXAPI RFX_Single(CFieldExchange* pFX, LPCTSTR szName, float& value);
 void AFXAPI RFX_Double(CFieldExchange* pFX, LPCTSTR szName, double& value);
-void AFXAPI RFX_BigInt(CFieldExchange* pFX, LPCTSTR szName, LONGLONG& value);
 
 // date and time
 void AFXAPI RFX_Date(CFieldExchange* pFX, LPCTSTR szName, CTime& value);
@@ -449,42 +460,40 @@ void AFXAPI RFX_Date(CFieldExchange* pFX, LPCTSTR szName, COleDateTime& value);
 // Binary data
 void AFXAPI RFX_Binary(CFieldExchange* pFX, LPCTSTR szName, CByteArray& value,
 	// Default max length is for binary and varbinary
-	INT_PTR nMaxLength = 255);
+	int nMaxLength = 255);
 void AFXAPI RFX_Byte(CFieldExchange* pFX, LPCTSTR szName, BYTE& value);
 void AFXAPI RFX_LongBinary(CFieldExchange* pFX, LPCTSTR szName, CLongBinary& value);
 
 /////////////////////////////////////////////////////////////////////////////
 // Bulk Recordset Field Exchange helpers
 void AFXAPI AfxRFXBulkDefault(CFieldExchange* pFX, LPCTSTR szName,
-	void* pv, LONG_PTR* rgLengths, int nCType, SQLULEN cbValue);
+	void* pv, long* rgLengths, int nCType, UINT cbValue);
 
 /////////////////////////////////////////////////////////////////////////////
 // Bulk Recordset Field Exchange routines
 
 void AFXAPI RFX_Text_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	_Out_ _Deref_post_cap_(nMaxLength) LPWSTR* prgStrVals, LONG_PTR** prgLengths, int nMaxLength);
-void AFXAPI RFX_Text_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	_Out_ _Deref_post_cap_(nMaxLength) LPSTR* prgStrVals, LONG_PTR** prgLengths, int nMaxLength);
+	LPSTR* prgStrVals, long** prgLengths, int nMaxLength);
 
 void AFXAPI RFX_Bool_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	BOOL** prgBoolVals, LONG_PTR** prgLengths);
+	BOOL** prgBoolVals, long** prgLengths);
 void AFXAPI RFX_Int_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	int** prgIntVals, LONG_PTR** prgLengths);
+	int** prgIntVals, long** prgLengths);
 void AFXAPI RFX_Long_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	long** prgLongVals, LONG_PTR** prgLengths);
+	long** prgLongVals, long** prgLengths);
 
 void AFXAPI RFX_Single_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	float** prgFltVals, LONG_PTR** prgLengths);
+	float** prgFltVals, long** prgLengths);
 void AFXAPI RFX_Double_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	double** prgDblVals, LONG_PTR** prgLengths);
+	double** prgDblVals, long** prgLengths);
 
 void AFXAPI RFX_Date_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	TIMESTAMP_STRUCT** prgTSVals, LONG_PTR** prgLengths);
+	TIMESTAMP_STRUCT** prgTSVals, long** prgLengths);
 
 void AFXAPI RFX_Byte_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	BYTE** prgByteVals, LONG_PTR** prgLengths);
+	BYTE** prgByteVals, long** prgLengths);
 void AFXAPI RFX_Binary_Bulk(CFieldExchange* pFX, LPCTSTR szName,
-	BYTE** prgByteVals, LONG_PTR** prgLengths, int nMaxLength);
+	BYTE** prgByteVals, long** prgLengths, int nMaxLength);
 
 /////////////////////////////////////////////////////////////////////////////
 // Database Dialog Data Exchange cover routines
@@ -503,8 +512,8 @@ void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, DWORD& value,
 	CRecordset* pRecordset);
 void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, CString& value,
 	CRecordset* pRecordset);
-void AFXAPI DDX_FieldText(_In_ CDataExchange* pDX, _In_ int nIDC, _Out_z_cap_(nMaxLen) LPTSTR pstrValue,
-	_In_ int nMaxLen, _In_ CRecordset* pRecordset);
+void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, LPTSTR pstrValue,
+	int nMaxLen, CRecordset* pRecordset);
 void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, double& value,
 	CRecordset* pRecordset);
 void AFXAPI DDX_FieldText(CDataExchange* pDX, int nIDC, float& value,
@@ -544,10 +553,9 @@ void AFXAPI DDX_FieldScroll(CDataExchange* pDX, int nIDC, int& value,
 // Most Move constants out of date
 // #define AFX_MOVE_FIRST      0x80000000L
 // #define AFX_MOVE_PREVIOUS   (-1L)
+#define AFX_MOVE_REFRESH    0L
 // #define AFX_MOVE_NEXT       (+1L)
 // #define AFX_MOVE_LAST       0x7fffffffL
-
-#define AFX_MOVE_REFRESH       0L
 
 #define AFX_RECORDSET_STATUS_OPEN    (+1L)
 #define AFX_RECORDSET_STATUS_CLOSED  0L
@@ -559,7 +567,7 @@ class CRecordset : public CObject
 
 // Constructor
 public:
-	/* explicit */ CRecordset(CDatabase* pDatabase = NULL);
+	CRecordset(CDatabase* pDatabase = NULL);
 
 public:
 	virtual ~CRecordset();
@@ -637,7 +645,7 @@ public:
 
 	virtual void SetRowsetSize(DWORD dwNewRowsetSize);
 	DWORD GetRowsetSize() const;
-	SQLULEN GetRowsFetched() const;
+	DWORD GetRowsFetched() const;
 	virtual void CheckRowsetError(RETCODE nRetCode);
 	void RefreshRowset(WORD wRow, WORD wLockType = SQL_LOCK_NO_CHANGE);
 	void SetRowsetCursorPosition(WORD wRow, WORD wLockType = SQL_LOCK_NO_CHANGE);
@@ -650,91 +658,19 @@ public:
 	virtual void Delete();      // delete the current record
 	void CancelUpdate();        // cancel pending Edit/AddNew
 
-	BOOL FlushResultSet();
+	BOOL FlushResultSet() const;
 
 	// field operations
 	short GetODBCFieldCount() const;
 	void GetODBCFieldInfo(short nIndex, CODBCFieldInfo& fieldinfo);
 	void GetODBCFieldInfo(LPCTSTR lpszName, CODBCFieldInfo& fieldinfo);
-
 	void GetFieldValue(LPCTSTR lpszName, CDBVariant& varValue,
 		short nFieldType = DEFAULT_FIELD_TYPE);
 	void GetFieldValue(short nIndex, CDBVariant& varValue,
 		short nFieldType = DEFAULT_FIELD_TYPE);
+	void GetFieldValue(LPCTSTR lpszName, CString& strValue);
+	void GetFieldValue(short nIndex, CString& strValue);
 
-	void GetFieldValue(LPCTSTR lpszName, CStringW &strValue);
-	void GetFieldValue(LPCTSTR lpszName, CStringA &strValue);
-	void GetFieldValue(short nIndex, CStringW &strValue);
-	void GetFieldValue(short nIndex, CStringA &strValue);
-
-private:
-	template<typename StringType>
-	inline void GetFieldValueEx(short nIndex, StringType &strValue, short nFieldType)
-	{
-		ASSERT_VALID(this);
-		ASSERT(IsOpen());
-
-		// No data or no column info fetched yet
-		if (GetODBCFieldCount() <= 0)
-		{
-			ASSERT(FALSE);
-			return;
-		}
-
-		// Convert index to 1-based and check range
-		nIndex++;
-		if (nIndex < 1 || nIndex > GetODBCFieldCount())
-		{
-			ThrowDBException(AFX_SQL_ERROR_FIELD_NOT_FOUND);
-		}
-
-		SQLLEN nLen = GetTextLen(m_rgODBCFieldInfos[nIndex - 1].m_nSQLType,
-				m_rgODBCFieldInfos[nIndex - 1].m_nPrecision);
-		if (nLen > INT_MAX)
-			AfxThrowMemoryException();
-		void* pvData = strValue.GetBufferSetLength(int(nLen));
-
-		// Now can actually get the data
-		SQLLEN nActualSize = GetData(m_pDatabase, m_hstmt, nIndex,
-			nFieldType, pvData, nLen * sizeof(StringType::XCHAR),
- 			m_rgODBCFieldInfos[nIndex - 1].m_nSQLType);
-
-		// Handle NULL data separately
-		if (nActualSize == SQL_NULL_DATA)
-		{
-			// Clear value
-			strValue.Empty();
-		}
-		else
-		{
-			// May need to cleanup and call SQLGetData again if necessary
-			GetLongCharDataAndCleanup(m_pDatabase, m_hstmt, nIndex,
-				nActualSize / (sizeof(StringType::XCHAR)), &pvData, nLen, strValue,
-				m_rgODBCFieldInfos[nIndex - 1].m_nSQLType, nFieldType);
-		}
-	}
-
-	template<typename StringType>
-	void GetFieldValueEx(LPCTSTR lpszName, StringType &strValue)
-	{
-		ASSERT_VALID(this);
-		ASSERT(IsOpen());
-		ASSERT(lpszName != NULL);
-
-		// No data or no column info fetched yet
-		if (GetODBCFieldCount() <= 0)
-		{
-			ASSERT(FALSE);
-			return;
-		}
-
-		// Get the index of the field corresponding to name
-		short nField = GetFieldIndexByName(lpszName);
-
-		GetFieldValue(nField, strValue);
-	}
-
-public:
 	void SetFieldDirty(void *pv, BOOL bDirty = TRUE);
 	void SetFieldNull(void *pv, BOOL bNull = TRUE);
 	void SetParamNull(int nIndex, BOOL bNull = TRUE);
@@ -763,7 +699,6 @@ public:
 
 	// set special options
 	virtual void OnSetOptions(HSTMT hstmt);
-	virtual void OnSetUpdateOptions(HSTMT hstmt);
 
 	// for recordset field exchange
 	virtual void DoFieldExchange(CFieldExchange* pFX);
@@ -782,11 +717,11 @@ public:
 	void ResetCursor();
 	void CheckRowsetCurrencyStatus(UWORD wFetchType, long nRows);
 	RETCODE FetchData(UWORD wFetchType, SDWORD nRow,
-		SQLULEN* pdwRowsFetched);
+		DWORD* pdwRowsFetched);
 	void SkipDeletedRecords(UWORD wFetchType, long nRows,
-		SQLULEN* pdwRowsFetched, RETCODE* pnRetCode);
+		DWORD* pdwRowsFetched, RETCODE* pnRetCode);
 	virtual void SetRowsetCurrencyStatus(RETCODE nRetCode,
-		UWORD wFetchType, long nRows, SQLULEN dwRowsFetched);
+		UWORD wFetchType, long nRows, DWORD dwRowsFetched);
 
 	virtual void PreBindFields();   // called before data fields are bound
 	UINT m_nFields;         // number of RFX fields
@@ -836,7 +771,7 @@ public:
 	short GetFieldIndexByName(LPCTSTR lpszFieldName);
 
 	void AllocStatusArrays();
-	LONG_PTR* GetFieldLengthBuffer(DWORD nField, int nFieldType);   // for fields & params
+	long* GetFieldLengthBuffer(DWORD nField, int nFieldType);   // for fields & params
 
 	BYTE GetFieldStatus(DWORD nField);
 	void SetFieldStatus(DWORD nField, BYTE bFlags);
@@ -864,21 +799,16 @@ public:
 	// GetFieldValue helpers
 	static short PASCAL GetDefaultFieldType(short nSQLType);
 	static void* PASCAL GetDataBuffer(CDBVariant& varValue, short nFieldType,
-		SQLLEN* pnLen, short nSQLType, SQLULEN nPrecision);
-	static SQLLEN PASCAL GetTextLen(short nSQLType, SQLULEN nPrecision);
-	static SQLLEN PASCAL GetData(CDatabase* pdb, HSTMT hstmt, short nFieldIndex,
-		short nFieldType, LPVOID pvData, SQLLEN nLen, short nSQLType);
+		int* pnLen, short nSQLType, UDWORD nPrecision);
+	static int PASCAL GetTextLen(short nSQLType, UDWORD nPrecision);
+	static long PASCAL GetData(CDatabase* pdb, HSTMT hstmt, short nFieldIndex,
+		short nFieldType, LPVOID pvData, int nLen, short nSQLType);
 	static void PASCAL GetLongBinaryDataAndCleanup(CDatabase* pdb, HSTMT hstmt,
-		short nFieldIndex, SQLLEN nActualSize, LPVOID* ppvData, SQLLEN nLen,
+		short nFieldIndex, long nActualSize, LPVOID* ppvData, int nLen,
 		CDBVariant& varValue, short nSQLType);
-
 	static void PASCAL GetLongCharDataAndCleanup(CDatabase* pdb, HSTMT hstmt,
-		short nFieldIndex, SQLLEN nActualSize, LPVOID* ppvData, SQLLEN nLen,
-		CStringW& strValue, short nSQLType, short nSQLCType = SQL_C_WCHAR);
-
-	static void PASCAL GetLongCharDataAndCleanup(CDatabase* pdb, HSTMT hstmt,
-		short nFieldIndex, SQLLEN nActualSize, LPVOID* ppvData, SQLLEN nLen,
-		CStringA& strValue, short nSQLType, short nSQLCType = SQL_C_CHAR);
+		short nFieldIndex, long nActualSize, LPVOID* ppvData, int nLen,
+		CString& strValue, short nSQLType);
 
 protected:
 	UINT m_nOpenType;
@@ -901,7 +831,7 @@ protected:
 	UDWORD m_dwDriverConcurrency;   // driver supported concurrency types
 	UDWORD m_dwConcurrency; // requested concurrency type
 	UWORD* m_rgRowStatus;     // row status used by SQLExtendedFetch and SQLSetPos
-	SQLULEN m_dwRowsFetched;  // number of rows fetched by SQLExtendedFetch
+	DWORD m_dwRowsFetched;  // number of rows fetched by SQLExtendedFetch
 	HSTMT m_hstmtUpdate;
 	BOOL m_bRecordsetDb;
 	BOOL m_bBOF;
@@ -916,7 +846,7 @@ protected:
 	int m_nFieldsBound;
 	BYTE* m_pbFieldFlags;
 	BYTE* m_pbParamFlags;
-	LONG_PTR* m_plParamLength;
+	LONG* m_plParamLength;
 	DWORD m_dwInitialGetDataLen;    // Initial GetFieldValue alloc size for long data
 	DWORD m_dwRowsetSize;
 	DWORD m_dwAllocatedRowsetSize;
@@ -949,8 +879,8 @@ protected:
 	void BuildUpdateSQL();
 	void ExecuteUpdateSQL();
 	void SendLongBinaryData(HSTMT hstmt);
-	virtual SQLLEN GetLBFetchSize(SQLLEN lOldSize);     // CLongBinary fetch chunking
-	virtual SQLLEN GetLBReallocSize(SQLLEN lOldSize);   // CLongBinary realloc chunking
+	virtual long GetLBFetchSize(long lOldSize);     // CLongBinary fetch chunking
+	virtual long GetLBReallocSize(long lOldSize);   // CLongBinary realloc chunking
 
 	friend class CFieldExchange;
 	friend class CRecordView;
@@ -968,15 +898,12 @@ struct CRecordsetStatus
 	BOOL m_bRecordCountFinal;// Have we counted all records?
 };
 
-#pragma warning( push )
-#pragma warning( disable: 4121 )
-
 // Must maintian data binding info
 struct CFieldInfo
 {
 	// MFC specific info
 	void* m_pvDataCache;
-	LONG_PTR m_nLength;
+	long m_nLength;
 	int m_nDataType;
 	BYTE m_bStatus;
 #ifdef _DEBUG
@@ -984,14 +911,12 @@ struct CFieldInfo
 #endif
 };
 
-#pragma warning( pop )
-
 struct CODBCFieldInfo
 {
 	// meta data from ODBC
 	CString m_strName;
 	SWORD m_nSQLType;
-	SQLULEN m_nPrecision;
+	UDWORD m_nPrecision;
 	SWORD m_nScale;
 	SWORD m_nNullability;
 };
@@ -1019,8 +944,6 @@ struct CODBCParamInfo
 #define DBVT_DATE       7
 #define DBVT_STRING     8
 #define DBVT_BINARY     9
-#define DBVT_ASTRING    10
-#define DBVT_WSTRING    11
 
 class CDBVariant
 {
@@ -1043,8 +966,6 @@ public:
 	  TIMESTAMP_STRUCT* m_pdate;
 	  CString*          m_pstring;
 	  CLongBinary*      m_pbinary;
-	  CStringA*			m_pstringA;
-	  CStringW*			m_pstringW;
 	};
 
 // Operations
@@ -1058,14 +979,18 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // CRecordView - form for viewing data records
 
+#ifdef _AFXDLL
+class CRecordView : public CFormView
+#else
 class AFX_NOVTABLE CRecordView : public CFormView
+#endif
 {
 	DECLARE_DYNAMIC(CRecordView)
 
 // Construction
 protected:  // must derive your own class
-	explicit CRecordView(LPCTSTR lpszTemplateName);
-	explicit CRecordView(UINT nIDTemplate);
+	CRecordView(LPCTSTR lpszTemplateName);
+	CRecordView(UINT nIDTemplate);
 
 // Attributes
 public:
@@ -1080,7 +1005,7 @@ public:
 
 // Implementation
 public:
-	virtual ~CRecordView() = 0;
+	virtual ~CRecordView();
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -1124,6 +1049,9 @@ protected:
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif //__AFXDB_H__

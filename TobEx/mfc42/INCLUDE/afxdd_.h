@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,21 +10,11 @@
 
 // Do not include this file directly (included by AFXWIN.H)
 
-#pragma once
-
 /////////////////////////////////////////////////////////////////////////////
 // Standard Dialog Data Exchange routines
 
 class COleCurrency;    // forward reference (see afxdisp.h)
-
-namespace ATL
-{
-	class COleDateTime;	// forward reference (see atlcomtime.h)
-}
-using ATL::COleDateTime;
-
-struct tagDEC;
-typedef tagDEC DECIMAL;
+class COleDateTime;    // forward reference (see afxdisp.h)
 
 // simple text operations
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, BYTE& value);
@@ -33,17 +23,12 @@ void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, int& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, UINT& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, long& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DWORD& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, LONGLONG& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, ULONGLONG& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, CString& value);
-void AFXAPI DDX_Text(_Inout_ CDataExchange* pDX, _In_ int nIDC, _Out_z_cap_(nMaxLen) LPTSTR value, _In_ int nMaxLen);
+void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, LPTSTR value, int nMaxLen);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, float& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, double& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, COleCurrency& value);
 void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, COleDateTime& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, GUID& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DECIMAL& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, FILETIME& value);
 
 // special control types
 void AFXAPI DDX_Check(CDataExchange* pDX, int nIDC, int& value);
@@ -57,15 +42,10 @@ void AFXAPI DDX_CBStringExact(CDataExchange* pDX, int nIDC, CString& value);
 void AFXAPI DDX_Scroll(CDataExchange* pDX, int nIDC, int& value);
 void AFXAPI DDX_Slider(CDataExchange* pDX, int nIDC, int& value);
 
-void AFXAPI DDX_IPAddress(CDataExchange* pDX, int nIDC, DWORD& value);
-
 void AFXAPI DDX_MonthCalCtrl(CDataExchange* pDX, int nIDC, CTime& value);
 void AFXAPI DDX_MonthCalCtrl(CDataExchange* pDX, int nIDC, COleDateTime& value);
-void AFXAPI DDX_MonthCalCtrl(CDataExchange* pDX, int nIDC, FILETIME& value);
-void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, CString& value);
 void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, CTime& value);
 void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, COleDateTime& value);
-void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, FILETIME& value);
 
 // for getting access to the actual controls
 void AFXAPI DDX_Control(CDataExchange* pDX, int nIDC, CWnd& rControl);
@@ -82,8 +62,6 @@ void AFXAPI DDV_MinMaxInt(CDataExchange* pDX, int value, int minVal, int maxVal)
 void AFXAPI DDV_MinMaxLong(CDataExchange* pDX, long value, long minVal, long maxVal);
 void AFXAPI DDV_MinMaxUInt(CDataExchange* pDX, UINT value, UINT minVal, UINT maxVal);
 void AFXAPI DDV_MinMaxDWord(CDataExchange* pDX, DWORD value, DWORD minVal, DWORD maxVal);
-void AFXAPI DDV_MinMaxLongLong(CDataExchange* pDX, LONGLONG value, LONGLONG minVal, LONGLONG maxVal);
-void AFXAPI DDV_MinMaxULongLong(CDataExchange* pDX, ULONGLONG value, ULONGLONG minVal, ULONGLONG maxVal);
 void AFXAPI DDV_MinMaxFloat(CDataExchange* pDX, float const& value, float minVal, float maxVal);
 void AFXAPI DDV_MinMaxDouble(CDataExchange* pDX, double const& value, double minVal, double maxVal);
 
@@ -91,7 +69,7 @@ void AFXAPI DDV_MinMaxDouble(CDataExchange* pDX, double const& value, double min
 void AFXAPI DDV_MinMaxSlider(CDataExchange* pDX, DWORD value, DWORD minVal, DWORD maxVal);
 void AFXAPI DDV_MinMaxDateTime(CDataExchange* pDX, CTime& refValue, const CTime* refMinRange, const CTime* refMaxRange);
 void AFXAPI DDV_MinMaxDateTime(CDataExchange* pDX, COleDateTime& refValue, const COleDateTime* refMinRange, const COleDateTime* refMaxRange);
-void AFXAPI DDV_MinMaxMonth(CDataExchange* pDX,	CTime& refValue, const CTime* pMinRange, const CTime* pMaxRange);
+void AFXAPI DDV_MinMaxMonth(CDataExchange* pDX, CTime& refValue, const CTime* pMinRange, const CTime* pMaxRange);
 void AFXAPI DDV_MinMaxMonth(CDataExchange* pDX, COleDateTime& refValue, const COleDateTime* refMinRange, const COleDateTime* refMaxRange);
 
 

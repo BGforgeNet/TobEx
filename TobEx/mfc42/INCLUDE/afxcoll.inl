@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,341 +10,264 @@
 
 // Inlines for AFXCOLL.H
 
-#pragma once
-
 #ifdef _AFXCOLL_INLINE
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CByteArray::GetSize() const
+_AFXCOLL_INLINE int CByteArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CByteArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CByteArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CByteArray::GetUpperBound() const
+_AFXCOLL_INLINE int CByteArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CByteArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE BYTE CByteArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE BYTE CByteArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CByteArray::SetAt(INT_PTR nIndex, BYTE newElement)
+_AFXCOLL_INLINE void CByteArray::SetAt(int nIndex, BYTE newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE BYTE& CByteArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE BYTE& CByteArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const BYTE* CByteArray::GetData() const
 	{ return (const BYTE*)m_pData; }
 _AFXCOLL_INLINE BYTE* CByteArray::GetData()
 	{ return (BYTE*)m_pData; }
-_AFXCOLL_INLINE INT_PTR CByteArray::Add(BYTE newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CByteArray::Add(BYTE newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE BYTE CByteArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE BYTE CByteArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE BYTE& CByteArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE BYTE& CByteArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CWordArray::GetSize() const
+_AFXCOLL_INLINE int CWordArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CWordArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CWordArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CWordArray::GetUpperBound() const
+_AFXCOLL_INLINE int CWordArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CWordArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE WORD CWordArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE WORD CWordArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CWordArray::SetAt(INT_PTR nIndex, WORD newElement)
+_AFXCOLL_INLINE void CWordArray::SetAt(int nIndex, WORD newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE WORD& CWordArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE WORD& CWordArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const WORD* CWordArray::GetData() const
 	{ return (const WORD*)m_pData; }
 _AFXCOLL_INLINE WORD* CWordArray::GetData()
 	{ return (WORD*)m_pData; }
-_AFXCOLL_INLINE INT_PTR CWordArray::Add(WORD newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CWordArray::Add(WORD newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE WORD CWordArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE WORD CWordArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE WORD& CWordArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE WORD& CWordArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CDWordArray::GetSize() const
+_AFXCOLL_INLINE int CDWordArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CDWordArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CDWordArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CDWordArray::GetUpperBound() const
+_AFXCOLL_INLINE int CDWordArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CDWordArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE DWORD CDWordArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE DWORD CDWordArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CDWordArray::SetAt(INT_PTR nIndex, DWORD newElement)
+_AFXCOLL_INLINE void CDWordArray::SetAt(int nIndex, DWORD newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE DWORD& CDWordArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE DWORD& CDWordArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const DWORD* CDWordArray::GetData() const
 	{ return (const DWORD*)m_pData; }
 _AFXCOLL_INLINE DWORD* CDWordArray::GetData()
 	{ return (DWORD*)m_pData; }
-_AFXCOLL_INLINE INT_PTR CDWordArray::Add(DWORD newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CDWordArray::Add(DWORD newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE DWORD CDWordArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE DWORD CDWordArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE DWORD& CDWordArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE DWORD& CDWordArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CUIntArray::GetSize() const
+_AFXCOLL_INLINE int CUIntArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CUIntArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CUIntArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CUIntArray::GetUpperBound() const
+_AFXCOLL_INLINE int CUIntArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CUIntArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE UINT CUIntArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE UINT CUIntArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CUIntArray::SetAt(INT_PTR nIndex, UINT newElement)
+_AFXCOLL_INLINE void CUIntArray::SetAt(int nIndex, UINT newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE UINT& CUIntArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE UINT& CUIntArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const UINT* CUIntArray::GetData() const
 	{ return (const UINT*)m_pData; }
 _AFXCOLL_INLINE UINT* CUIntArray::GetData()
 	{ return (UINT*)m_pData; }
-_AFXCOLL_INLINE INT_PTR CUIntArray::Add(UINT newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CUIntArray::Add(UINT newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE UINT CUIntArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE UINT CUIntArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE UINT& CUIntArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE UINT& CUIntArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CPtrArray::GetSize() const
+_AFXCOLL_INLINE int CPtrArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CPtrArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CPtrArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CPtrArray::GetUpperBound() const
+_AFXCOLL_INLINE int CPtrArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CPtrArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE void* CPtrArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE void* CPtrArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CPtrArray::SetAt(INT_PTR nIndex, void* newElement)
+_AFXCOLL_INLINE void CPtrArray::SetAt(int nIndex, void* newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE void*& CPtrArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE void*& CPtrArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const void** CPtrArray::GetData() const
 	{ return (const void**)m_pData; }
 _AFXCOLL_INLINE void** CPtrArray::GetData()
 	{ return (void**)m_pData; }
-_AFXCOLL_INLINE INT_PTR CPtrArray::Add(void* newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CPtrArray::Add(void* newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE void* CPtrArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE void* CPtrArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE void*& CPtrArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE void*& CPtrArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CObArray::GetSize() const
+_AFXCOLL_INLINE int CObArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CObArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CObArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CObArray::GetUpperBound() const
+_AFXCOLL_INLINE int CObArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CObArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE CObject* CObArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE CObject* CObArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CObArray::SetAt(INT_PTR nIndex, CObject* newElement)
+_AFXCOLL_INLINE void CObArray::SetAt(int nIndex, CObject* newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE CObject*& CObArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE CObject*& CObArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
 _AFXCOLL_INLINE const CObject** CObArray::GetData() const
 	{ return (const CObject**)m_pData; }
 _AFXCOLL_INLINE CObject** CObArray::GetData()
 	{ return (CObject**)m_pData; }
-_AFXCOLL_INLINE INT_PTR CObArray::Add(CObject* newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CObArray::Add(CObject* newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE CObject* CObArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE CObject* CObArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE CObject*& CObArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE CObject*& CObArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CStringArray::GetSize() const
+_AFXCOLL_INLINE int CStringArray::GetSize() const
 	{ return m_nSize; }
-_AFXCOLL_INLINE INT_PTR CStringArray::GetCount() const
-	{ return m_nSize; }
-_AFXCOLL_INLINE BOOL CStringArray::IsEmpty() const
-	{ return m_nSize == 0; }
-_AFXCOLL_INLINE INT_PTR CStringArray::GetUpperBound() const
+_AFXCOLL_INLINE int CStringArray::GetUpperBound() const
 	{ return m_nSize-1; }
 _AFXCOLL_INLINE void CStringArray::RemoveAll()
 	{ SetSize(0); }
-_AFXCOLL_INLINE const CString& CStringArray::GetAt(INT_PTR nIndex) const
+_AFXCOLL_INLINE CString CStringArray::GetAt(int nIndex) const
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-_AFXCOLL_INLINE void CStringArray::SetAt(INT_PTR nIndex, LPCTSTR newElement)
+_AFXCOLL_INLINE void CStringArray::SetAt(int nIndex, LPCTSTR newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE void CStringArray::SetAt(INT_PTR nIndex, const CString& newElement)
+_AFXCOLL_INLINE void CStringArray::SetAt(int nIndex, const CString& newElement)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		m_pData[nIndex] = newElement; }
 
-_AFXCOLL_INLINE CString& CStringArray::ElementAt(INT_PTR nIndex)
+_AFXCOLL_INLINE CString& CStringArray::ElementAt(int nIndex)
 	{ ASSERT(nIndex >= 0 && nIndex < m_nSize);
-		if( nIndex < 0 || nIndex >= m_nSize )
-			AfxThrowInvalidArgException();
 		return m_pData[nIndex]; }
-
 _AFXCOLL_INLINE const CString* CStringArray::GetData() const
 	{ return (const CString*)m_pData; }
 _AFXCOLL_INLINE CString* CStringArray::GetData()
 	{ return (CString*)m_pData; }
-_AFXCOLL_INLINE INT_PTR CStringArray::Add(LPCTSTR newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CStringArray::Add(LPCTSTR newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE INT_PTR CStringArray::Add(const CString& newElement)
-	{ INT_PTR nIndex = m_nSize;
+_AFXCOLL_INLINE int CStringArray::Add(const CString& newElement)
+	{ int nIndex = m_nSize;
 		SetAtGrow(nIndex, newElement);
 		return nIndex; }
 
-_AFXCOLL_INLINE const CString& CStringArray::operator[](INT_PTR nIndex) const
+_AFXCOLL_INLINE CString CStringArray::operator[](int nIndex) const
 	{ return GetAt(nIndex); }
-_AFXCOLL_INLINE CString& CStringArray::operator[](INT_PTR nIndex)
+_AFXCOLL_INLINE CString& CStringArray::operator[](int nIndex)
 	{ return ElementAt(nIndex); }
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CPtrList::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CPtrList::GetSize() const
+_AFXCOLL_INLINE int CPtrList::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CPtrList::IsEmpty() const
 	{ return m_nCount == 0; }
 _AFXCOLL_INLINE void*& CPtrList::GetHead()
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
-_AFXCOLL_INLINE const void* CPtrList::GetHead() const
+_AFXCOLL_INLINE void* CPtrList::GetHead() const
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
 _AFXCOLL_INLINE void*& CPtrList::GetTail()
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
-_AFXCOLL_INLINE const void* CPtrList::GetTail() const
+_AFXCOLL_INLINE void* CPtrList::GetTail() const
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
 _AFXCOLL_INLINE POSITION CPtrList::GetHeadPosition() const
@@ -354,70 +277,54 @@ _AFXCOLL_INLINE POSITION CPtrList::GetTailPosition() const
 _AFXCOLL_INLINE void*& CPtrList::GetNext(POSITION& rPosition) // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
-_AFXCOLL_INLINE const void* CPtrList::GetNext(POSITION& rPosition) const // return *Position++
+_AFXCOLL_INLINE void* CPtrList::GetNext(POSITION& rPosition) const // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
 _AFXCOLL_INLINE void*& CPtrList::GetPrev(POSITION& rPosition) // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
-_AFXCOLL_INLINE const void* CPtrList::GetPrev(POSITION& rPosition) const // return *Position--
+_AFXCOLL_INLINE void* CPtrList::GetPrev(POSITION& rPosition) const // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
 _AFXCOLL_INLINE void*& CPtrList::GetAt(POSITION position)
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
-_AFXCOLL_INLINE const void* CPtrList::GetAt(POSITION position) const
+_AFXCOLL_INLINE void* CPtrList::GetAt(POSITION position) const
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
 _AFXCOLL_INLINE void CPtrList::SetAt(POSITION pos, void* newElement)
 	{ CNode* pNode = (CNode*) pos;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		pNode->data = newElement; }
 
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CObList::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CObList::GetSize() const
+_AFXCOLL_INLINE int CObList::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CObList::IsEmpty() const
 	{ return m_nCount == 0; }
 _AFXCOLL_INLINE CObject*& CObList::GetHead()
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
-_AFXCOLL_INLINE const CObject* CObList::GetHead() const
+_AFXCOLL_INLINE CObject* CObList::GetHead() const
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
 _AFXCOLL_INLINE CObject*& CObList::GetTail()
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
-_AFXCOLL_INLINE const CObject* CObList::GetTail() const
+_AFXCOLL_INLINE CObject* CObList::GetTail() const
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
 _AFXCOLL_INLINE POSITION CObList::GetHeadPosition() const
@@ -427,70 +334,54 @@ _AFXCOLL_INLINE POSITION CObList::GetTailPosition() const
 _AFXCOLL_INLINE CObject*& CObList::GetNext(POSITION& rPosition) // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
-_AFXCOLL_INLINE const CObject* CObList::GetNext(POSITION& rPosition) const // return *Position++
+_AFXCOLL_INLINE CObject* CObList::GetNext(POSITION& rPosition) const // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
 _AFXCOLL_INLINE CObject*& CObList::GetPrev(POSITION& rPosition) // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
-_AFXCOLL_INLINE const CObject* CObList::GetPrev(POSITION& rPosition) const // return *Position--
+_AFXCOLL_INLINE CObject* CObList::GetPrev(POSITION& rPosition) const // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
 _AFXCOLL_INLINE CObject*& CObList::GetAt(POSITION position)
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
-_AFXCOLL_INLINE const CObject* CObList::GetAt(POSITION position) const
+_AFXCOLL_INLINE CObject* CObList::GetAt(POSITION position) const
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
 _AFXCOLL_INLINE void CObList::SetAt(POSITION pos, CObject* newElement)
 	{ CNode* pNode = (CNode*) pos;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		pNode->data = newElement; }
 
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CStringList::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CStringList::GetSize() const
+_AFXCOLL_INLINE int CStringList::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CStringList::IsEmpty() const
 	{ return m_nCount == 0; }
 _AFXCOLL_INLINE CString& CStringList::GetHead()
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
-_AFXCOLL_INLINE const CString& CStringList::GetHead() const
+_AFXCOLL_INLINE CString CStringList::GetHead() const
 	{ ASSERT(m_pNodeHead != NULL);
 		return m_pNodeHead->data; }
 _AFXCOLL_INLINE CString& CStringList::GetTail()
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
-_AFXCOLL_INLINE const CString& CStringList::GetTail() const
+_AFXCOLL_INLINE CString CStringList::GetTail() const
 	{ ASSERT(m_pNodeTail != NULL);
 		return m_pNodeTail->data; }
 _AFXCOLL_INLINE POSITION CStringList::GetHeadPosition() const
@@ -500,64 +391,46 @@ _AFXCOLL_INLINE POSITION CStringList::GetTailPosition() const
 _AFXCOLL_INLINE CString& CStringList::GetNext(POSITION& rPosition) // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
-_AFXCOLL_INLINE const CString& CStringList::GetNext(POSITION& rPosition) const // return *Position++
+_AFXCOLL_INLINE CString CStringList::GetNext(POSITION& rPosition) const // return *Position++
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pNext;
 		return pNode->data; }
 _AFXCOLL_INLINE CString& CStringList::GetPrev(POSITION& rPosition) // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
-_AFXCOLL_INLINE const CString& CStringList::GetPrev(POSITION& rPosition) const // return *Position--
+_AFXCOLL_INLINE CString CStringList::GetPrev(POSITION& rPosition) const // return *Position--
 	{ CNode* pNode = (CNode*) rPosition;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		rPosition = (POSITION) pNode->pPrev;
 		return pNode->data; }
 _AFXCOLL_INLINE CString& CStringList::GetAt(POSITION position)
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
-_AFXCOLL_INLINE const CString& CStringList::GetAt(POSITION position) const
+_AFXCOLL_INLINE CString CStringList::GetAt(POSITION position) const
 	{ CNode* pNode = (CNode*) position;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		return pNode->data; }
 _AFXCOLL_INLINE void CStringList::SetAt(POSITION pos, LPCTSTR newElement)
 	{ CNode* pNode = (CNode*) pos;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		pNode->data = newElement; }
 
 _AFXCOLL_INLINE void CStringList::SetAt(POSITION pos, const CString& newElement)
 	{ CNode* pNode = (CNode*) pos;
 		ASSERT(AfxIsValidAddress(pNode, sizeof(CNode)));
-		if( pNode == NULL )
-			AfxThrowInvalidArgException();
 		pNode->data = newElement; }
 
 
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CMapWordToPtr::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapWordToPtr::GetSize() const
+_AFXCOLL_INLINE int CMapWordToPtr::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapWordToPtr::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -571,9 +444,7 @@ _AFXCOLL_INLINE UINT CMapWordToPtr::GetHashTableSize() const
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CMapPtrToWord::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapPtrToWord::GetSize() const
+_AFXCOLL_INLINE int CMapPtrToWord::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapPtrToWord::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -587,9 +458,7 @@ _AFXCOLL_INLINE UINT CMapPtrToWord::GetHashTableSize() const
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CMapPtrToPtr::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapPtrToPtr::GetSize() const
+_AFXCOLL_INLINE int CMapPtrToPtr::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapPtrToPtr::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -603,9 +472,7 @@ _AFXCOLL_INLINE UINT CMapPtrToPtr::GetHashTableSize() const
 
 ////////////////////////////////////////////////////////////////////////////
 
-_AFXCOLL_INLINE INT_PTR CMapWordToOb::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapWordToOb::GetSize() const
+_AFXCOLL_INLINE int CMapWordToOb::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapWordToOb::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -618,9 +485,7 @@ _AFXCOLL_INLINE UINT CMapWordToOb::GetHashTableSize() const
 
 
 ////////////////////////////////////////////////////////////////////////////
-_AFXCOLL_INLINE INT_PTR CMapStringToPtr::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapStringToPtr::GetSize() const
+_AFXCOLL_INLINE int CMapStringToPtr::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapStringToPtr::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -633,9 +498,7 @@ _AFXCOLL_INLINE UINT CMapStringToPtr::GetHashTableSize() const
 
 
 ////////////////////////////////////////////////////////////////////////////
-_AFXCOLL_INLINE INT_PTR CMapStringToOb::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapStringToOb::GetSize() const
+_AFXCOLL_INLINE int CMapStringToOb::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapStringToOb::IsEmpty() const
 	{ return m_nCount == 0; }
@@ -648,9 +511,7 @@ _AFXCOLL_INLINE UINT CMapStringToOb::GetHashTableSize() const
 
 
 ////////////////////////////////////////////////////////////////////////////
-_AFXCOLL_INLINE INT_PTR CMapStringToString::GetCount() const
-	{ return m_nCount; }
-_AFXCOLL_INLINE INT_PTR CMapStringToString::GetSize() const
+_AFXCOLL_INLINE int CMapStringToString::GetCount() const
 	{ return m_nCount; }
 _AFXCOLL_INLINE BOOL CMapStringToString::IsEmpty() const
 	{ return m_nCount == 0; }

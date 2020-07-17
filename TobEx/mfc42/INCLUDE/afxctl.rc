@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -212,7 +212,7 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_PICTURECANTOPEN "Unable to open the picture file %1. The file may not exist, or may not be readable."
-	AFX_IDP_PICTURECANTLOAD "Unable to load the picture file %1. The file may have an improper format."
+	AFX_IDP_PICTURECANTLOAD "Unable to load the picture file %1. The file may have an invalid format."
 	AFX_IDP_PICTURETOOLARGE "Unable to load the picture file %1. The file is too large to fit in memory."
 	AFX_IDP_PICTUREREADFAILED
 							"Unable to load the picture file %1. Unexplained read failure."
@@ -253,11 +253,11 @@ BEGIN
 	AFX_IDP_E_DISKNOTREADY  "Disk not ready"
 	AFX_IDP_E_PATHFILEACCESSERROR "Path/File access error"
 	AFX_IDP_E_PATHNOTFOUND  "Path not found"
-	AFX_IDP_E_INVALIDPATTERNSTRING "Incorrect pattern string"
-	AFX_IDP_E_INVALIDUSEOFNULL "Incorrect use of null"
-	AFX_IDP_E_INVALIDFILEFORMAT "Incorrect file format"
-	AFX_IDP_E_INVALIDPROPERTYVALUE "Incorrect property value"
-	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Incorrect array index"
+	AFX_IDP_E_INVALIDPATTERNSTRING "Invalid pattern string"
+	AFX_IDP_E_INVALIDUSEOFNULL "Invalid use of null"
+	AFX_IDP_E_INVALIDFILEFORMAT "Invalid file format"
+	AFX_IDP_E_INVALIDPROPERTYVALUE "Invalid property value"
+	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Invalid array index"
 	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "Property cannot be set at run time"
 	AFX_IDP_E_SETNOTSUPPORTED "Property is read-only"
 	AFX_IDP_E_NEEDPROPERTYARRAYINDEX

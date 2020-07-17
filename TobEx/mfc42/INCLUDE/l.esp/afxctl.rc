@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -53,14 +53,14 @@ BEGIN
 					CBS_OWNERDRAWFIXED | CBS_AUTOHSCROLL | CBS_SORT |
 					CBS_HASSTRINGS | CBS_DISABLENOSCROLL | WS_VSCROLL |
 					WS_TABSTOP
-	LTEXT           "&Estilo de fuente:",IDC_STATIC,102,19,53,8
+	LTEXT           "Estilo de &fuente:",IDC_STATIC,102,19,53,8
 	COMBOBOX        AFX_IDC_FONTSTYLES,104,29,53,53,CBS_DROPDOWNLIST |
 					CBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
 	LTEXT           "&Tamaño:",IDC_STATIC,167,19,40,8
 	COMBOBOX        AFX_IDC_FONTSIZES,167,29,36,53,CBS_DROPDOWN | CBS_SORT |
 					CBS_DISABLENOSCROLL | WS_VSCROLL | WS_TABSTOP
 	GROUPBOX        "Efectos",IDC_STATIC,104,44,142,24,WS_GROUP
-	CONTROL         "T&achado",AFX_IDC_STRIKEOUT,"Button",BS_AUTOCHECKBOX |
+	CONTROL         "Ta&chado",AFX_IDC_STRIKEOUT,"Button",BS_AUTOCHECKBOX |
 					WS_TABSTOP,109,55,65,10
 	CONTROL         "S&ubrayado",AFX_IDC_UNDERLINE,"Button",BS_AUTOCHECKBOX |
 					WS_TABSTOP,175,55,65,10
@@ -76,7 +76,7 @@ BEGIN
 	LTEXT           "&Propiedad:",IDC_STATIC,3,3,100,8
 	COMBOBOX        AFX_IDC_COLORPROP,3,13,100,54,CBS_DROPDOWNLIST |
 					CBS_SORT | WS_VSCROLL | WS_TABSTOP
-	LTEXT           "C&olor del sistema:",IDC_STATIC,3,29,100,8
+	LTEXT           "&Color del sistema:",IDC_STATIC,3,29,100,8
 	COMBOBOX        AFX_IDC_SYSTEMCOLORS,3,39,100,54,CBS_DROPDOWNLIST |
 					CBS_SORT | WS_VSCROLL | WS_TABSTOP
 	CONTROL         "",AFX_IDC_COLOR_BLACK,"Button",BS_OWNERDRAW | WS_GROUP |
@@ -143,7 +143,7 @@ STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDS_PROPPAGE_UNKNOWN "(Desconocido)"
 	AFX_IDS_COLOR_DESKTOP   "Escritorio"
-	AFX_IDS_COLOR_APPWORKSPACE "Área de trabajo de la aplicación"
+	AFX_IDS_COLOR_APPWORKSPACE "Area de trabajo de la aplicación"
 	AFX_IDS_COLOR_WNDBACKGND "Fondo de la ventana"
 	AFX_IDS_COLOR_WNDTEXT   "Texto de la ventana"
 	AFX_IDS_COLOR_MENUBAR   "Barra del menú"
@@ -212,7 +212,7 @@ END
 STRINGTABLE DISCARDABLE
 BEGIN
 	AFX_IDP_PICTURECANTOPEN "Imposible abrir el archivo de imágenes %1. Puede que el archivo no exista o no se pueda leer."
-	AFX_IDP_PICTURECANTLOAD "Imposible cargar el archivo de imágenes %1. Puede que el archivo tenga un formato inadecuado."
+	AFX_IDP_PICTURECANTLOAD "Imposible cargar el archivo de imágenes %1. Puede que el archivo tenga un formato no válido."
 	AFX_IDP_PICTURETOOLARGE "Imposible cargar el archivo de imágenes %1. El archivo es demasiado grande para caber en la memoria."
 	AFX_IDP_PICTUREREADFAILED
 							"Imposible cargar el archivo de imágenes %1. Error de lectura desconocido."
@@ -253,11 +253,11 @@ BEGIN
 	AFX_IDP_E_DISKNOTREADY  "El disco no está listo"
 	AFX_IDP_E_PATHFILEACCESSERROR "Error de acceso a la ruta o el archivo"
 	AFX_IDP_E_PATHNOTFOUND  "No se ha encontrado la ruta de acceso"
-	AFX_IDP_E_INVALIDPATTERNSTRING "Cadena modelo incorrecta"
-	AFX_IDP_E_INVALIDUSEOFNULL "Uso incorrecto de Null"
-	AFX_IDP_E_INVALIDFILEFORMAT "Formato de archivo incorrecto"
-	AFX_IDP_E_INVALIDPROPERTYVALUE "Valor de propiedad incorrecto"
-	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Índice de matriz incorrecto"
+	AFX_IDP_E_INVALIDPATTERNSTRING "La cadena modelo no es válida"
+	AFX_IDP_E_INVALIDUSEOFNULL "Uso no válido de Null"
+	AFX_IDP_E_INVALIDFILEFORMAT "Formato de archivo no válido"
+	AFX_IDP_E_INVALIDPROPERTYVALUE "El valor de la propiedad no es válido"
+	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Índice de matriz no válido"
 	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "No se puede establecer la propiedad en tiempo de ejecución"
 	AFX_IDP_E_SETNOTSUPPORTED "La propiedad es de sólo lectura"
 	AFX_IDP_E_NEEDPROPERTYARRAYINDEX

@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,8 +11,6 @@
 #ifndef __AFXINET_H_
 #define __AFXINET_H_
 
-#pragma once
-
 #ifndef __AFX_H__
 	#include <afx.h>
 #endif
@@ -21,7 +19,7 @@
 #include <wininet.h>
 #endif
 
-#ifdef _AFXDLL
+#ifndef _AFXDLL
 #pragma comment(lib, "wininet.lib")
 #endif
 
@@ -64,7 +62,7 @@ DWORD AFXAPI AfxGetInternetHandleType(HINTERNET hQuery);
 
 // see CInternetException at the bottom of this file
 
-void AFXAPI AfxThrowInternetException(DWORD_PTR dwContext, DWORD dwError = 0);
+void AFXAPI AfxThrowInternetException(DWORD dwContext, DWORD dwError = 0);
 
 // these are defined by WININET.H
 
@@ -93,8 +91,8 @@ void AFXAPI AfxThrowInternetException(DWORD_PTR dwContext, DWORD dwError = 0);
 class CInternetSession : public CObject
 {
 public:
-	/* explicit */ CInternetSession(LPCTSTR pstrAgent = NULL,
-		DWORD_PTR dwContext = 1,
+	CInternetSession(LPCTSTR pstrAgent = NULL,
+		DWORD dwContext = 1,
 		DWORD dwAccessType = PRE_CONFIG_INTERNET_ACCESS,
 		LPCTSTR pstrProxyName = NULL,
 		LPCTSTR pstrProxyBypass = NULL,
@@ -102,13 +100,14 @@ public:
 
 	BOOL QueryOption(DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufLen) const;
 	BOOL QueryOption(DWORD dwOption, DWORD& dwValue) const;
+	BOOL QueryOption(DWORD dwOption, CString& refString) const;
 
 	BOOL SetOption(DWORD dwOption, LPVOID lpBuffer, DWORD dwBufferLength,
 			DWORD dwFlags = 0);
 	BOOL SetOption(DWORD dwOption, DWORD dwValue, DWORD dwFlags = 0);
 
 	CStdioFile* OpenURL(LPCTSTR pstrURL,
-		DWORD_PTR dwContext = 1, DWORD dwFlags = INTERNET_FLAG_TRANSFER_ASCII,
+		DWORD dwContext = 1, DWORD dwFlags = INTERNET_FLAG_TRANSFER_ASCII,
 		LPCTSTR pstrHeaders = NULL, DWORD dwHeadersLength = 0);
 
 	CFtpConnection* GetFtpConnection(LPCTSTR pstrServer,
@@ -129,28 +128,30 @@ public:
 
 	BOOL EnableStatusCallback(BOOL bEnable = TRUE);
 
-// Operations
+	DWORD ServiceTypeFromHandle(HINTERNET hQuery);
 
-	DWORD_PTR GetContext() const;
+// operations
+
+	DWORD GetContext() const;
 	operator HINTERNET() const;
 	virtual void Close();
 
 	// cookies
-	static BOOL SetCookie(LPCTSTR pstrUrl, LPCTSTR pstrCookieName, LPCTSTR pstrCookieData);
-	static BOOL GetCookie(_In_z_ LPCTSTR pstrUrl, _In_z_ LPCTSTR pstrCookieName, _Out_z_cap_(dwBufLen) LPTSTR pstrCookieData, _In_ DWORD dwBufLen);
-	static DWORD GetCookieLength(LPCTSTR pstrUrl, LPCTSTR pstrCookieName);
-	static BOOL GetCookie(LPCTSTR pstrUrl, LPCTSTR pstrCookieName, CString& strCookieData);
+	static BOOL SetCookie(LPCSTR pstrUrl, LPCTSTR pstrCookieName, LPCTSTR pstrCookieData);
+	static BOOL GetCookie(LPCSTR pstrUrl, LPCTSTR pstrCookieName, LPTSTR pstrCookieData, DWORD dwBufLen);
+	static DWORD GetCookieLength(LPCSTR pstrUrl, LPCTSTR pstrCookieName);
+	static BOOL GetCookie(LPCSTR pstrUrl, LPCTSTR pstrCookieName, CString& strCookieData);
 
-// Overridables
-	virtual void OnStatusCallback(DWORD_PTR dwContext, DWORD dwInternetStatus,
+// overridables
+	virtual void OnStatusCallback(DWORD dwContext, DWORD dwInternetStatus,
 		LPVOID lpvStatusInformation, DWORD dwStatusInformationLength);
 
-// Implementation
+// implementation
 	DECLARE_DYNAMIC(CInternetSession)
 	~CInternetSession();
 
 protected:
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 	HINTERNET m_hSession;
 	INTERNET_STATUS_CALLBACK m_pOldCallback;
 	BOOL m_bCallbackEnabled;
@@ -172,7 +173,7 @@ protected:
 	CInternetFile(HINTERNET hFile, LPCTSTR pstrFileName,
 		CInternetConnection* pConnection, BOOL bReadMode);
 	CInternetFile(HINTERNET hFile, HINTERNET hSession,
-		LPCTSTR pstrFileName, LPCTSTR pstrServer, DWORD_PTR dwContext,
+		LPCTSTR pstrFileName, LPCTSTR pstrServer, DWORD dwContext,
 		BOOL bReadMode);
 
 // Attributes
@@ -180,7 +181,7 @@ protected:
 	HINTERNET m_hFile;
 public:
 	operator HINTERNET() const;
-	DWORD_PTR GetContext() const;
+	DWORD GetContext() const;
 
 // Operations
 	BOOL SetWriteBufferSize(UINT nWriteSize);
@@ -188,13 +189,14 @@ public:
 
 	BOOL QueryOption(DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufLen) const;
 	BOOL QueryOption(DWORD dwOption, DWORD& dwValue) const;
+	BOOL QueryOption(DWORD dwOption, CString& refString) const;
 
 	BOOL SetOption(DWORD dwOption, LPVOID lpBuffer, DWORD dwBufferLength,
 			DWORD dwFlags = 0);
 	BOOL SetOption(DWORD dwOption, DWORD dwValue, DWORD dwFlags = 0);
 
 // Overridables
-	virtual ULONGLONG Seek(LONGLONG lOffset, UINT nFrom);
+	virtual LONG Seek(LONG lOffset, UINT nFrom);
 
 	virtual UINT Read(void* lpBuf, UINT nCount);
 	virtual void Write(const void* lpBuf, UINT nCount);
@@ -203,17 +205,17 @@ public:
 	virtual void Flush();
 
 	virtual void Close();
-	virtual ULONGLONG GetLength() const;
+	virtual DWORD GetLength() const;
 
 	virtual BOOL ReadString(CString& rString);
-	virtual LPTSTR ReadString(_Out_z_cap_(nMax) LPTSTR pstr, _In_ UINT nMax);
+	virtual LPTSTR ReadString(LPTSTR pstr, UINT nMax);
 	virtual void WriteString(LPCTSTR pstr);
 
 	// Not supported by CInternetFile
-	void LockRange(ULONGLONG dwPos, ULONGLONG dwCount);
-	void UnlockRange(ULONGLONG dwPos, ULONGLONG dwCount);
+	void LockRange(DWORD dwPos, DWORD dwCount);
+	void UnlockRange(DWORD dwPos, DWORD dwCount);
 	CFile* Duplicate() const;
-	virtual void SetLength(ULONGLONG dwNewLen);
+	virtual void SetLength(DWORD dwNewLen);
 
 // Implementation
 public:
@@ -221,7 +223,7 @@ public:
 
 protected:
 	BOOL m_bReadMode;
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 	HINTERNET m_hConnection;
 
 	CString m_strServerName;
@@ -253,7 +255,7 @@ class CHttpFile : public CInternetFile
 // Constructors
 protected:
 	CHttpFile(HINTERNET hFile, HINTERNET hSession, LPCTSTR pstrObject,
-		LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD_PTR dwContext);
+		LPCTSTR pstrServer, LPCTSTR pstrVerb, DWORD dwContext);
 	CHttpFile(HINTERNET hFile, LPCTSTR pstrVerb, LPCTSTR pstrObject,
 		CHttpConnection* pConnection);
 
@@ -269,12 +271,12 @@ public:
 	BOOL SendRequest(CString& strHeaders,
 		LPVOID lpOptional = NULL, DWORD dwOptionalLen = 0);
 	BOOL SendRequestEx(DWORD dwTotalLen,
-		DWORD dwFlags = HSR_INITIATE,	DWORD_PTR dwContext = 1);
+		DWORD dwFlags = HSR_INITIATE,   DWORD dwContext = 1);
 	BOOL SendRequestEx(LPINTERNET_BUFFERS lpBuffIn,
 		LPINTERNET_BUFFERS lpBuffOut, DWORD dwFlags = HSR_INITIATE,
-		DWORD_PTR dwContext = 1);
+		DWORD dwContext = 1);
 	BOOL EndRequest(DWORD dwFlags = 0,
-		LPINTERNET_BUFFERS lpBuffIn = NULL, DWORD_PTR dwContext = 1);
+		LPINTERNET_BUFFERS lpBuffIn = NULL, DWORD dwContext = 1);
 	BOOL QueryInfo(DWORD dwInfoLevel, LPVOID lpvBuffer,
 		LPDWORD lpdwBufferLength, LPDWORD lpdwIndex = NULL) const;
 	BOOL QueryInfo(DWORD dwInfoLevel, CString& str,
@@ -293,14 +295,9 @@ public:
 // Attributes
 public:
 	CString GetVerb() const;
-
-#pragma push_macro("GetObject")
-#undef GetObject
-	CString _AFX_FUNCNAME(GetObject)() const;
 	CString GetObject() const;
-#pragma pop_macro("GetObject")
-
 	virtual CString GetFileURL() const;
+	virtual void Close();
 
 // Implementation
 public:
@@ -330,29 +327,29 @@ class CInternetConnection : public CObject
 public:
 	CInternetConnection(CInternetSession* pSession, LPCTSTR pstrServer,
 		INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
-		DWORD_PTR dwContext = 1);
+		DWORD dwContext = 1);
 
 // Operations
 	operator HINTERNET() const;
-	DWORD_PTR GetContext() const;
+	DWORD GetContext() const;
 	CInternetSession* GetSession() const;
 
 	CString GetServerName() const;
 
 	BOOL QueryOption(DWORD dwOption, LPVOID lpBuffer, LPDWORD lpdwBufLen) const;
 	BOOL QueryOption(DWORD dwOption, DWORD& dwValue) const;
+	BOOL QueryOption(DWORD dwOption, CString& refString) const;
 
 	BOOL SetOption(DWORD dwOption, LPVOID lpBuffer, DWORD dwBufferLength,
 			DWORD dwFlags = 0);
 	BOOL SetOption(DWORD dwOption, DWORD dwValue, DWORD dwFlags = 0);
 
-	virtual void Close();
-
 // Implementation
 protected:
 	HINTERNET m_hConnection;
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 	CInternetSession* m_pSession;
+	virtual void Close();
 
 	CString m_strServerName;
 	INTERNET_PORT m_nPort;
@@ -370,61 +367,41 @@ public:
 class CFtpConnection : public CInternetConnection
 {
 public:
-	enum CmdResponseType
-	{
-		CmdRespNone = 0,
-		CmdRespRead,
-		CmdRespWrite
-	};
-
-public:
 	CFtpConnection(CInternetSession* pSession, HINTERNET hConnected,
-		LPCTSTR pstrServer, DWORD_PTR dwContext);
+		LPCTSTR pstrServer, DWORD dwContext);
 	CFtpConnection(CInternetSession* pSession, LPCTSTR pstrServer,
 		LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
-		DWORD_PTR dwContext = 0,
+		DWORD dwContext = 0,
 		INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 		BOOL bPassive = FALSE);
 
-#pragma push_macro("SetCurrentDirectory")
-#undef SetCurrentDirectory
-	BOOL _AFX_FUNCNAME(SetCurrentDirectory)(LPCTSTR pstrDirName);
 	BOOL SetCurrentDirectory(LPCTSTR pstrDirName);
-#pragma pop_macro("SetCurrentDirectory")
 
 	BOOL GetCurrentDirectory(CString& strDirName) const;
-	BOOL GetCurrentDirectory(_Out_z_cap_post_count_(*lpdwLen, *lpdwLen) LPTSTR pstrDirName, _Inout_ LPDWORD lpdwLen) const;
-	BOOL GetCurrentDirectoryAsURL(_Out_z_cap_post_count_(*lpdwLen, *lpdwLen) LPTSTR pstrName, _Inout_ LPDWORD lpdwLen) const;
+	BOOL GetCurrentDirectory(LPTSTR pstrDirName, LPDWORD lpdwLen) const;
+	BOOL GetCurrentDirectoryAsURL(LPTSTR pstrName, LPDWORD lpdwLen) const;
 	BOOL GetCurrentDirectoryAsURL(CString& strDirName) const;
 
 	BOOL RemoveDirectory(LPCTSTR pstrDirName);
-#pragma push_macro("CreateDirectory")
-#undef CreateDirectory
-	BOOL _AFX_FUNCNAME(CreateDirectory)(LPCTSTR pstrDirName);
 	BOOL CreateDirectory(LPCTSTR pstrDirName);
-#pragma pop_macro("CreateDirectory")
 	BOOL Rename(LPCTSTR pstrExisting, LPCTSTR pstrNew);
 	BOOL Remove(LPCTSTR pstrFileName);
 
 	BOOL PutFile(LPCTSTR pstrLocalFile, LPCTSTR pstrRemoteFile,
-		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD_PTR dwContext = 1);
+		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD dwContext = 1);
 
 	BOOL GetFile(LPCTSTR pstrRemoteFile, LPCTSTR pstrLocalFile,
 		BOOL bFailIfExists = TRUE,
 		DWORD dwAttributes = FILE_ATTRIBUTE_NORMAL,
-		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD_PTR dwContext = 1);
+		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD dwContext = 1);
 
 	CInternetFile* OpenFile(LPCTSTR pstrFileName,
 		DWORD dwAccess = GENERIC_READ,
-		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD_PTR dwContext = 1);
+		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY, DWORD dwContext = 1);
 
-#if _WIN32_IE >= 0x0500
-	CInternetFile* Command(LPCTSTR pszCommand, CmdResponseType eResponse = CmdRespNone,
-		DWORD dwFlags = FTP_TRANSFER_TYPE_BINARY,
-		DWORD_PTR dwContext = 1);
-#endif
+	virtual void Close();
 
-// Implementation
+// implementation
 	~CFtpConnection();
 
 protected:
@@ -456,28 +433,29 @@ public:
 
 public:
 	CHttpConnection(CInternetSession* pSession, HINTERNET hConnected,
-		LPCTSTR pstrServer, DWORD_PTR dwContext);
+		LPCTSTR pstrServer, DWORD dwContext);
 	CHttpConnection(CInternetSession* pSession, LPCTSTR pstrServer,
 		INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 		LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
-		DWORD_PTR dwContext = 1);
+		DWORD dwContext = 1);
 	CHttpConnection(CInternetSession* pSession, LPCTSTR pstrServer,
 		DWORD dwFlags, INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER,
 		LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
-		DWORD_PTR dwContext = 1);
+		DWORD dwContext = 1);
 
 	CHttpFile* OpenRequest(LPCTSTR pstrVerb,    LPCTSTR pstrObjectName,
-		LPCTSTR pstrReferer = NULL,DWORD_PTR dwContext = 1,
+		LPCTSTR pstrReferer = NULL,DWORD dwContext = 1,
 		LPCTSTR* ppstrAcceptTypes = NULL, LPCTSTR pstrVersion = NULL,
 		DWORD dwFlags = INTERNET_FLAG_EXISTING_CONNECT);
 
 	CHttpFile* OpenRequest(int nVerb, LPCTSTR pstrObjectName,
-		LPCTSTR pstrReferer = NULL, DWORD_PTR dwContext = 1,
+		LPCTSTR pstrReferer = NULL, DWORD dwContext = 1,
 		LPCTSTR* ppstrAcceptTypes = NULL, LPCTSTR pstrVersion = NULL,
 		DWORD dwFlags = INTERNET_FLAG_EXISTING_CONNECT);
 
-// Implementation
+// implementation
 	~CHttpConnection();
+	virtual void Close();
 
 protected:
 	CString m_strServerName;
@@ -497,15 +475,15 @@ class CGopherConnection : public CInternetConnection
 {
 public:
 	CGopherConnection(CInternetSession* pSession,
-		HINTERNET hConnected, LPCTSTR pstrServer, DWORD_PTR dwContext);
+		HINTERNET hConnected, LPCTSTR pstrServer, DWORD dwContext);
 
 	CGopherConnection(CInternetSession* pSession, LPCTSTR pstrServer,
 		LPCTSTR pstrUserName = NULL, LPCTSTR pstrPassword = NULL,
-		DWORD_PTR dwContext = 0,
+		DWORD dwContext = 0,
 		INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER);
 
 	CGopherFile* OpenFile(CGopherLocator& refLocator, DWORD dwFlags = 0,
-		LPCTSTR pstrView = NULL, DWORD_PTR dwContext = 1);
+		LPCTSTR pstrView = NULL, DWORD dwContext = 1);
 
 	CGopherLocator CreateLocator(LPCTSTR pstrDisplayString,
 		LPCTSTR pstrSelectorString, DWORD dwGopherType);
@@ -519,8 +497,9 @@ public:
 		LPCTSTR pstrSelectorString, DWORD dwGopherType,
 		INTERNET_PORT nPort = INTERNET_INVALID_PORT_NUMBER);
 
-// Implementation
+// implementation
 	~CGopherConnection();
+	virtual void Close();
 
 public:
 #ifdef _DEBUG
@@ -537,7 +516,7 @@ public:
 class CFtpFileFind : public CFileFind
 {
 public:
-	explicit CFtpFileFind(CFtpConnection* pConnection, DWORD_PTR dwContext = 1);
+	CFtpFileFind(CFtpConnection* pConnection, DWORD dwContext = 1);
 	virtual ~CFtpFileFind();
 
 	virtual BOOL FindFile(LPCTSTR pstrName = NULL,
@@ -545,11 +524,11 @@ public:
 	virtual BOOL FindNextFile();
 	CString GetFileURL() const;
 
-// Implementation
+// implementation
 protected:
 	virtual void CloseContext();
 	CFtpConnection* m_pConnection;
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 
 public:
 #ifdef _DEBUG
@@ -594,10 +573,11 @@ protected:
 	CGopherFile(HINTERNET hFile, CGopherLocator& refLocator,
 		CGopherConnection* pConnection);
 	CGopherFile(HINTERNET hFile, HINTERNET hSession,
-		LPCTSTR pstrLocator, DWORD dwLocLen, DWORD_PTR dwContext);
+		LPCTSTR pstrLocator, DWORD dwLocLen, DWORD dwContext);
 
 // Operations
 public:
+	virtual void Close();
 	virtual void Write(const void* lpBuf, UINT nCount);
 	void WriteString(LPCTSTR pstr);
 
@@ -624,7 +604,7 @@ public:
 class CGopherFileFind : public CFileFind
 {
 public:
-	explicit CGopherFileFind(CGopherConnection* pConnection, DWORD_PTR dwContext = 1);
+	CGopherFileFind(CGopherConnection* pConnection, DWORD dwContext = 1);
 	virtual ~CGopherFileFind();
 
 	virtual BOOL FindFile(CGopherLocator& refLocator, LPCTSTR pstrString,
@@ -645,14 +625,17 @@ public:
 	CGopherLocator GetLocator() const;
 	CString GetScreenName() const;
 
-	virtual ULONGLONG GetLength() const;
+	virtual DWORD GetLength() const;
+#if defined(_X86_) || defined(_ALPHA_)
+	virtual __int64 GetLength64() const;
+#endif
 
 protected:
 	virtual void CloseContext();
 	CGopherConnection* m_pConnection;
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 
-// Implementation
+// implementation
 public:
 	// Unsupported APIs
 	CString GetFileName() const;
@@ -680,7 +663,7 @@ public:
 
 // Attributes
 	DWORD m_dwError;
-	DWORD_PTR m_dwContext;
+	DWORD m_dwContext;
 
 // Implementation
 public:
@@ -688,8 +671,8 @@ public:
 #ifdef _DEBUG
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-	virtual BOOL GetErrorMessage(_Out_z_cap_(nMaxError) LPTSTR lpstrError, _In_ UINT nMaxError,
-		_Out_opt_ PUINT pnHelpContext = NULL) const;
+	virtual BOOL GetErrorMessage(LPTSTR lpstrError, UINT nMaxError,
+		PUINT pnHelpContext = NULL);
 	DECLARE_DYNAMIC(CInternetException)
 };
 
@@ -707,12 +690,8 @@ public:
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
-
-#ifndef _AFX_DISABLE_DEPRECATED
-#pragma deprecated( CGopherLocator )
-#pragma deprecated( CGopherFile )
-#pragma deprecated( CGopherConnection )
-#pragma deprecated( CGopherFileFind )
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
 #endif
 
 #endif // __AFXINET_H__

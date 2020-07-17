@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -10,14 +10,9 @@
 
 // Inlines for AFXRICH.H
 
-#pragma once
-
 #ifdef _AFXRICH_INLINE
 
 // CRichEditView
-// NOTE: The cast in GetRichEditCtrl is ugly, but must be preserved for compatibility.
-// CRichEditCtrl is not related to CRichEditView by inheritance so we must be careful to ensure 
-// that CRichEditCtrl remains a binary compatible subset of CRichEditView.
 _AFXRICH_INLINE CRichEditCtrl& CRichEditView::GetRichEditCtrl() const
 	{ return *(CRichEditCtrl*)this; }
 int _AFXRICH_INLINE CRichEditView::GetPrintWidth() const
@@ -37,13 +32,9 @@ CRect _AFXRICH_INLINE CRichEditView::GetMargins() const
 
 _AFXRICH_INLINE long CRichEditView::GetTextLength() const
 	{ return GetRichEditCtrl().GetTextLength(); }
-
-_AFXRICH_INLINE	long CRichEditView::GetTextLengthEx(DWORD dwFlags, UINT uCodePage) const
-	{ return GetRichEditCtrl().GetTextLengthEx(dwFlags, uCodePage); }
-
 _AFXRICH_INLINE CRichEditDoc* CRichEditView::GetDocument() const
 {
-	AFXASSUME(m_pDocument != NULL);
+	ASSERT(m_pDocument != NULL);
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CRichEditDoc)));
 	return (CRichEditDoc*)m_pDocument;
 }

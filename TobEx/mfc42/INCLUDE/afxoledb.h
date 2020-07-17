@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -11,22 +11,45 @@
 #ifndef __AFXOLEDB_H__
 #define __AFXOLEDB_H__
 
-//#ifdef _AFX_NO_DAO_SUPPORT
-//	#error OLE DB classes not supported in this library variant.
-//#endif
+#ifdef _AFX_NO_DAO_SUPPORT
+	#error OLE DB classes not supported in this library variant.
+#endif
 
 #ifndef __AFXEXT_H__
 	#include <afxext.h>
 #endif
 
+#include <atlbase.h>
+
+// application is expected to provide a _Module
+extern CComModule _Module;
+
+#include <atlcom.h>
 #include <atldbcli.h>
 
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, off)
-#endif 
+#endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, on)
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Win32 libraries
+
+#ifndef _AFX_NOFORCE_LIBS
+#ifdef _AFXDLL
+	#if defined(_DEBUG) && !defined(_AFX_MONOLITHIC)
+		#ifndef _UNICODE
+			#pragma comment(lib, "mfco42d.lib")
+			#pragma comment(lib, "mfcd42d.lib")
+		#else
+			#pragma comment(lib, "mfco42ud.lib")
+			#pragma comment(lib, "mfcd42ud.lib")
+		#endif
+	#endif
+#endif
+#endif
 
 #ifdef _AFX_PACKING
 #pragma pack(push, _AFX_PACKING)
@@ -46,16 +69,6 @@
 
 #undef AFX_DATA
 #define AFX_DATA AFX_DB_DATA
-
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DB_NUMERIC& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DBDATE& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DBTIME& value);
-void AFXAPI DDX_Text(CDataExchange* pDX, int nIDC, DBTIMESTAMP& value);
-
-void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, DBDATE& value);
-void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, DBTIME& value);
-void AFXAPI DDX_DateTimeCtrl(CDataExchange* pDX, int nIDC, DBTIMESTAMP& value);
-void AFXAPI DDX_MonthCalCtrl(CDataExchange* pDX, int nIDC, DBDATE& value);
 
 /////////////////////////////////////////////////////////////////////////////
 // CRecordView - form for viewing data records
@@ -81,7 +94,7 @@ protected:  // must derive your own class
 
 // Attributes
 public:
-	virtual CRowset<>* OnGetRowset() = 0;
+	virtual CRowset* OnGetRowset() = 0;
 
 // Operations
 public:
@@ -117,6 +130,8 @@ protected:
 #ifdef _AFX_MINREBUILD
 #pragma component(minrebuild, on)
 #endif
+#ifndef _AFX_FULLTYPEINFO
+#pragma component(mintypeinfo, off)
+#endif
 
 #endif __AFXOLEDB_H__
-

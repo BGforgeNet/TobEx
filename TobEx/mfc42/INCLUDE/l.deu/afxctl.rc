@@ -1,5 +1,5 @@
 // This is a part of the Microsoft Foundation Classes C++ library.
-// Copyright (C) Microsoft Corporation
+// Copyright (C) 1992-1998 Microsoft Corporation
 // All rights reserved.
 //
 // This source code is only intended as a supplement to the
@@ -19,7 +19,7 @@
 // This will prevent the VC++ Resource Editor user from saving this file
 1 TEXTINCLUDE DISCARDABLE
 BEGIN
-"< Standard-MFC-Ressourcen können nicht geändert werden! >\0"
+"< Cannot change standard MFC resources! >\0"
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -45,7 +45,7 @@ AFX_IDD_PROPPAGE_FONT DIALOG DISCARDABLE  13, 54, 250, 110
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "Eigenschaften&name:",IDC_STATIC,3,5,61,8
+	LTEXT           "Eigenschafts&name:",IDC_STATIC,3,5,61,8
 	COMBOBOX        AFX_IDC_FONTPROP,65,3,100,71,CBS_DROPDOWNLIST | CBS_SORT |
 					WS_VSCROLL | WS_TABSTOP
 	LTEXT           "&Schriftart:",IDC_STATIC,3,19,91,8
@@ -73,7 +73,7 @@ AFX_IDD_PROPPAGE_COLOR DIALOG DISCARDABLE  0, 0, 250, 62
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "Eigenschaften&name:",IDC_STATIC,3,3,100,8
+	LTEXT           "Eigenschafts&name:",IDC_STATIC,3,3,100,8
 	COMBOBOX        AFX_IDC_COLORPROP,3,13,100,54,CBS_DROPDOWNLIST |
 					CBS_SORT | WS_VSCROLL | WS_TABSTOP
 	LTEXT           "System&farbe:",IDC_STATIC,3,29,100,8
@@ -113,7 +113,7 @@ AFX_IDD_PROPPAGE_PICTURE DIALOG DISCARDABLE  0, 0, 250, 62
 STYLE WS_CHILD | 0x4
 FONT 8, "MS Shell Dlg"
 BEGIN
-	LTEXT           "Eigenschaften&name:",IDC_STATIC,3,3,100,8
+	LTEXT           "Eigenschafts&name:",IDC_STATIC,3,3,100,8
 	COMBOBOX        AFX_IDC_PROPNAME,3,13,100,30,CBS_DROPDOWNLIST | CBS_SORT |
 					WS_VSCROLL | WS_TABSTOP
 	PUSHBUTTON      "&Durchsuchen...",AFX_IDC_BROWSE,3,35,54,14
@@ -211,9 +211,9 @@ END
 #ifndef _AFX_NO_STOCKPPG_RESOURCES
 STRINGTABLE DISCARDABLE
 BEGIN
-	AFX_IDP_PICTURECANTOPEN "Bilddatei %1 konnte nicht geöffnet werden. Die Datei ist möglicherweise nicht vorhanden oder nicht lesbar."
-	AFX_IDP_PICTURECANTLOAD "Bilddatei %1 konnte nicht geladen werden. Die Datei hat möglicherweise ein falsches Format."
-	AFX_IDP_PICTURETOOLARGE "Bilddatei %1 konnte nicht geladen werden, da sie nicht in den Speicher passt."
+	AFX_IDP_PICTURECANTOPEN "Bilddatei %1 konnte nicht geöffnet werden. Die Datei existiert möglicherweise nicht oder ist nicht lesbar."
+	AFX_IDP_PICTURECANTLOAD "Bilddatei %1 konnte nicht geladen werden. Die Datei hat möglicherweise ein ungültiges Format."
+	AFX_IDP_PICTURETOOLARGE "Bilddatei %1 konnte nicht geladen werden, da sie nicht in den Speicher paßt."
 	AFX_IDP_PICTUREREADFAILED
 							"Bilddatei %1 konnte nicht geladen werden, da ein unbekannter Lesefehler auftrat."
 END
@@ -230,15 +230,15 @@ BEGIN
 	AFX_IDP_E_ILLEGALFUNCTIONCALL "Ungültiger Funktionsaufruf"
 	AFX_IDP_E_OVERFLOW      "Überlauf"
 	AFX_IDP_E_OUTOFMEMORY   "Nicht genügend Speicher"
-	AFX_IDP_E_DIVISIONBYZERO "Division durch 0 (null)"
+	AFX_IDP_E_DIVISIONBYZERO "Division durch Null"
 	AFX_IDP_E_OUTOFSTRINGSPACE "Nicht genügend Zeichenfolgenspeicher"
-	AFX_IDP_E_OUTOFSTACKSPACE "Nicht genügend Stackspeicher"
+	AFX_IDP_E_OUTOFSTACKSPACE "Nicht genügend Stack-Speicher"
 	AFX_IDP_E_BADFILENAMEORNUMBER "Ungültiger Dateiname oder -nummer"
 	AFX_IDP_E_FILENOTFOUND  "Datei nicht gefunden"
 	AFX_IDP_E_BADFILEMODE   "Falscher Dateimodus"
 	AFX_IDP_E_FILEALREADYOPEN "Datei bereits geöffnet"
 	AFX_IDP_E_DEVICEIOERROR "Geräte-E/A-Fehler"
-	AFX_IDP_E_FILEALREADYEXISTS "Datei ist bereits vorhanden"
+	AFX_IDP_E_FILEALREADYEXISTS "Datei besteht bereits"
 	AFX_IDP_E_BADRECORDLENGTH "Ungültige Datensatzlänge"
 	AFX_IDP_E_DISKFULL      "Datenträger voll"
 	AFX_IDP_E_BADRECORDNUMBER "Ungültige Datensatznummer"
@@ -253,16 +253,16 @@ BEGIN
 	AFX_IDP_E_DISKNOTREADY  "Laufwerk nicht bereit"
 	AFX_IDP_E_PATHFILEACCESSERROR "Pfad-/Dateizugriffsfehler"
 	AFX_IDP_E_PATHNOTFOUND  "Pfad nicht gefunden"
-	AFX_IDP_E_INVALIDPATTERNSTRING "Falsche Musterzeichenfolge"
-	AFX_IDP_E_INVALIDUSEOFNULL "Falsche Verwendung von NULL"
-	AFX_IDP_E_INVALIDFILEFORMAT "Falsches Dateiformat"
-	AFX_IDP_E_INVALIDPROPERTYVALUE "Falscher Eigenschaftenwert"
-	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Falscher Arrayindex"
-	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "Eigenschaft kann nicht zur Laufzeit festgelegt werden"
+	AFX_IDP_E_INVALIDPATTERNSTRING "Ungültige Musterzeichenfolge"
+	AFX_IDP_E_INVALIDUSEOFNULL "Ungültige Verwendung von Null"
+	AFX_IDP_E_INVALIDFILEFORMAT "Ungültiges Dateiformat"
+	AFX_IDP_E_INVALIDPROPERTYVALUE "Ungültiger Eigenschaftswert"
+	AFX_IDP_E_INVALIDPROPERTYARRAYINDEX "Ungültiger Feldindex"
+	AFX_IDP_E_SETNOTSUPPORTEDATRUNTIME "Eigenschaft kann nicht zur Laufzeit gesetzt werden"
 	AFX_IDP_E_SETNOTSUPPORTED "Eigenschaft ist schreibgeschützt"
 	AFX_IDP_E_NEEDPROPERTYARRAYINDEX
-							"Ein Arrayindex muss angegeben sein, wenn ein Eigenschaftenarray verwendet wird"
-	AFX_IDP_E_SETNOTPERMITTED "Eigenschaft kann für dieses Steuerelement nicht festgelegt werden"
+							"Ein Feldindex muß angegeben sein, wenn ein Eigenschaftsfeld verwendet wird"
+	AFX_IDP_E_SETNOTPERMITTED "Eigenschaft kann für dieses Steuerelement nicht gesetzt werden"
 	AFX_IDP_E_GETNOTSUPPORTEDATRUNTIME "Eigenschaft kann nicht zur Laufzeit gelesen werden"
 END
 
