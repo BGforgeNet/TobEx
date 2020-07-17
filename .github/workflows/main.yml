@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
       - name: Install vcexpress
         run: choco install vcexpress2010
@@ -32,3 +32,9 @@ jobs:
       - name: Core Build
         run: msbuild TobEx.sln
         shell: cmd
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: tobex.dll
+          path: TobEx\Debug\TobEx.dll
