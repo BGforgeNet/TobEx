@@ -183,7 +183,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 	char cRollMagicResist = rollMagicResist & ~CRESAVE_USED;
 
 	short wSaveRollTotal = 0;
-	BOOL bSavedVsType = FALSE;
+	BOOL bPrintMsg = FALSE;
 	STRREF srSuccessSave;
 	CDerivedStats& cdsTarget = creTarget.GetDerivedStats();
 
@@ -282,24 +282,34 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 
 		switch (cSaveTypeUsed) {
 		case 1: //death
-			rollSaveDeath |= CRESAVE_USED;
-			bSavedVsType = TRUE;
+			if (!(rollSaveDeath & CRESAVE_USED)) {
+				rollSaveDeath |= CRESAVE_USED;
+				bPrintMsg = TRUE;
+			}
 			break;
 		case 2: //wands
-			rollSaveWands |= CRESAVE_USED;
-			bSavedVsType = TRUE;
+			if (!(rollSaveWands & CRESAVE_USED)) {
+				rollSaveWands |= CRESAVE_USED;
+				bPrintMsg = TRUE;
+			}
 			break;
 		case 3: //poly
-			rollSavePoly |= CRESAVE_USED;
-			bSavedVsType = TRUE;
+			if (!(rollSavePoly & CRESAVE_USED)) {
+				rollSavePoly |= CRESAVE_USED;
+				bPrintMsg = TRUE;
+			}
 			break;
 		case 4: //breath
-			rollSaveBreath |= CRESAVE_USED;
-			bSavedVsType = TRUE;
+			if (!(rollSaveBreath & CRESAVE_USED)) {
+				rollSaveBreath |= CRESAVE_USED;
+				bPrintMsg = TRUE;
+			}
 			break;
 		case 5: //spells
-			rollSaveSpells |= CRESAVE_USED;
-			bSavedVsType = TRUE;
+			if (!(rollSaveSpells & CRESAVE_USED)) {
+				rollSaveSpells |= CRESAVE_USED;
+				bPrintMsg = TRUE;
+			}
 			break;
 		default: //none
 			break;
@@ -343,7 +353,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 				if (!(rollSaveDeath & CRESAVE_USED)) {
 					if (wSaveRollTotal >= wSaveThreshold) {
 						rollSaveDeath |= CRESAVE_USED;
-						bSavedVsType = TRUE;
+						bPrintMsg = TRUE;
 					}
 				}
 			}
@@ -358,7 +368,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 				if (!(rollSaveWands & CRESAVE_USED)) {
 					if (wSaveRollTotal >= wSaveThreshold) {
 						rollSaveWands |= CRESAVE_USED;
-						bSavedVsType = TRUE;
+						bPrintMsg = TRUE;
 					}
 				}
 			}
@@ -373,7 +383,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 				if (!(rollSavePoly & CRESAVE_USED)) {
 					if (wSaveRollTotal >= wSaveThreshold) {
 						rollSavePoly |= CRESAVE_USED;
-						bSavedVsType = TRUE;
+						bPrintMsg = TRUE;
 					}
 				}
 			}
@@ -388,7 +398,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 				if (!(rollSaveBreath & CRESAVE_USED)) {
 					if (wSaveRollTotal >= wSaveThreshold) {
 						rollSaveBreath |= CRESAVE_USED;
-						bSavedVsType = TRUE;
+						bPrintMsg = TRUE;
 					}
 				}
 			}
@@ -403,7 +413,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 				if (!(rollSaveSpells & CRESAVE_USED)) {
 					if (wSaveRollTotal >= wSaveThreshold) {
 						rollSaveSpells |= CRESAVE_USED;
-						bSavedVsType = TRUE;
+						bPrintMsg = TRUE;
 					}
 				}
 			}
@@ -430,7 +440,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 
 	if (wSaveRollTotal >= wSaveThreshold) {
 		//saved
-		if (bSavedVsType &&
+		if (bPrintMsg &&
 			!(cdsTarget.stateFlags & STATE_DEAD)) {
 			if (g_pChitin->pGame->m_GameOptions.m_nEffectTextLevel & 1) {
 				IECString sRoll;
