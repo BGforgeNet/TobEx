@@ -33,8 +33,14 @@ jobs:
         run: msbuild TobEx.sln
         shell: cmd
 
-      - name: Upload artifact
+      - name: Upload debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: tobex.dll
-          path: Debug\TobEx.dll
+          name: tobex-debug
+          path: Debug
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: tobex-release
+          path: Release
