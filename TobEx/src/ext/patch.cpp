@@ -3297,10 +3297,12 @@ void InitPatches() {
 		for (int i = 0; i < vDataList.size(); i++) {
 			bApply = CheckPatch(vDataList[i]);
 			if (bApply) {
-				LPCTSTR lpsz = "InitPatches(): patch '%s' applied\r\n";
-				console.writef(CONSOLEFORECOLOR_NORMAL, lpsz, vPatchItr->GetName());
-				L.timestamp();
-				L.appendf(lpsz, vPatchItr->GetName());
+				if (vPatchItr->GetName()) {
+					LPCTSTR lpsz = "InitPatches(): patch '%s' applied\r\n";
+					console.writef(CONSOLEFORECOLOR_NORMAL, lpsz, vPatchItr->GetName());
+					L.timestamp();
+					L.appendf(lpsz, vPatchItr->GetName());
+				}
 			} else {
 				LPCTSTR lpsz = "InitPatches(): patch '%s' not applied\r\n";
 				console.writef(CONSOLEFORECOLOR_WARNING, lpsz, vPatchItr->GetName());
