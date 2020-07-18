@@ -36,11 +36,5 @@ jobs:
       - name: Upload debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: tobex-debug
+          name: tobex
           path: Debug
-
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: tobex-release
-          path: Release
