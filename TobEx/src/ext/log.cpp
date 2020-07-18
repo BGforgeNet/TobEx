@@ -22,6 +22,7 @@ BOOL Log::Init(int mode) {
 	hFile = CreateFile(szFile, GENERIC_WRITE, FILE_SHARE_READ, NULL, mode, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile) SetFilePointer(hFile, 0, 0, FILE_END);
 	bFileOpen = hFile ? TRUE : FALSE;
+	if (GetLastError() == ERROR_ALREADY_EXISTS) SetLastError(ERROR_SUCCESS);
 	return bFileOpen;
 }
 
