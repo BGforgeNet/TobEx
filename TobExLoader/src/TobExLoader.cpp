@@ -27,7 +27,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int n
 	if (FindFirstFileA(szFileName, &FileData) != INVALID_HANDLE_VALUE) {
 		if (!checkFileVersion(szFileName, "2, 5, 0, 2")) return -1;
 	} else {
-		displayErrorMessage("WinMain(): FindFirstFileA() failed.", GetLastError());
+		displayErrorMessage("FindFirstFileA(): Could not find game executable.", GetLastError());
 		return -1;
 	}
 
@@ -49,7 +49,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int n
 	    CloseHandle(pi.hProcess);
 		if (!dwExitCode) return -1;
 	} else {
-		displayErrorMessage("WinMain(): CreateProcessA() failed.", GetLastError());
+		displayErrorMessage("CreateProcessA(): Unable to start game.", GetLastError());
 	}
 
 	return 0;
