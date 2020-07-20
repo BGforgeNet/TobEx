@@ -62,7 +62,7 @@ jobs:
       - name: Package release
         run: |
           cd WeiDU
-          7z -r "tobex_%GIT_TAG_NAME%.zip" *
+          7z -r tobex_${{ env.GIT_TAG_NAME }}.zip *
 
       - name: Upload release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -70,4 +70,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            WeiDU/tobex_$GIT_TAG_NAME.zip
+            WeiDU/tobex_${{ env.GIT_TAG_NAME }}.zip
