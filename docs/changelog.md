@@ -1,5 +1,6 @@
 ## Changelog
 
+- [Version 28](#version-28)
 - [Beta 0026](#beta-0026)
 - [Beta 0025](#beta-0025)
 - [Beta 0024](#beta-0024)
@@ -28,8 +29,14 @@
 - [Beta 0001](#beta-0001)
 - [Alpha](#alpha)
 
-### v28
-- WeiDU: updated Chinese translations
+### Version 28
+- Loader: Modified error messages to be very slightly more informative
+- Log Dialogue Bar: Fixed a bug that prevented user patches from working if `TobEx_dlg.log` already existed
+- Magic Resistance Mod Fix: Fixed a bug when successfully resisting a spell showed too many messages in the dialogue bar
+- Saving Throw Fix: Fixed a bug when successfully saving against a group of effects showed too many messages in the dialogue bar
+- User Patches: Successfully applied user patches are now logged too
+- WeiDU: Updated simplified Chinese and traditional Chinese translations (by Hindo's Doom)
+- Internal: switched `PlatformToolset` to v100, updated Detours to 4.0.1.
 
 ### Beta 0026
 - Class/structure updates
