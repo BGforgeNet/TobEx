@@ -1,5 +1,33 @@
 ## Changelog
 
+- [Beta 0026](#beta-0026)
+- [Beta 0025](#beta-0025)
+- [Beta 0024](#beta-0024)
+- [Beta 0023](#beta-0023)
+- [Beta 0022](#beta-0022)
+- [Beta 0021](#beta-0021)
+- [Beta 0020](#beta-0020)
+- [Beta 0019](#beta-0019)
+- [Beta 0018](#beta-0018)
+- [Beta 0017](#beta-0017)
+- [Beta 0016](#beta-0016)
+- [Beta 0015](#beta-0015)
+- [Beta 0014](#beta-0014)
+- [Beta 0013](#beta-0013)
+- [Beta 0012](#beta-0012)
+- [Beta 0011](#beta-0011)
+- [Beta 0010](#beta-0010)
+- [Beta 0009](#beta-0009)
+- [Beta 0008](#beta-0008)
+- [Beta 0007](#beta-0007)
+- [Beta 0006](#beta-0006)
+- [Beta 0005](#beta-0005)
+- [Beta 0004](#beta-0004)
+- [Beta 0003](#beta-0003)
+- [Beta 0002](#beta-0002)
+- [Beta 0001](#beta-0001)
+- [Alpha](#alpha)
+
 ### v28
 - WeiDU: updated Chinese translations
 
@@ -190,7 +218,6 @@
 - Repeating Effect Fix: Fixed a bug where the effect would not work properly on permanent timings
 
 ### Beta 0019
-
 - Assertion updates
 - Class/structure updates
 - Added: Expanded Triggers
@@ -203,7 +230,6 @@
 - Scrollable Priest Spellbook: Fixed a bug where the maximum scroll bar position was calculated incorrectly
 
 ### Beta 0018
-
 - Overhauled installation process: TobEx can now be included in mods in a redistributable format. Please see readme.txt for more details.
 - Overhauled tweaks: These are in the Extras group for optional installation
 - Assertion updates
