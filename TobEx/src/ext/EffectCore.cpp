@@ -438,6 +438,21 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 		}
 	}
 
+	// test
+	CMessageDisplayDialogue* pMDD = IENew CMessageDisplayDialogue();
+	pMDD->eTarget = creTarget.e;
+	pMDD->eSource = creTarget.e;
+	pMDD->srOwner = creTarget.GetLongNameStrRef();
+	pMDD->srText = 19225; //'Magic Resistance'
+	pMDD->rgbOwner = g_ColorDefaultText;
+	pMDD->rgbText = g_ColorDefaultText;
+	pMDD->u1c = -1;
+	pMDD->u20 = 0;
+	pMDD->bFloatText = false;
+	pMDD->u22 = 0;
+	pMDD->bPlaySound = true;
+	g_pChitin->messages.Send(*pMDD, FALSE);
+
 	if (wSaveRollTotal >= wSaveThreshold) {
 		//saved
 		if (bPrintMsg &&
