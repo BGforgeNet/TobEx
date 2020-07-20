@@ -15,7 +15,7 @@ BOOL DETOUR_CSoundMixer::DETOUR_InitSonglist(int nSongs, char** pSongFileArray) 
 #ifndef _DEBUG
 	CSingleLock csl = CSingleLock(&csSos, TRUE);
 #endif
-	Sos_LoadSongPath(szSongPath, "acm");
+	Sos_LoadSongPath(szSongPath, "wav");
 	sSongPath.ReleaseBuffer(-1);
 
 	SongResource* pArray = (SongResource*)malloc(nSongs * sizeof(SongResource));
