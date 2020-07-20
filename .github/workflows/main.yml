@@ -9,6 +9,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Cache chocolatey
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-choco
+        with:
+          path:  ~\AppData\Local\Temp\chocolatey
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install vcexpress
         run: choco install vcexpress2010
 
