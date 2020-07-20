@@ -12,8 +12,8 @@ BOOL DETOUR_CSoundMixer::DETOUR_InitSonglist(int nSongs, char** pSongFileArray) 
 	if (!bSosDriverLoaded) return FALSE;
 	if (nNumSongs) return FALSE; //normally an assert
 	LPTSTR szSongPath = sSongPath.GetBuffer(0);
-	lpDirectSoundBuffer.SetFrequency(44100);
-	m_CSoundProperties.lpDirectSoundBuffer.SetFrequency(44100);
+	*lpDirectSoundBuffer.SetFrequency(44100);
+	*m_CSoundProperties.lpDirectSoundBuffer.SetFrequency(44100);
 #ifndef _DEBUG
 	CSingleLock csl = CSingleLock(&csSos, TRUE);
 #endif
