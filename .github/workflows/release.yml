@@ -56,10 +56,10 @@ jobs:
           path: Debug
 
       - name: Package release
-        uses: thedoctor0/zip-release@master
-        with:
-          filename: tobex_${{ github.ref }}.zip
-          directory: WeiDU
+        run: |
+          cd WeiDU
+          7z -r tobex_${{ github.ref }}.zip *
+        shell: cmd
 
       - name: Upload release
         uses: "marvinpinto/action-automatic-releases@latest"
