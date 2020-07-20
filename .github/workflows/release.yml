@@ -61,6 +61,13 @@ jobs:
         uses: olegtarasov/get-tag@v2
         id: tagName
 
+      - name: Download WeiDU
+        run: |
+          wget "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -O weidu.zip
+          7z e weidu.zip WeiDU-Windows/bin/x86/weidu.exe
+          move /y weidu.exe WeiDU/setup-tobex.exe
+        shell: cmd
+
       - name: Package release
         run: |
           cd WeiDU
