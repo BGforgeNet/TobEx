@@ -55,11 +55,14 @@ jobs:
           name: tobex
           path: Debug
 
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2
+        id: tagName
+
       - name: Package release
         run: |
           cd WeiDU
-          7z -r tobex_${{ github.ref }}.zip *
-        shell: cmd
+          7z -r tobex_$GIT_TAG_NAME.zip *
 
       - name: Upload release
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -67,4 +70,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            WeiDU/tobex_${{ github.ref }}.zip
+            WeiDU/tobex_$GIT_TAG_NAME.zip
