@@ -42,11 +42,19 @@ jobs:
         shell: cmd
 
       - name: Core Build
-        run: msbuild TobEx.sln
+        run: |
+          msbuild TobEx.sln /p:Configuration=Release
+          msbuild TobEx.sln /p:Configuration=Debug
         shell: cmd
 
       - name: Upload debug artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: tobex
+          name: debug
           path: Debug
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: WeiDU

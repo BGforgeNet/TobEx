@@ -46,7 +46,9 @@ jobs:
         shell: cmd
 
       - name: Core Build
-        run: msbuild TobEx.sln
+        run: |
+          msbuild TobEx.sln /p:Configuration=Release
+          msbuild TobEx.sln /p:Configuration=Debug
         shell: cmd
 
       - name: Upload debug artifacts
@@ -63,6 +65,11 @@ jobs:
         run: |
           cd WeiDU
           7z a -r tobex_${{ env.GIT_TAG_NAME }}.zip *
+
+      - name: Package debug
+        run: |
+          cd Debug
+          7z a -r tobex_debug_${{ env.GIT_TAG_NAME }}.zip *
 
       - name: Create release
         id: create_release
@@ -84,4 +91,15 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: WeiDU/tobex_${{ env.GIT_TAG_NAME }}.zip
           asset_name: tobex_${{ env.GIT_TAG_NAME }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload debug asset
+        id: upload-debug-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Debug/tobex_debug_${{ env.GIT_TAG_NAME }}.zip
+          asset_name: tobex_debug_${{ env.GIT_TAG_NAME }}.zip
           asset_content_type: application/zip
