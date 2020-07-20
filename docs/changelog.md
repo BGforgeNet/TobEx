@@ -6,15 +6,15 @@
 ### Beta 0026
 - Class/structure updates
 - Cast Spell On Condition Mod: Fixed wrong target text in the contingency info screen
-- Expanded Triggers: Fixed certain 0x0XXX triggers like Heard() not working correctly
-- Poison Resistance Mod: Added temporary workaround for invalid nParam2 messages caused by BG2Fixpack, until BG2Fixpack is updated
+- Expanded Triggers: Fixed certain `0x0XXX` triggers like `Heard()` not working correctly
+- Poison Resistance Mod: Added temporary workaround for invalid `nParam2` messages caused by BG2Fixpack, until BG2Fixpack is updated
 - Remove all race-class restrictions: Disabled dwarven paladins because dwarves do not meet the charisma requirement to be paladins, which caused an infinite loop
 - Saving Throw Fix: Fixed a bug where abilities with multiple effects with the save type would only allow a saving throw against the first effect (fixes issues such as saving against an effect but still showing the portrait icon or visual effect)
 - Use EFF File Fix: Fixed a bug where the parent effect parameters were used to determine whether the child effect was applied or not (fixes issues such as not getting experience for items that instantly kill undead)
 
 ### Beta 0025
 - Class/structure updates
-- User Patches: No longer spouts an error when the ./TobEx_ini/patch directory is non-existent or empty
+- User Patches: No longer spouts an error when the `./TobEx_ini/patch` directory is non-existent or empty
 - Added: Clone Creature Fix
 - Added: Externalise Bard Song Effects
 - Added: Externalise Difficulty Settings
@@ -25,12 +25,12 @@
 - Renamed: Disable Duplicate Effect Stacking -> Configurable Effect Stacking
 - Configurable Damage Effect Bypasses Mirror Images: Fixed implementation as per the reference; bit 24 of the effect save type field is used rather than the parent item ability flag of spell flag; this flag is thus different from tob_hacks and Spell Revisions
 - Disable Duplicate Effect Stacking: Fixed issue with timing mode 10, where Bard Song would continue for a prolonged period of time
-- Expanded Actions: Assign() now recognises special type sp[], which currently allows putting the source's coordinates into trigger block variables
-- Expanded Actions: Eval() expressions now recognise and(), or(), band(), and bor() functions
-- Expanded Stats: Fixed bitwise AND and bitwise OR types for Set Stat [318] effect
-- Expanded Triggers: Added 0x411F CheckStatBAND()
-- Expanded Triggers: Assign() now recognises special type sp[], which currently allows putting the source's coordinates into trigger block variables
-- Expanded Triggers: Eval() expressions now recognise and(), or(), band(), and bor() functions
+- Expanded Actions: `Assign()` now recognises special type `sp[]`, which currently allows putting the source's coordinates into trigger block variables
+- Expanded Actions: `Eval()` expressions now recognise `and()`, `or()`, `band()`, and `bor()` functions
+- Expanded Stats: Fixed bitwise `AND` and bitwise `OR` types for `Set Stat [318]` effect
+- Expanded Triggers: Added `0x411F CheckStatBAND()`
+- Expanded Triggers: `Assign()` now recognises special type `sp[]`, which currently allows putting the source's coordinates into trigger block variables
+- Expanded Triggers: `Eval()` expressions now recognise `and()`, `or()`, `band()`, and `bor()` functions
 - Item Recharge Mod: Fixed bugs where stackable items with 0 quantity in store files were valued at 1 gold, did not register a quantity when bought, and did not stack properly when bought
 
 ### Beta 0024
@@ -45,13 +45,13 @@
 - Added: Use EFF File Fix
 - Modified and Renamed: Item Recharge in Bag Fix->Item Recharge Mod
 - Awaken On Damage: Fixed a bug where creatures hit unconscious by FIST/STUNNING damage would still be a target and would recover consciousness in the same around
-- Expanded Actions: Added actions 356-358 allowing for script variable substitution
-- Expanded Triggers: Added triggers 0x411A-0x411E allowing for script variable substitution
+- Expanded Actions: Added actions `356-358` allowing for script variable substitution
+- Expanded Triggers: Added triggers `0x411A-0x411E` allowing for script variable substitution
 - Expanded Triggers: Internal script compiler (for dialogues) now recognises more trigger parameter combinations for new triggers in the future
 
 ### Beta 0023
 - Class/structure updates
-- Added feature to apply custom user patches in the ./TobEx_ini/patch directory, see template.patch in that directory
+- Added feature to apply custom user patches in the `./TobEx_ini/patch directory`, see `template.patch` in that directory
 - Improved installation text compatibility with Linux systems
 - Improved stability of hex patching code
 - Added: Castilian translation (by Lisandro)
@@ -85,20 +85,20 @@
 - Dexterity Mod: Added information to reference that this hack also fixes incorrect wrapping of attribute values
 - Dispel Formula Fix: Re-implemented the hack, now overrides tob_hacks and other mods
 - Save Vs <> Mod: Added information to reference that these hacks also fix incorrect wrapping of save values
-- Enable PickpocketFailed Trigger: Re-implemented the hack, old hack has been renamed (see below), now sends PickPocketFailed() in addition to the original AttackedBy() trigger, moved to core hacks, now overrides tob_hacks
+- Enable PickpocketFailed Trigger: Re-implemented the hack, old hack has been renamed (see below), now sends `PickPocketFailed()` in addition to the original `AttackedBy()` trigger, moved to core hacks, now overrides tob_hacks
 - Externalise Item-Creature Exclusions: Re-implemented the hack to closer reflect the GemRB implementation
 - PickpocketFailed Trigger Only: Renamed from the previous tweak hack Enabled PickpocketFailed Trigger
-- Enlarge Tooltip Scroll: Fixed the DDERR_INVALIDRECT issue in software renderer causing the tooltip to get stuck on the screen, re-enabled by default
+- Enlarge Tooltip Scroll: Fixed the `DDERR_INVALIDRECT` issue in software renderer causing the tooltip to get stuck on the screen, re-enabled by default
 - Remain Hidden On Pickpocket Success: Re-implemented the hack, re-classified the hack as of type Action, now overrides tob_hacks
 - Scrollable Mage Spellbook: Fixed a bug in calculating the maximum scroll bar position
 - Scrollable Priest Spellbook: Fixed a bug in calculating the maximum scroll bar position
 - Strength Mod: Added information to reference that this hack also fixes incorrect wrapping of attribute values
-- Subtitles For Standard Soundsets: Fixed a typo in the FEMALE3 soundset subtitles
+- Subtitles For Standard Soundsets: Fixed a typo in the `FEMALE3` soundset subtitles
 
 ### Beta 0022
 - Assertion updates
 - Class/structure updates
-- Upgraded to use the Detours Express 3.0 library, removing need for detoured.dll
+- Upgraded to use the Detours Express 3.0 library, removing need for `detoured.dll`
 - Added: Externalise Mage Spells Cap
 - Updated: Italian translation (by Salk)
 - Updated: Simplified and Traditional Chinese translations (by Hindo's Doom)
@@ -106,7 +106,7 @@
 - Blindness As Spell Description: Should now overwrite the Blindness Fix hack as intended
 - Contingency Detects Select Spell: Fixed memorised spells in lowercase not displaying correctly
 - Disease Fix: Fixed a bug where a creature slowed on death remained alive and untargettable
-- Kit Trigger Fix: Fixed breaking of vanilla behaviour when Kit(*, 0) was specifically used to detect Barbarian and Wild Mage kits
+- Kit Trigger Fix: Fixed breaking of vanilla behaviour when `Kit(*, 0)` was specifically used to detect Barbarian and Wild Mage kits
 - Log Assertion Failures: Missing spell icons for spells in the spell selection screen correctly display an assertion failure
 - Log Missing Resources: Fixed an issue that prevented this hack from working
 - Optimise Bag Search Code: (?) Hopefully now fixed occasional client-side crash when accessing bags or stores
@@ -127,18 +127,18 @@
 - Removed: Instantly Set Dialogue Variables
 - Disable Experience Boost: Merged with hack that corrects experience reporting in dialogue bar
 - Disintegrate Fix: Fixed a bug where IDS targetting was ignored
-- Expanded Actions: Added DialogueSetGlobal(), DialogueIncrementGlobal(), DialogueSG()
+- Expanded Actions: Added `DialogueSetGlobal()`, `DialogueIncrementGlobal()`, `DialogueSG()`
 - Expanded Stats: Fixed loss of character animations on network players on saving multiplayer game
 - Expanded Stats: Fixed network communication of new stats
-- Externalise Mage Spell Hiding: Fixed a bug where Lightning (SPWI938) was selectable in Sorceror level-up mage spell selection (added SPWI927-949 to HIDESPL.2DA to preserve vanilla behaviour)
+- Externalise Mage Spell Hiding: Fixed a bug where Lightning (`SPWI938`) was selectable in Sorceror level-up mage spell selection (added `SPWI927-949` to `HIDESPL.2DA` to preserve vanilla behaviour)
 - Magic Resistance Mod Fix: Swapped implementation of parameter 2 values 0 and 3 to preserve vanilla behaviour
 - Optimise Bag Search Code: (?) Fixed occasional client-side crash when accessing bags or stores
-- Poison Fix: Fixed a typo that caused crashes with effect opcode #41 (Sparkle) and prevented this hack from working
+- Poison Fix: Fixed a typo that caused crashes with effect opcode `#41` (Sparkle) and prevented this hack from working
 - Scrollable Chargen Mage Spell Selection: Fixed intermittent bugs with scroll bars not scrolling when there were spells that could fit onto one page
 - Scrollable Level Up Mage Spell Selection: Fixed intermittent bugs with scroll bars not scrolling when there were spells that could fit onto one page
-- Strength Mod: Removed all changes to Cumulative Modifier (param1 = 0), correcting issues with equipped items not keeping strength bonus on loading a game, and issues with strength incrementation with items such as the Manual of Gainful Exercise, Evil Tear of Bhaal, and Blackrazor
-- Strength Mod: Strength Spell (param1 = 3) now increments Strength through 18/XX based on differences detected in STRMODEX.2DA
-- Subtitles For Standard Soundsets: Fixed a typo in the FEMALE3 soundset subtitles
+- Strength Mod: Removed all changes to Cumulative Modifier (`param1 = 0`), correcting issues with equipped items not keeping strength bonus on loading a game, and issues with strength incrementation with items such as the Manual of Gainful Exercise, Evil Tear of Bhaal, and Blackrazor
+- Strength Mod: Strength Spell (param1 = 3) now increments Strength through 18/XX based on differences detected in `STRMODEX.2DA`
+- Subtitles For Standard Soundsets: Fixed a typo in the `FEMALE3` soundset subtitles
 - Use Caster Level On Mirror Image: Fixed a typo that prevented this hack from working
 
 ### Beta 0020
@@ -178,10 +178,10 @@
 - Renamed: IWD Style Strength Mod -> Strength Mod
 - Attacks Per Round Mod Fix: Corrected the use of incorrect base value for percentage type
 - Configurable Backstab Restrictions: Fixed a bug where non-barbarians with immunity to backstab could still get backstabbed
-- Expanded Stats: Added a number of effect-associated hard-coded non-modifiable stats (opcodes 308-331)
-- Expanded Stats: Added damage-type specific percentage modifier stats (opcodes 387-399)
-- Expanded Triggers: Added triggers 0x4101-0x4119
-- Externalise Mage Spell Hiding: Modified the column label in HIDESPL.2DA to prevent confusion
+- Expanded Stats: Added a number of effect-associated hard-coded non-modifiable stats (opcodes `308-331`)
+- Expanded Stats: Added damage-type specific percentage modifier stats (opcodes `387-399`)
+- Expanded Triggers: Added triggers` 0x4101-0x4119`
+- Externalise Mage Spell Hiding: Modified the column label in `HIDESPL.2DA` to prevent confusion
 - Level One Proficiency Restrictions: Fixed some consistency issues
 - IWD Style Strength Mod: Corrected the use of incorrect base value for percentage type
 - IWD Style Strength Mod: Fixed a bug where this hack was never enabled
@@ -198,7 +198,7 @@
 - Configurable Critical Hit Aversion: Fixed a typo that prevented this hack from being activated ("Critial")
 - Expanded Stats: Shifted stats to 300 and above for GemRB compatibility
 - Enable PickpocketFailed Trigger: Fixed a typo that prevented this hack from being activated ("Tweak:")
-- Scrollable Level Up Mage Spell Selection: Prevented assertion failed crash if TobEx-modified GUIREC.CHU is overwritten by a modification
+- Scrollable Level Up Mage Spell Selection: Prevented assertion failed crash if TobEx-modified `GUIREC.CHU` is overwritten by a modification
 - Scrollable Mage Spellbook: Fixed a bug where the maximum scroll bar position was calculated incorrectly
 - Scrollable Priest Spellbook: Fixed a bug where the maximum scroll bar position was calculated incorrectly
 
@@ -228,9 +228,9 @@
 - Configurable Spells Can Target Invisible: Removed external resource changes
 - Correct Experience Gain: Split into Correct Experience Reporting, and Disable Experience Boost
 - Customisable Critical Hit Aversion: Removed external resource changes
-- Expanded Stats: Added stat 300 WEIGHTALLOWANCEMOD
-- Externalise Animation Walking Sounds: Fixed a bug where the 0xE*** animations still used vanilla walking sound code
-- Externalise Class-Race Restrictions: Fixed a bug where players could select a true class mage using the Enter hotkey even if not allowed by MGSRCREQ.2DA
+- Expanded Stats: Added stat `300 WEIGHTALLOWANCEMOD`
+- Externalise Animation Walking Sounds: Fixed a bug where the `0xE***` animations still used vanilla walking sound code
+- Externalise Class-Race Restrictions: Fixed a bug where players could select a true class mage using the Enter hotkey even if not allowed by `MGSRCREQ.2DA`
 - Externalise Race Selection StrRef: Fixed a bug where basilisk, bear, fairy, mist, mimic, and giant races could display nonsense text in the record screen
 - Soundset Subtitles: Removed external resource changes
 - Use Animation Percentages for Throwing Weapons: Fixed a bug with non-ammo ranged weapons causing crashes/warnings
@@ -258,12 +258,12 @@
 - Added: Log Missing Resources
 - Added: No Spell Interruption On Zero Damage
 - Added: Targetting Dead Animations Fix
-- Core: Fixed a bug with incorrect patching of SPELLS.2DA
+- Core: Fixed a bug with incorrect patching of `SPELLS.2DA`
 - Externalise Encumbrance Restrictions: Fixed a bug with encumbrance calculation
-- Externalise Logging: Moved to debug QUICK_MENU
-- Expanded Stats: Added hard-coded stats 202-208
+- Externalise Logging: Moved to debug `QUICK_MENU`
+- Expanded Stats: Added hard-coded stats `202-208`
 - Expanded Stats: Prevented divide by zero crashes
-- Reviewed TobEx_ini.txt
+- Reviewed `TobEx_ini.txt`
 
 ### Beta 0015
 - Class/structure updates
@@ -277,16 +277,16 @@
 - Added: Kit Trigger Fix
 - Added: Rest Spawns Advance Time
 - Added: Use Animation Percentages for Throwing Weapons
-- Removed: Opcode 0x13E
+- Removed: Opcode `0x13E`
 - Streamlined config installation
-- Reviewed TobEx_ini.txt
+- Reviewed `TobEx_ini.txt`
 
 ### Beta 0014
 - Custom Dialogue Bar Buffer Size: Fixed a dialogue crash bug when this hack was disabled (set to 0)
 - Log Dialogue Bar: Fixed a crash bug when trying to log text larger than 256 characters
-- Soundset Subtitles: Corrected a typo in the FEMALE2 soundset subtitles
+- Soundset Subtitles: Corrected a typo in the `FEMALE2` soundset subtitles
 - Modified config installation to allow quick and manual configurations
-- Reviewed TobEx_ini.txt
+- Reviewed `TobEx_ini.txt`
 
 ### Beta 0013
 - Class/structure updates
@@ -308,7 +308,7 @@
 - Added: Remove Projectile Mod
 - Added: Verbose Logging
 - Externalise Class-Race Restrictions: Fixed a bug where the standard gnome and dwarf multi-class options were swapped
-- Magic Resistance Mod Fix: Fixed a bug with non-instant/limited timings (timing != 1) using increment (param2 = 0) type
+- Magic Resistance Mod Fix: Fixed a bug with non-instant/limited timings (`timing != 1`) using increment (`param2 = 0`) type
 - Scrollable Level Up Mage Spell Selection: Fixed a bug with selecting high-level abilities
 - Condensed WeiDU components for more convenient installation
 - Split core and configuration installations
@@ -349,7 +349,7 @@
 - Added fail safes for a few cases where required WeiDU components are not installed
 - Added component: Critical Error Message Box Fix
 - Added some troubleshooting information to readme
-- Recommended files for Soundset Subtitles: Fixed a CSound.2da patching bug if custom subtitles were installed prior to TobEx
+- Recommended files for Soundset Subtitles: Fixed a `CSound.2da` patching bug if custom subtitles were installed prior to TobEx
 
 NOTE: this version cannot be compared to the previous version due to a major change to program architecture
 
@@ -359,7 +359,7 @@ NOTE: this version cannot be compared to the previous version due to a major cha
 - Added components: Allow 99 Priest Known Spells Per Level
 - Removed TobEx.def
 - Renamed all components
-- Extended Songlist: Now completely removes the row limit in SONGLIST.2DA
+- Extended Songlist: Now completely removes the row limit in `SONGLIST.2DA`
 
 ### Beta 0007
 - Class/structure updates
@@ -368,7 +368,7 @@ NOTE: this version cannot be compared to the previous version due to a major cha
 - Fixed crash when ExternLog, MoreLog, and RaceStrRef are enabled together
 - RandomTreasure99: Fixed some bad patching issues
 - ExternLog: Fixed a patching issue that caused crashes and problems with detecting saved games
-- Added TobEx.def to source
+- Added `TobEx.def` to source
 
 ### Beta 0006
 - Class/structure updates
@@ -390,10 +390,10 @@ NOTE: this version cannot be compared to the previous version due to a major cha
 
 ### Beta 0002
 - Class/structure updates
-- Removed dependency on a number of DLL files and reduced size of TobEx.dll
-- Added two varieties of TobEx.ini: Tob_hacks-safe and default
+- Removed dependency on a number of DLL files and reduced size of `TobEx.dll`
+- Added two varieties of `TobEx.ini`: Tob_hacks-safe and default
 - Added components: BiggerTooltip, CastLevelBonus, RaceStrRef, MageScroll, PriestScroll, BlindCumPen, OpcodeBlindOrig
-- Updated components: KitScroll (guicg.chu now dynamically patched)
+- Updated components: KitScroll (`guicg.chu` now dynamically patched)
 
 ### Beta 0001
 - Now installed via WeiDU
