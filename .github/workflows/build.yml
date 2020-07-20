@@ -1,0 +1,60 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache chocolatey
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-choco
+        with:
+          path:  ~\AppData\Local\Temp\chocolatey
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install vcexpress
+        run: choco install vcexpress2010
+
+      - name: Setup MSBuild.exe
+        uses: warrenbuckley/Setup-MSBuild@v1
+
+      - name: Setup Environment
+        run: |
+          "echo ::add-path::C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE"
+          "echo ::add-path::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN"
+          "echo ::add-path::C:\Windows\Microsoft.NET\Framework\v4.0.30319"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\LIB;%LIB%"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib;%LIB%"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;%LIB%"
+          "echo ::set-env name=INCLUDE::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include;%INCLUDE%"
+
+      - name: Start VCTools
+        run: 'call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86'
+        shell: cmd
+
+      - name: Core Build
+        run: |
+          msbuild TobEx.sln /p:Configuration=Release
+          msbuild TobEx.sln /p:Configuration=Debug
+        shell: cmd
+
+      - name: Upload debug artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: debug
+          path: Debug
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: release
+          path: WeiDU
