@@ -1,0 +1,112 @@
+---
+name: "release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache chocolatey
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-choco
+        with:
+          path:  ~\AppData\Local\Temp\chocolatey
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install vcexpress
+        run: choco install vcexpress2010
+
+      - name: Setup MSBuild.exe
+        uses: warrenbuckley/Setup-MSBuild@v1
+
+      - name: Setup Environment
+        run: |
+          "echo ::add-path::C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE"
+          "echo ::add-path::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\BIN"
+          "echo ::add-path::C:\Windows\Microsoft.NET\Framework\v4.0.30319"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\LIB;%LIB%"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Lib;%LIB%"
+          "echo ::set-env name=LIB::C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;%LIB%"
+          "echo ::set-env name=INCLUDE::C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include;%INCLUDE%"
+
+      - name: Start VCTools
+        run: 'call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86'
+        shell: cmd
+
+      - name: Core Build
+        run: |
+          msbuild TobEx.sln /p:Configuration=Release
+          msbuild TobEx.sln /p:Configuration=Debug
+        shell: cmd
+
+      - name: Upload debug artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: tobex
+          path: Debug
+
+      - name: Get tag name
+        uses: olegtarasov/get-tag@v2
+        id: tagName
+
+      - name: Download WeiDU
+        run: |
+          curl -Ls "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip | bash
+          7z e weidu.zip WeiDU-Windows/bin/x86/weidu.exe
+          mv -f weidu.exe WeiDU/setup-tobex.exe
+        shell: bash
+
+      - name: Package release
+        run: |
+          cd WeiDU
+          7z a -r tobex_${{ env.GIT_TAG_NAME }}.zip *
+
+      - name: Package debug
+        run: |
+          cd Debug
+          7z a -r tobex_debug_${{ env.GIT_TAG_NAME }}.zip *
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.GIT_TAG_NAME }}
+          release_name: ${{ env.GIT_TAG_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: WeiDU/tobex_${{ env.GIT_TAG_NAME }}.zip
+          asset_name: tobex_${{ env.GIT_TAG_NAME }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload debug asset
+        id: upload-debug-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: Debug/tobex_debug_${{ env.GIT_TAG_NAME }}.zip
+          asset_name: tobex_debug_${{ env.GIT_TAG_NAME }}.zip
+          asset_content_type: application/zip
