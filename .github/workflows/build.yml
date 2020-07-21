@@ -41,6 +41,18 @@ jobs:
         run: 'call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86'
         shell: cmd
 
+
+      - uses: actions/checkout@master
+        with:
+          name: microsoft/Detours    
+          ref: 4.0.1
+          path: detours
+
+      - name: Build detours
+        run: nmake
+        working-directory: ./detours
+        shell: cmd
+      
       - name: Core Build
         run: |
           msbuild TobEx.sln /p:Configuration=Release
