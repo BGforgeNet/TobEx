@@ -1,7 +1,7 @@
 ## Compile notes
 
 Requires:
-- Microsoft Detours 4.0 Express Library
+- Microsoft Detours 4.0.1 Express Library
 - MFC 4.2 libraries (from Visual Studio 6.0 or another source - included)
 - Microsoft Visual C++ 2010 Express
 - modified MathPresso libraries (included)
