@@ -36,6 +36,7 @@
 - Saving Throw Fix: Fixed a bug when successfully saving against a group of effects showed too many messages in the dialogue bar
 - User Patches: Successfully applied user patches are now logged too
 - WeiDU: Updated simplified Chinese and traditional Chinese translations (by Hindo's Doom)
+- WeiDU: updated to v246
 - Internal: switched `PlatformToolset` to v100, updated Detours to 4.0.1.
 
 ### Beta 0026
