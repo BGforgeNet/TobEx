@@ -9,8 +9,8 @@ Baldur's Gate II: Throne of Bhaal version 26498 is required.
 A redistributable version of TobEx identical to the "TobEx - Core" component of this modification may be packaged within other modifications.
 
 ## Docs
-- [Redistributable package readme](https://htmlpreview.github.io/?https://github.com/BGforgeNet/TobEx/blob/master/WeiDU/TobEx/tobex_redist/readme/readme.htm)
-- [Modder reference](https://htmlpreview.github.io/?https://github.com/BGforgeNet/TobEx/blob/master/WeiDU/TobEx/tobex_redist/readme/TobExReference.htm)
+- [Redistributable package readme](https://htmlpreview.github.io/?https://github.com/BGforgeNet/TobEx/blob/master/weidu/tobex/tobex_redist/readme/readme.htm)
+- [Modder reference](https://htmlpreview.github.io/?https://github.com/BGforgeNet/TobEx/blob/master/WeiDU/TobEx/tobex_redist/readme/tobexreference.htm)
 - [Compile notes](docs/compile_notes.md)
 - [Program notes](docs/program_notes.md)
 - [Changelog](docs/changelog.md)
