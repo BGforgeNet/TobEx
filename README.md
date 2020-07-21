@@ -11,3 +11,4 @@ A redistributable version of TobEx identical to the "TobEx - Core" component of 
 - [Modder reference](https://htmlpreview.github.io/?https://github.com/BGforgeNet/TobEx/blob/master/WeiDU/TobEx/TobEx_redist/readme/TobExReference.htm)
 - [Compile notes](docs/compile_notes.md)
 - [Program notes](docs/program_notes.md)
+- [Changelog](docs/changelog.md)
