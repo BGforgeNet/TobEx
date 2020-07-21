@@ -76,12 +76,21 @@ jobs:
         run: |
           copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
           copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\weidu\tobex\tobex_redist\asmjit.dll"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\Debug\asmjit.dll"
         shell: cmd
 
       - name: Core Build
         run: |
           msbuild TobEx.sln /p:Configuration=Release
           msbuild TobEx.sln /p:Configuration=Debug
+        shell: cmd
+
+      - name: Lowercase files
+        run: |
+          ren Debug\TobEx.dll Debug\tobex.dll
+          ren Debug\TobExLoader.exe Debug\tobexloader.exe
+          ren weidu\tobex\tobex_redist\TobEx.dll ren weidu\tobex\tobex_redist\tobex.dll
+          ren weidu\tobex\tobex_redist\TobExLoader.exe ren weidu\tobex\tobex_redist\tobexloader.exe
         shell: cmd
 
       - name: Upload debug artifacts
