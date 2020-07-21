@@ -21,6 +21,9 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - name: Install cmake
+        run: choco install cmake
+
       - name: Install vcexpress
         run: choco install vcexpress2010
 
@@ -44,15 +47,33 @@ jobs:
 
       - uses: actions/checkout@master
         with:
-          name: microsoft/Detours    
-          ref: 4.0.1
-          path: detours
+          repository: microsoft/Detours    
+          ref: '4.0.1'
+          path: './detours'
 
       - name: Build detours
         run: nmake
         working-directory: ./detours
         shell: cmd
       
+      - name: Build asmjit
+        run: |
+          "C:\program files\cmake\bin\cmake.exe" -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./ 
+          msbuild AsmJit.sln /p:Configuration=Release 
+        working-directory: ./TobEx/MathPresso/AsmJit/
+      
+      - name: copy asmjit.lib file
+        uses: canastro/copy-file-action@master
+        with:
+          source: "./TobEx/MathPresso/AsmJit/Release/AsmJit.lib"
+          target: "./TobEx/AsmJit/AsmJit.lib"
+
+      - name: copy asmjit.dll file
+        uses: canastro/copy-file-action@master
+        with:
+          source: "./TobEx/MathPresso/AsmJit/Release/AsmJit.dll"
+          target: "./WeiDU/TobEx/TobEx_redist/AsmJit.dll"
+
       - name: Core Build
         run: |
           msbuild TobEx.sln /p:Configuration=Release
