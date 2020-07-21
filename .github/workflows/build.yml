@@ -9,6 +9,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - uses: actions/checkout@master
+        with:
+          repository: microsoft/Detours    
+          ref: '4.0.1'
+          path: './detours'
+
       - name: Cache chocolatey
         uses: actions/cache@v2
         env:
@@ -43,13 +49,6 @@ jobs:
       - name: Start VCTools
         run: 'call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86'
         shell: cmd
-
-
-      - uses: actions/checkout@master
-        with:
-          repository: microsoft/Detours    
-          ref: '4.0.1'
-          path: './detours'
 
       - name: Build detours
         run: nmake
