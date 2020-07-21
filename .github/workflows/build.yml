@@ -67,9 +67,6 @@ jobs:
           COPY  /Y "./TobEx/MathPresso/AsmJit/Release/AsmJit.lib" "./TobEx/AsmJit/AsmJit.lib"
           COPY  /Y "./TobEx/MathPresso/AsmJit/Release/AsmJit.dll" "./WeiDU/TobEx/TobEx_redist/AsmJit.dll"
         shell: cmd
-        with:
-          source: 
-          target: 
 
       - name: Core Build
         run: |
