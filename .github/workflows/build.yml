@@ -63,6 +63,7 @@ jobs:
           call "C:\Program Files\CMake\bin\cmake.exe" -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./ 
           msbuild AsmJit.sln /p:Configuration=Release 
         working-directory: ./TobEx/MathPresso/AsmJit/
+        shell: cmd
       
       - name: copy asmjit.lib file
         uses: canastro/copy-file-action@master
