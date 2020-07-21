@@ -63,7 +63,7 @@ jobs:
 
       - name: Download WeiDU
         run: |
-          curl -s "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip | bash
+          curl -Ls "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip | bash
           7z e weidu.zip WeiDU-Windows/bin/x86/weidu.exe
           mv -f weidu.exe WeiDU/setup-tobex.exe
         shell: bash
