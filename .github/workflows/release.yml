@@ -25,6 +25,13 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
+      - name: Checkout Detours
+        uses: actions/checkout@master
+        with:
+          repository: microsoft/Detours
+          ref: '4.0.1'
+          path: './detours'
+
       - name: Install vcexpress
         run: choco install vcexpress2010
 
@@ -45,6 +52,32 @@ jobs:
         run: 'call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86'
         shell: cmd
 
+      - name: Build detours
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+          nmake
+        working-directory: ./detours
+        shell: cmd
+
+      - name: copy detours.lib file
+        run: |
+          COPY  /Y ".\detours\lib.X86\detours.lib" ".\TobEx\detours\lib.X86\detours.lib"
+        shell: cmd
+
+      - name: Build asmjit
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+          cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./
+          msbuild AsmJit.sln /p:Configuration=Release
+        working-directory: ./TobEx/MathPresso/AsmJit/
+        shell: cmd
+
+      - name: copy asmjit.lib,dll file
+        run: |
+          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
+          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
+        shell: cmd
+
       - name: Core Build
         run: |
           msbuild TobEx.sln /p:Configuration=Release
@@ -63,7 +96,7 @@ jobs:
 
       - name: Download WeiDU
         run: |
-          curl -Ls "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip | bash
+          curl -Ls "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip
           7z e weidu.zip WeiDU-Windows/bin/x86/weidu.exe
           mv -f weidu.exe WeiDU/setup-tobex.exe
         shell: bash

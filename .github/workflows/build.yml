@@ -9,7 +9,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - uses: actions/checkout@master
+      - name: Checkout Detours
+        uses: actions/checkout@master
         with:
           repository: microsoft/Detours
           ref: '4.0.1'
@@ -63,7 +64,7 @@ jobs:
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
           cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./
-          msbuild AsmJit.sln /p:Configuration=Release 
+          msbuild AsmJit.sln /p:Configuration=Release
         working-directory: ./TobEx/MathPresso/AsmJit/
         shell: cmd
 
