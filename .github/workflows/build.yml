@@ -11,7 +11,7 @@ jobs:
 
       - uses: actions/checkout@master
         with:
-          repository: microsoft/Detours    
+          repository: microsoft/Detours
           ref: '4.0.1'
           path: './detours'
 
@@ -58,19 +58,19 @@ jobs:
         run: |
           COPY  /Y ".\detours\lib.X86\detours.lib" ".\TobEx\detours\lib.X86\detours.lib"
         shell: cmd
-      
+
       - name: Build asmjit
         run: |
           call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
-          cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./ 
+          cmake -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./
           msbuild AsmJit.sln /p:Configuration=Release 
         working-directory: ./TobEx/MathPresso/AsmJit/
         shell: cmd
-      
+
       - name: copy asmjit.lib,dll file
         run: |
-          COPY  /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
-          COPY  /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
+          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
+          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
         shell: cmd
 
       - name: Core Build
