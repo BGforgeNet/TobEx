@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Guard]
 #ifndef _ASMJIT_DEFS_H
@@ -36,6 +17,20 @@ namespace AsmJit {
 //! @{
 
 // ============================================================================
+// [AsmJit::ENUM]
+// ============================================================================
+
+//! @brief Uncategorized constants.
+enum
+{
+  //! @brief Invalid operand identifier.
+  INVALID_VALUE = 0xFFFFFFFF,
+
+  //! @brief Maximum allowed arguments per function declaration / call.
+  FUNC_MAX_ARGS = 32
+};
+
+// ============================================================================
 // [AsmJit::MEMORY_ALLOC_TYPE]
 // ============================================================================
 
@@ -44,9 +39,9 @@ enum MEMORY_ALLOC_TYPE
 {
   //! @brief Allocate memory that can be freed by @c AsmJit::MemoryManager::free()
   //! method.
-  MEMORY_ALLOC_FREEABLE,
+  MEMORY_ALLOC_FREEABLE = 0,
   //! @brief Allocate permanent memory that will be never freed.
-  MEMORY_ALLOC_PERMANENT
+  MEMORY_ALLOC_PERMANENT = 1
 };
 
 // ============================================================================
@@ -161,6 +156,23 @@ enum OPERAND_MEM_TYPE
   //! @brief Operand is absolute memory location (supported mainly in 32-bit 
   //! mode)
   OPERAND_MEM_ABSOLUTE = 2,
+};
+
+// ============================================================================
+// [AsmJit::OPERAND_ID]
+// ============================================================================
+
+//! @brief Operand ID masks used to determine the operand type.
+enum OPERAND_ID
+{
+  //! @brief Operand id value mask (part used for IDs).
+  OPERAND_ID_VALUE_MASK = 0x3FFFFFFF,
+  //! @brief Operand id type mask (part used for operand type).
+  OPERAND_ID_TYPE_MASK  = 0xC0000000,
+  //! @brief Label operand mark id.
+  OPERAND_ID_TYPE_LABEL = 0x40000000,
+  //! @brief Variable operand mark id.
+  OPERAND_ID_TYPE_VAR   = 0x80000000
 };
 
 // ============================================================================
@@ -334,9 +346,9 @@ enum VARIABLE_ALLOC
 enum VARIABLE_ALLOC_POLICY
 {
   //! @brief Allocate preserved registers first.
-  VARIABLE_ALLOC_PRESERVED_FIRST,
+  VARIABLE_ALLOC_PRESERVED_FIRST = 0,
   //! @brief Allocate preserved registers last (default).
-  VARIABLE_ALLOC_PRESERVED_LAST
+  VARIABLE_ALLOC_PRESERVED_LAST = 1
 };
 
 // ============================================================================
@@ -378,34 +390,11 @@ enum ARGUMENT_DIR
 };
 
 // ============================================================================
-// [AsmJit::Constants]
-// ============================================================================
-
-enum {
-  //! @brief Invalid operand identifier.
-  INVALID_VALUE = 0xFFFFFFFF,
-
-  //! @brief Operand id value mask (part used for IDs).
-  OPERAND_ID_VALUE_MASK = 0x3FFFFFFF,
-  //! @brief Operand id type mask (part used for operand type).
-  OPERAND_ID_TYPE_MASK  = 0xC0000000,
-  //! @brief Label operand mark id.
-  OPERAND_ID_TYPE_LABEL = 0x40000000,
-  //! @brief Variable operand mark id.
-  OPERAND_ID_TYPE_VAR   = 0x80000000,
-};
-
-enum {
-  //! @brief Maximum allowed arguments per function declaration / call.
-  FUNC_MAX_ARGS = 32
-};
-
-// ============================================================================
 // [AsmJit::API]
 // ============================================================================
 
 //! @brief Translates error code (see @c ERROR_CODE) into text representation.
-ASMJIT_API const char* getErrorCodeAsString(uint32_t error) ASMJIT_NOTHROW;
+ASMJIT_API const char* getErrorString(uint32_t error) ASMJIT_NOTHROW;
 
 //! @}
 

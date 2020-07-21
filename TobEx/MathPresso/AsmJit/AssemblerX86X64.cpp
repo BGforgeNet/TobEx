@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // We are using sprintf() here.
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
@@ -88,8 +69,8 @@ struct ASMJIT_HIDDEN TrampolineWriter
 // ============================================================================
 
 AssemblerCore::AssemblerCore(CodeGenerator* codeGenerator) ASMJIT_NOTHROW :
-  _codeGenerator(codeGenerator != NULL ? codeGenerator : CodeGenerator::getGlobal()),
   _zone(16384 - sizeof(Zone::Chunk) - 32),
+  _codeGenerator(codeGenerator != NULL ? codeGenerator : CodeGenerator::getGlobal()),
   _logger(NULL),
   _error(0),
   _properties((1 << PROPERTY_OPTIMIZE_ALIGN)),
@@ -126,7 +107,7 @@ void AssemblerCore::setError(uint32_t error) ASMJIT_NOTHROW
   if (_logger)
   {
     _logger->logFormat("*** ASSEMBLER ERROR: %s (%u).\n",
-      getErrorCodeAsString(error),
+      getErrorString(error),
       (unsigned int)error);
   }
 }
@@ -225,13 +206,25 @@ bool AssemblerCore::canEmit() ASMJIT_NOTHROW
 
 void AssemblerCore::_emitSegmentPrefix(const Operand& rm) ASMJIT_NOTHROW
 {
-  static const uint8_t prefixes[] = { 0x00, 0x2E, 0x36, 0x3E, 0x26, 0x64, 0x65 };
-
-  if (rm.isMem())
+  static const uint8_t segmentPrefixCode[6] =
   {
-    sysuint_t segmentPrefix = reinterpret_cast<const Mem&>(rm).getSegmentPrefix();
-    if (segmentPrefix) _emitByte(prefixes[segmentPrefix]);
-  }
+    0x26, // ES
+    0x2E, // SS
+    0x36, // SS
+    0x3E, // DS
+    0x64, // FS
+    0x65  // GS
+  };
+
+  uint32_t segmentPrefix;
+  
+  if (!rm.isMem())
+    return;
+
+  if ((segmentPrefix = reinterpret_cast<const Mem&>(rm).getSegmentPrefix()) >= REG_NUM_SEGMENT)
+    return;
+
+  _emitByte(segmentPrefixCode[segmentPrefix]);
 }
 
 void AssemblerCore::_emitModM(
@@ -397,7 +390,7 @@ void AssemblerCore::_emitModM(
         // Bound label.
         disp += getOffset() - l_data.offset;
 
-        // Add a dummy DWORD.
+        // Displacement is known.
         _emitInt32((int32_t)disp);
       }
       else
@@ -628,14 +621,14 @@ static const char* operandSize[] =
   "dqword ptr "
 };
 
-static const char segmentName[] =
-  "\0\0\0\0"
+static const char segmentPrefixName[] =
+  "es:\0"
   "cs:\0"
   "ss:\0"
   "ds:\0"
-  "es:\0"
   "fs:\0"
-  "gs:\0";
+  "gs:\0"
+  "\0\0\0\0";
 
 ASMJIT_HIDDEN char* dumpInstructionName(char* buf, uint32_t code) ASMJIT_NOTHROW
 {
@@ -654,41 +647,82 @@ ASMJIT_HIDDEN char* dumpRegister(char* buf, uint32_t type, uint32_t index) ASMJI
   {
     case REG_TYPE_GPB_LO:
       if (index < 8)
-        return buf + sprintf(buf, "%s", &reg8l[index*4]);
-      else
-        return buf + sprintf(buf, "r%ub", (uint32_t)index);
+        return Util::mycpy(buf, &reg8l[index*4]);
+
+      *buf++ = 'r';
+      goto _EmitID;
+
     case REG_TYPE_GPB_HI:
       if (index < 4)
-        return buf + sprintf(buf, "%s", &reg8h[index*4]);
-      else
-        return buf + sprintf(buf, "%s", "INVALID");
+        return Util::mycpy(buf, &reg8h[index*4]);
+
+_EmitNE:
+      return Util::mycpy(buf, "NE");
+
     case REG_TYPE_GPW:
       if (index < 8)
-        return buf + sprintf(buf, "%s", &reg16[index*4]);
-      else
-        return buf + sprintf(buf, "r%uw", (uint32_t)index);
+        return Util::mycpy(buf, &reg16[index*4]);
+
+      *buf++ = 'r';
+      buf = Util::myutoa(buf, index);
+      *buf++ = 'w';
+      return buf;
+
     case REG_TYPE_GPD:
       if (index < 8)
-        return buf + sprintf(buf, "e%s", &reg16[index*4]);
-      else
-        return buf + sprintf(buf, "r%ud", (uint32_t)index);
+      {
+        *buf++ = 'e';
+        return Util::mycpy(buf, &reg16[index*4]);
+      }
+
+      *buf++ = 'r';
+      buf = Util::myutoa(buf, index);
+      *buf++ = 'd';
+      return buf;
+    
     case REG_TYPE_GPQ:
+      *buf++ = 'r';
+
       if (index < 8)
-        return buf + sprintf(buf, "r%s", &reg16[index*4]);
-      else
-        return buf + sprintf(buf, "r%u", (uint32_t)index);
+        return Util::mycpy(buf, &reg16[index*4]);
+
+_EmitID:
+      return Util::myutoa(buf, index);
+    
     case REG_TYPE_X87:
-      return buf + sprintf(buf, "st%u", (uint32_t)index);
+      *buf++ = 's';
+      *buf++ = 't';
+      goto _EmitID;
+    
     case REG_TYPE_MM:
-      return buf + sprintf(buf, "mm%u", (uint32_t)index);
+      *buf++ = 'm';
+      *buf++ = 'm';
+      goto _EmitID;
+    
     case REG_TYPE_XMM:
-      return buf + sprintf(buf, "xmm%u", (uint32_t)index);
+      *buf++ = 'x';
+      *buf++ = 'm';
+      *buf++ = 'm';
+      goto _EmitID;
+    
+    case REG_TYPE_YMM:
+      *buf++ = 'y';
+      *buf++ = 'm';
+      *buf++ = 'm';
+      goto _EmitID;
+
+    case REG_TYPE_SEGMENT:
+      if (index < REG_NUM_SEGMENT)
+        return Util::mycpy(buf, &segmentPrefixName[index*4], 2);
+      
+      goto _EmitNE;
+
     default:
       return buf;
   }
 }
 
-ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW
+ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op, uint32_t memRegType) ASMJIT_NOTHROW
 {
   if (op->isReg())
   {
@@ -697,15 +731,20 @@ ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW
   }
   else if (op->isMem())
   {
-    bool isAbsolute = false;
     const Mem& mem = reinterpret_cast<const Mem&>(*op);
+    uint32_t segmentPrefix = mem.getSegmentPrefix();
+
+    bool isAbsolute = false;
 
     if (op->getSize() <= 16)
     {
       buf = Util::mycpy(buf, operandSize[op->getSize()]);
     }
 
-    buf = Util::mycpy(buf, &segmentName[mem.getSegmentPrefix() * 4]);
+    if (segmentPrefix < REG_NUM_SEGMENT)
+    {
+      buf = Util::mycpy(buf, &segmentPrefixName[segmentPrefix * 4]);
+    }
 
     *buf++ = '[';
 
@@ -714,7 +753,7 @@ ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW
       case OPERAND_MEM_NATIVE:
       {
         // [base + index*scale + displacement]
-        buf = dumpRegister(buf, REG_TYPE_GPN, mem.getBase());
+        buf = dumpRegister(buf, memRegType, mem.getBase());
         break;
       }
       case OPERAND_MEM_LABEL:
@@ -727,7 +766,7 @@ ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW
       {
         // [absolute]
         isAbsolute = true;
-        buf = Util::myutoa(buf, (sysuint_t)mem.getTarget(), 16);
+        buf = Util::myutoa(buf, (sysuint_t)mem.getTarget() + mem.getDisplacement(), 16);
         break;
       }
     }
@@ -735,7 +774,7 @@ ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW
     if (mem.hasIndex())
     {
       buf = Util::mycpy(buf, " + ");
-      buf = dumpRegister(buf, REG_TYPE_GPN, mem.getIndex());
+      buf = dumpRegister(buf, memRegType, mem.getIndex());
 
       if (mem.getShift())
       {
@@ -776,7 +815,8 @@ static char* dumpInstruction(char* buf,
   uint32_t emitOptions,
   const Operand* o0,
   const Operand* o1,
-  const Operand* o2) ASMJIT_NOTHROW
+  const Operand* o2,
+  uint32_t memRegType) ASMJIT_NOTHROW
 {
   if (emitOptions & EMIT_OPTION_REX_PREFIX ) buf = Util::mycpy(buf, "rex ", 4);
   if (emitOptions & EMIT_OPTION_LOCK_PREFIX) buf = Util::mycpy(buf, "lock ", 5);
@@ -786,9 +826,9 @@ static char* dumpInstruction(char* buf,
   buf = dumpInstructionName(buf, code);
 
   // Dump operands.
-  if (!o0->isNone()) { *buf++ = ' '; buf = dumpOperand(buf, o0); }
-  if (!o1->isNone()) { *buf++ = ','; *buf++ = ' '; buf = dumpOperand(buf, o1); }
-  if (!o2->isNone()) { *buf++ = ','; *buf++ = ' '; buf = dumpOperand(buf, o2); }
+  if (!o0->isNone()) { *buf++ = ' '; buf = dumpOperand(buf, o0, memRegType); }
+  if (!o1->isNone()) { *buf++ = ','; *buf++ = ' '; buf = dumpOperand(buf, o1, memRegType); }
+  if (!o2->isNone()) { *buf++ = ','; *buf++ = ' '; buf = dumpOperand(buf, o2, memRegType); }
 
   return buf;
 }
@@ -884,6 +924,7 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
 #else
   uint32_t forceRexPrefix = _emitOptions & EMIT_OPTION_REX_PREFIX;
 #endif
+  uint32_t memRegType = REG_TYPE_GPN;
 
 #if defined(ASMJIT_DEBUG)
   bool assertIllegal = false;
@@ -966,7 +1007,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
 
   if (_emitOptions & EMIT_OPTION_LOCK_PREFIX)
   {
-    if (!id->isLockable()) goto illegalInstruction;
+    if (!id->isLockable())
+      goto illegalInstruction;
     _emitByte(0xF0);
   }
 
@@ -1421,6 +1463,18 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       {
         const GPReg& dst = reinterpret_cast<const GPReg&>(*o0);
         const Mem& src = reinterpret_cast<const Mem&>(*o1);
+
+        // Size override prefix support.
+        if (src.getSizePrefix())
+        {
+          _emitByte(0x67);
+#if defined(ASMJIT_X86)
+          memRegType = REG_TYPE_GPW;
+#else
+          memRegType = REG_TYPE_GPD;
+#endif
+        }
+
         _emitX86RM(0x8D,
           dst.isRegType(REG_TYPE_GPW),
           dst.isRegType(REG_TYPE_GPQ), dst.getRegCode(), src,
@@ -1451,6 +1505,39 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         // Reg <- Reg/Mem
         case (OPERAND_REG << 4) | OPERAND_REG:
         {
+          // Reg <- Sreg
+          if (src.isRegType(REG_TYPE_SEGMENT))
+          {
+            ASMJIT_ASSERT(dst.isRegType(REG_TYPE_GPW) ||
+                          dst.isRegType(REG_TYPE_GPD) ||
+                          dst.isRegType(REG_TYPE_GPQ) );
+
+            _emitX86RM(0x8C,
+              dst.getSize() == 2,
+              dst.getSize() == 8,
+              reinterpret_cast<const SegmentReg&>(src).getRegCode(),
+              reinterpret_cast<const Operand&>(dst),
+              0, forceRexPrefix);
+            _FINISHED();
+          }
+
+          // Sreg <- Reg/Mem
+          if (dst.isRegType(REG_TYPE_SEGMENT))
+          {
+            ASMJIT_ASSERT(src.isRegType(REG_TYPE_GPW   ) ||
+                          src.isRegType(REG_TYPE_GPD   ) ||
+                          src.isRegType(REG_TYPE_GPQ   ) );
+
+_Emit_Mov_Sreg_RM:
+            _emitX86RM(0x8E,
+              src.getSize() == 2,
+              src.getSize() == 8,
+              reinterpret_cast<const SegmentReg&>(dst).getRegCode(),
+              reinterpret_cast<const Operand&>(src),
+              0, forceRexPrefix);
+            _FINISHED();
+          }
+
           ASMJIT_ASSERT(src.isRegType(REG_TYPE_GPB_LO) ||
                         src.isRegType(REG_TYPE_GPB_HI) ||
                         src.isRegType(REG_TYPE_GPW   ) ||
@@ -1460,6 +1547,12 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         }
         case (OPERAND_REG << 4) | OPERAND_MEM:
         {
+          // Sreg <- Mem
+          if (dst.isRegType(REG_TYPE_SEGMENT))
+          {
+            goto _Emit_Mov_Sreg_RM;
+          }
+
           ASMJIT_ASSERT(dst.isRegType(REG_TYPE_GPB_LO) ||
                         dst.isRegType(REG_TYPE_GPB_HI) ||
                         dst.isRegType(REG_TYPE_GPW   ) ||
@@ -1512,22 +1605,37 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
           _FINISHED_IMMEDIATE(&src, immSize);
         }
 
-        // Mem <- Reg
+        // Mem <- Reg/Sreg
         case (OPERAND_MEM << 4) | OPERAND_REG:
         {
-          ASMJIT_ASSERT(src.isRegType(REG_TYPE_GPB_LO) ||
-                        src.isRegType(REG_TYPE_GPB_HI) ||
-                        src.isRegType(REG_TYPE_GPW   ) ||
-                        src.isRegType(REG_TYPE_GPD   ) ||
-                        src.isRegType(REG_TYPE_GPQ   ) );
+          if (src.isRegType(REG_TYPE_SEGMENT))
+          {
+            // Mem <- Sreg
+            _emitX86RM(0x8C,
+              dst.getSize() == 2,
+              dst.getSize() == 8,
+              reinterpret_cast<const SegmentReg&>(src).getRegCode(),
+              reinterpret_cast<const Operand&>(dst),
+              0, forceRexPrefix);
+            _FINISHED();
+          }
+          else
+          {
+            // Mem <- Reg
+            ASMJIT_ASSERT(src.isRegType(REG_TYPE_GPB_LO) ||
+                          src.isRegType(REG_TYPE_GPB_HI) ||
+                          src.isRegType(REG_TYPE_GPW   ) ||
+                          src.isRegType(REG_TYPE_GPD   ) ||
+                          src.isRegType(REG_TYPE_GPQ   ) );
 
-          _emitX86RM(0x88 + (src.getSize() != 1),
-            src.isRegType(REG_TYPE_GPW),
-            src.isRegType(REG_TYPE_GPQ),
-            reinterpret_cast<const GPReg&>(src).getRegCode(),
-            reinterpret_cast<const Operand&>(dst),
-            0, forceRexPrefix);
-          _FINISHED();
+            _emitX86RM(0x88 + (src.getSize() != 1),
+              src.isRegType(REG_TYPE_GPW),
+              src.isRegType(REG_TYPE_GPQ),
+              reinterpret_cast<const GPReg&>(src).getRegCode(),
+              reinterpret_cast<const Operand&>(dst),
+              0, forceRexPrefix);
+            _FINISHED();
+          }
         }
 
         // Mem <- Imm
@@ -1557,7 +1665,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         const GPReg& reg = reinterpret_cast<const GPReg&>(!reverse ? *o0 : *o1);
         const Imm& imm = reinterpret_cast<const Imm&>(!reverse ? *o1 : *o0);
 
-        if (reg.getRegIndex() != 0) goto illegalInstruction;
+        if (reg.getRegIndex() != 0)
+          goto illegalInstruction;
 
         if (reg.isRegType(REG_TYPE_GPW)) _emitByte(0x66);
 #if defined(ASMJIT_X64)
@@ -1577,9 +1686,14 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         const GPReg& dst = reinterpret_cast<const GPReg&>(*o0);
         const Operand& src = reinterpret_cast<const Operand&>(*o1);
 
-        if (dst.getSize() == 1) goto illegalInstruction;
-        if (src.getSize() != 1 && src.getSize() != 2) goto illegalInstruction;
-        if (src.getSize() == 2 && dst.getSize() == 2) goto illegalInstruction;
+        if (dst.getSize() == 1)
+          goto illegalInstruction;
+        
+        if (src.getSize() != 1 && src.getSize() != 2)
+          goto illegalInstruction;
+        
+        if (src.getSize() == 2 && dst.getSize() == 2)
+          goto illegalInstruction;
 
         _emitX86RM(id->opCode[0] + (src.getSize() != 1),
           dst.isRegType(REG_TYPE_GPW),
@@ -1922,7 +2036,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
 
         if (code != INST_FCOM && code != INST_FCOMP)
         {
-          if (!o1->isRegType(REG_TYPE_X87)) goto illegalInstruction;
+          if (!o1->isRegType(REG_TYPE_X87))
+            goto illegalInstruction;
           i2 = reinterpret_cast<const X87Reg&>(*o1).getRegIndex();
         }
         else if (i1 != 0 && i2 != 0)
@@ -2002,7 +2117,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
 
     case InstructionDescription::G_X87_MEM:
     {
-      if (!o0->isMem()) goto illegalInstruction;
+      if (!o0->isMem())
+        goto illegalInstruction;
       const Mem& m = reinterpret_cast<const Mem&>(*o0);
 
       uint8_t opCode = 0x00, mod = 0;
@@ -2055,11 +2171,12 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       }
 
       // Illegal.
-      if (o0->isMem() && o1->isMem()) goto illegalInstruction;
+      if (o0->isMem() && o1->isMem())
+        goto illegalInstruction;
 
-      uint8_t rexw = ((id->oflags[0]|id->oflags[1]) & InstructionDescription::O_NOREX)
+      uint8_t rexw = ((id->oflags[0] | id->oflags[1]) & InstructionDescription::O_NOREX)
         ? 0
-        : o0->isRegType(REG_TYPE_GPQ) | o0->isRegType(REG_TYPE_GPQ);
+        : o0->isRegType(REG_TYPE_GPQ) | o1->isRegType(REG_TYPE_GPQ);
 
       // (X)MM|Reg <- (X)MM|Reg
       if (o0->isReg() && o1->isReg())
@@ -2242,10 +2359,14 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       uint32_t opCode = id->opCode[0];
       uint8_t isGpdGpq = o0->isRegType(REG_TYPE_GPD) | o0->isRegType(REG_TYPE_GPQ);
 
-      if (code == INST_PEXTRB && (o0->getSize() != 0 && o0->getSize() != 1) && !isGpdGpq) goto illegalInstruction;
-      if (code == INST_PEXTRW && (o0->getSize() != 0 && o0->getSize() != 2) && !isGpdGpq) goto illegalInstruction;
-      if (code == INST_PEXTRD && (o0->getSize() != 0 && o0->getSize() != 4) && !isGpdGpq) goto illegalInstruction;
-      if (code == INST_PEXTRQ && (o0->getSize() != 0 && o0->getSize() != 8) && !isGpdGpq) goto illegalInstruction;
+      if (code == INST_PEXTRB && (o0->getSize() != 0 && o0->getSize() != 1) && !isGpdGpq)
+        goto illegalInstruction;
+      if (code == INST_PEXTRW && (o0->getSize() != 0 && o0->getSize() != 2) && !isGpdGpq)
+        goto illegalInstruction;
+      if (code == INST_PEXTRD && (o0->getSize() != 0 && o0->getSize() != 4) && !isGpdGpq)
+        goto illegalInstruction;
+      if (code == INST_PEXTRQ && (o0->getSize() != 0 && o0->getSize() != 8) && !isGpdGpq)
+        goto illegalInstruction;
 
       if (o1->isRegType(REG_TYPE_XMM)) opCode |= 0x66000000;
 
@@ -2294,14 +2415,16 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         ((id->oflags[1] & InstructionDescription::O_MM_XMM) == InstructionDescription::O_MM_XMM && o1->isRegType(REG_TYPE_XMM))
           ? 0x66000000
           : 0x00000000;
-      uint8_t rexw = ((id->oflags[0]|id->oflags[1]) & InstructionDescription::O_NOREX)
+
+      uint8_t rexw = ((id->oflags[0] | id->oflags[1]) & InstructionDescription::O_NOREX)
         ? 0
-        : o0->isRegType(REG_TYPE_GPQ) | o0->isRegType(REG_TYPE_GPQ);
+        : o0->isRegType(REG_TYPE_GPQ) | o1->isRegType(REG_TYPE_GPQ);
 
       // (X)MM <- (X)MM (opcode0)
       if (o1->isReg())
       {
-        if ((id->oflags[1] & (InstructionDescription::O_MM_XMM | InstructionDescription::O_GQD)) == 0) goto illegalInstruction;
+        if ((id->oflags[1] & (InstructionDescription::O_MM_XMM | InstructionDescription::O_GQD)) == 0)
+          goto illegalInstruction;
         _emitMmu(id->opCode[0] | prefix, rexw,
           reinterpret_cast<const BaseReg&>(*o0).getRegCode(),
           reinterpret_cast<const BaseReg&>(*o1), 0);
@@ -2310,7 +2433,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       // (X)MM <- Mem (opcode0)
       if (o1->isMem())
       {
-        if ((id->oflags[1] & InstructionDescription::O_MEM) == 0) goto illegalInstruction;
+        if ((id->oflags[1] & InstructionDescription::O_MEM) == 0)
+          goto illegalInstruction;
         _emitMmu(id->opCode[0] | prefix, rexw,
           reinterpret_cast<const BaseReg&>(*o0).getRegCode(),
           reinterpret_cast<const Mem&>(*o1), 0);
@@ -2319,7 +2443,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       // (X)MM <- Imm (opcode1+opcodeR)
       if (o1->isImm())
       {
-        if ((id->oflags[1] & InstructionDescription::O_IMM) == 0) goto illegalInstruction;
+        if ((id->oflags[1] & InstructionDescription::O_IMM) == 0)
+          goto illegalInstruction;
         _emitMmu(id->opCode[1] | prefix, rexw,
           (uint8_t)id->opCodeR,
           reinterpret_cast<const BaseReg&>(*o0), 1);
@@ -2355,14 +2480,16 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
         ((id->oflags[1] & InstructionDescription::O_MM_XMM) == InstructionDescription::O_MM_XMM && o1->isRegType(REG_TYPE_XMM))
           ? 0x66000000
           : 0x00000000;
+
       uint8_t rexw = ((id->oflags[0]|id->oflags[1]) & InstructionDescription::O_NOREX)
         ? 0
-        : o0->isRegType(REG_TYPE_GPQ) | o0->isRegType(REG_TYPE_GPQ);
+        : o0->isRegType(REG_TYPE_GPQ) | o1->isRegType(REG_TYPE_GPQ);
 
       // (X)MM <- (X)MM (opcode0)
       if (o1->isReg())
       {
-        if ((id->oflags[1] & (InstructionDescription::O_MM_XMM | InstructionDescription::O_GQD)) == 0) goto illegalInstruction;
+        if ((id->oflags[1] & (InstructionDescription::O_MM_XMM | InstructionDescription::O_GQD)) == 0)
+goto illegalInstruction;
         _emitMmu(id->opCode[0] | prefix, rexw,
           reinterpret_cast<const BaseReg&>(*o0).getRegCode(),
           reinterpret_cast<const BaseReg&>(*o1), 1);
@@ -2371,7 +2498,8 @@ void AssemblerCore::_emitInstruction(uint32_t code, const Operand* o0, const Ope
       // (X)MM <- Mem (opcode0)
       if (o1->isMem())
       {
-        if ((id->oflags[1] & InstructionDescription::O_MEM) == 0) goto illegalInstruction;
+        if ((id->oflags[1] & InstructionDescription::O_MEM) == 0)
+          goto illegalInstruction;
         _emitMmu(id->opCode[0] | prefix, rexw,
           reinterpret_cast<const BaseReg&>(*o0).getRegCode(),
           reinterpret_cast<const Mem&>(*o1), 1);
@@ -2468,7 +2596,7 @@ end:
       }
     }
 
-    buf = dumpInstruction(buf, code, _emitOptions, o0, o1, o2);
+    buf = dumpInstruction(buf, code, _emitOptions, o0, o1, o2, memRegType);
 
     if (_logger->getLogBinary())
       buf = dumpComment(buf, (sysuint_t)(buf - bufStorage), getCode() + beginOffset, getOffset() - beginOffset, _comment);
@@ -2686,7 +2814,7 @@ void AssemblerCore::embedLabel(const Label& label) ASMJIT_NOTHROW
 
   _relocData.append(r_data);
 
-  // Emit dummy sysint (4 or 8 bytes that depends to address size).
+  // Emit dummy sysint (4 or 8 bytes that depends on address size).
   _emitSysInt(0);
 }
 
@@ -2926,7 +3054,8 @@ void AssemblerCore::bind(const Label& label) ASMJIT_NOTHROW
 void* AssemblerCore::make() ASMJIT_NOTHROW
 {
   // Do nothing on error state or when no instruction was emitted.
-  if (_error || getCodeSize() == 0) return NULL;
+  if (_error || getCodeSize() == 0)
+    return NULL;
 
   void* p;
   _error = _codeGenerator->generate(&p, reinterpret_cast<Assembler*>(this));

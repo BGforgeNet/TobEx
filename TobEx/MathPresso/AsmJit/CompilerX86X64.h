@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Guard]
 #ifndef _ASMJIT_COMPILERX86X64_H
@@ -56,12 +37,6 @@ namespace AsmJit {
 
 //! @addtogroup AsmJit_Compiler
 //! @{
-
-// ============================================================================
-// [Forward Declarations]
-// ============================================================================
-
-struct CodeGenerator;
 
 // ============================================================================
 // [AsmJit::TypeToId]
@@ -348,9 +323,9 @@ struct VarData
   //! this variable is probably used in next instruction and can't be spilled.
   uint32_t workOffset;
 
-  //! @brief Next active variable in circullar double-linked list.
+  //! @brief Next active variable in circular double-linked list.
   VarData* nextActive;
-  //! @brief Previous active variable in circullar double-linked list.
+  //! @brief Previous active variable in circular double-linked list.
   VarData* prevActive;
 
   // --------------------------------------------------------------------------
@@ -1546,7 +1521,7 @@ struct ASMJIT_API CompilerContext
 
   //! @brief Current state (register allocator).
   StateData _state;
-  //! @brief Link to circullar double-linked list containing all active variables
+  //! @brief Link to circular double-linked list containing all active variables
   //! (for current state).
   VarData* _active;
 
@@ -1556,8 +1531,8 @@ struct ASMJIT_API CompilerContext
   //! @brief Current offset, used in prepare() stage. Each emittable should increment it.
   uint32_t _currentOffset;
 
-  //! @brief Whether current code is unrecheable.
-  uint32_t _unrecheable;
+  //! @brief Whether current code is unreachable.
+  uint32_t _unreachable;
 
   //! @brief Global modified GP registers mask (per function).
   uint32_t _modifiedGPRegisters;
@@ -2072,11 +2047,11 @@ struct ASMJIT_API CompilerCore
 
 protected:
 
-  //! @brief Code generator.
-  CodeGenerator* _codeGenerator;
-
   //! @brief Zone memory management.
   Zone _zone;
+
+  //! @brief Code generator.
+  CodeGenerator* _codeGenerator;
 
   //! @brief Logger.
   Logger* _logger;
@@ -2785,21 +2760,21 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
   //! This instruction divides (unsigned) the value in the AL, AX, or EAX
   //! register by the source operand and stores the result in the AX,
   //! DX:AX, or EDX:EAX registers.
-  inline void div_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const GPVar& src)
+  inline void div(const GPVar& dst_rem, const GPVar& dst_quot, const GPVar& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_rem.getId() != dst_quot.getId());
 
-    _emitInstruction(INST_DIV, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_DIV, &dst_rem, &dst_quot, &src);
   }
   //! @brief Unsigned divide.
   //! @overload
-  inline void div_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const Mem& src)
+  inline void div(const GPVar& dst_rem, const GPVar& dst_quot, const Mem& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_rem.getId() != dst_quot.getId());
 
-    _emitInstruction(INST_DIV, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_DIV, &dst_rem, &dst_quot, &src);
   }
 
 #if ASMJIT_NOT_SUPPORTED_BY_COMPILER
@@ -2815,40 +2790,40 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
   //! This instruction divides (signed) the value in the AL, AX, or EAX
   //! register by the source operand and stores the result in the AX,
   //! DX:AX, or EDX:EAX registers.
-  inline void idiv_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const GPVar& src)
+  inline void idiv(const GPVar& dst_rem, const GPVar& dst_quot, const GPVar& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_rem.getId() != dst_quot.getId());
 
-    _emitInstruction(INST_IDIV, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_IDIV, &dst_rem, &dst_quot, &src);
   }
   //! @brief Signed divide.
   //! @overload
-  inline void idiv_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const Mem& src)
+  inline void idiv(const GPVar& dst_rem, const GPVar& dst_quot, const Mem& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_rem.getId() != dst_quot.getId());
 
-    _emitInstruction(INST_IDIV, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_IDIV, &dst_rem, &dst_quot, &src);
   }
 
   //! @brief Signed multiply.
   //!
   //! [dst_lo:dst_hi] = dst_hi * src.
-  inline void imul_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const GPVar& src)
+  inline void imul(const GPVar& dst_hi, const GPVar& dst_lo, const GPVar& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_hi.getId() != dst_lo.getId());
 
-    _emitInstruction(INST_IMUL, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_IMUL, &dst_hi, &dst_lo, &src);
   }
   //! @overload
-  inline void imul_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const Mem& src)
+  inline void imul(const GPVar& dst_hi, const GPVar& dst_lo, const Mem& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_hi.getId() != dst_lo.getId());
 
-    _emitInstruction(INST_IMUL, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_IMUL, &dst_hi, &dst_lo, &src);
   }
 
   //! @brief Signed multiply.
@@ -3083,6 +3058,34 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
     _emitInstruction(INST_MOV, &dst, &src);
   }
 
+  //! @brief Move from segment register.
+  //! @overload.
+  inline void mov(const GPVar& dst, const SegmentReg& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+  
+  //! @brief Move from segment register.
+  //! @overload.
+  inline void mov(const Mem& dst, const SegmentReg& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move to segment register.
+  //! @overload.
+  inline void mov(const SegmentReg& dst, const GPVar& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move to segment register.
+  //! @overload.
+  inline void mov(const SegmentReg& dst, const Mem& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
   //! @brief Move byte, word, dword or qword from absolute address @a src to
   //! AL, AX, EAX or RAX register.
   inline void mov_ptr(const GPVar& dst, void* src)
@@ -3154,21 +3157,21 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
   //! is multiplied by the value in the AL, AX, or EAX register (depending
   //! on the operand size) and the product is stored in the AX, DX:AX, or
   //! EDX:EAX registers, respectively.
-  inline void mul_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const GPVar& src)
+  inline void mul(const GPVar& dst_hi, const GPVar& dst_lo, const GPVar& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_hi.getId() != dst_lo.getId());
 
-    _emitInstruction(INST_MUL, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_MUL, &dst_hi, &dst_lo, &src);
   }
   //! @brief Unsigned multiply.
   //! @overload
-  inline void mul_lo_hi(const GPVar& dst_lo, const GPVar& dst_hi, const Mem& src)
+  inline void mul(const GPVar& dst_hi, const GPVar& dst_lo, const Mem& src)
   {
     // Destination variables must be different.
-    ASMJIT_ASSERT(dst_lo.getId() != dst_hi.getId());
+    ASMJIT_ASSERT(dst_hi.getId() != dst_lo.getId());
 
-    _emitInstruction(INST_MUL, &dst_lo, &dst_hi, &src);
+    _emitInstruction(INST_MUL, &dst_hi, &dst_lo, &src);
   }
 
   //! @brief Two's Complement Negation.
@@ -4215,6 +4218,28 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
     _emitInstruction(INST_MOVQ, &dst, &src);
   }
 #endif
+
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packsswb(const MMVar& dst, const MMVar& src)
+  {
+    _emitInstruction(INST_PACKSSWB, &dst, &src);
+  }
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packsswb(const MMVar& dst, const Mem& src)
+  {
+    _emitInstruction(INST_PACKSSWB, &dst, &src);
+  }
+
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packssdw(const MMVar& dst, const MMVar& src)
+  {
+    _emitInstruction(INST_PACKSSDW, &dst, &src);
+  }
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packssdw(const MMVar& dst, const Mem& src)
+  {
+    _emitInstruction(INST_PACKSSDW, &dst, &src);
+  }
 
   //! @brief Pack with Unsigned Saturation (MMX).
   inline void packuswb(const MMVar& dst, const MMVar& src)
@@ -6164,6 +6189,12 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
   }
 
   //! @brief Move Unaligned Packed Double-Precision FP Values (SSE2).
+  inline void movupd(const XMMVar& dst, const XMMVar& src)
+  {
+    _emitInstruction(INST_MOVUPD, &dst, &src);
+  }
+
+  //! @brief Move Unaligned Packed Double-Precision FP Values (SSE2).
   inline void movupd(const XMMVar& dst, const Mem& src)
   {
     _emitInstruction(INST_MOVUPD, &dst, &src);
@@ -6454,6 +6485,17 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
   inline void pcmpgtd(const XMMVar& dst, const Mem& src)
   {
     _emitInstruction(INST_PCMPGTD, &dst, &src);
+  }
+
+  //! @brief Extract Word (SSE2).
+  inline void pextrw(const GPVar& dst, const XMMVar& src, const Imm& imm8)
+  {
+    _emitInstruction(INST_PEXTRW, &dst, &src, &imm8);
+  }
+  //! @brief Extract Word (SSE2).
+  inline void pextrw(const Mem& dst, const XMMVar& src, const Imm& imm8)
+  {
+    _emitInstruction(INST_PEXTRW, &dst, &src, &imm8);
   }
 
   //! @brief Packed Signed Integer Word Maximum (SSE2).
@@ -7718,17 +7760,6 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
     _emitInstruction(INST_PEXTRQ, &dst, &src, &imm8);
   }
 
-  //! @brief Extract Word (SSE4.1).
-  inline void pextrw(const GPVar& dst, const XMMVar& src, const Imm& imm8)
-  {
-    _emitInstruction(INST_PEXTRW, &dst, &src, &imm8);
-  }
-  //! @brief Extract Word (SSE4.1).
-  inline void pextrw(const Mem& dst, const XMMVar& src, const Imm& imm8)
-  {
-    _emitInstruction(INST_PEXTRW, &dst, &src, &imm8);
-  }
-
   //! @brief Packed Horizontal Word Minimum (SSE4.1).
   inline void phminposuw(const XMMVar& dst, const XMMVar& src)
   {
@@ -8757,7 +8788,7 @@ struct ASMJIT_HIDDEN CompilerIntrinsics : public CompilerCore
 //! @endverbatim
 //!
 //! This section provided information about how state-change works. The 
-//! behavior is deterministic and it can be overriden.
+//! behavior is deterministic and it can be overridden.
 //!
 //! @section AsmJit_Compiler_AdvancedCodeGeneration Advanced Code Generation
 //!

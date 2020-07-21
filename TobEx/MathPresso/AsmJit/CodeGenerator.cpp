@@ -1,38 +1,20 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Dependencies]
 #include "Assembler.h"
 #include "CodeGenerator.h"
 #include "Defs.h"
 #include "MemoryManager.h"
+#include "MemoryMarker.h"
 
 namespace AsmJit {
 
 // ============================================================================
-// [AsmJit::CodeGenerator]
+// [AsmJit::CodeGenerator - Construction / Destruction]
 // ============================================================================
 
 CodeGenerator::CodeGenerator()
@@ -43,18 +25,23 @@ CodeGenerator::~CodeGenerator()
 {
 }
 
-CodeGenerator* CodeGenerator::getGlobal()
+// ============================================================================
+// [AsmJit::CodeGenerator - GetGlobal]
+// ============================================================================
+
+JitCodeGenerator* CodeGenerator::getGlobal()
 {
   static JitCodeGenerator global;
   return &global;
 }
 
 // ============================================================================
-// [AsmJit::JitCodeGenerator]
+// [AsmJit::JitCodeGenerator - Construction / Destruction]
 // ============================================================================
 
 JitCodeGenerator::JitCodeGenerator() :
   _memoryManager(NULL),
+  _memoryMarker(NULL),
   _allocType(MEMORY_ALLOC_FREEABLE)
 {
 }
@@ -62,6 +49,10 @@ JitCodeGenerator::JitCodeGenerator() :
 JitCodeGenerator::~JitCodeGenerator()
 {
 }
+
+// ============================================================================
+// [AsmJit::JitCodeGenerator - Generate]
+// ============================================================================
 
 uint32_t JitCodeGenerator::generate(void** dest, Assembler* assembler)
 {
@@ -75,7 +66,11 @@ uint32_t JitCodeGenerator::generate(void** dest, Assembler* assembler)
 
   // Switch to global memory manager if not provided.
   MemoryManager* memmgr = getMemoryManager();
-  if (memmgr == NULL) memmgr = MemoryManager::getGlobal();
+
+  if (memmgr == NULL)
+  {
+    memmgr = MemoryManager::getGlobal();
+  }
 
   void* p = memmgr->alloc(codeSize, getAllocType());
   if (p == NULL)
@@ -87,10 +82,16 @@ uint32_t JitCodeGenerator::generate(void** dest, Assembler* assembler)
   // Relocate the code.
   sysuint_t relocatedSize = assembler->relocCode(p);
 
-  // Return unused memory to mamory-manager.
+  // Return unused memory to MemoryManager.
   if (relocatedSize < codeSize)
   {
     memmgr->shrink(p, relocatedSize);
+  }
+
+  // Mark memory if MemoryMarker provided.
+  if (_memoryMarker)
+  {
+    _memoryMarker->mark(p, relocatedSize);
   }
 
   // Return the code.

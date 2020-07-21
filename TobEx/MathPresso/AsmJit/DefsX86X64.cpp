@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Dependencies]
 #include "Defs.h"
@@ -1346,26 +1327,26 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_COMISS           , "comiss"           , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F2F, 0),
   MAKE_INST(INST_CPUID            , "cpuid"            , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x00000FA2, 0),
   MAKE_INST(INST_CRC32            , "crc32"            , G(CRC32)         , F(NONE)          , O(GQD)              , O(GQDWB_MEM)        , 0, 0xF20F38F0, 0),
-  MAKE_INST(INST_CVTDQ2PD         , "cvtdq2pd"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000FE6, 0),
-  MAKE_INST(INST_CVTDQ2PS         , "cvtdq2ps"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F5B, 0),
-  MAKE_INST(INST_CVTPD2DQ         , "cvtpd2dq"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF2000FE6, 0),
-  MAKE_INST(INST_CVTPD2PI         , "cvtpd2pi"         , G(MMU_RMI)       , F(NONE)          , O(MM)               , O(XMM_MEM)          , 0, 0x66000F2D, 0),
-  MAKE_INST(INST_CVTPD2PS         , "cvtpd2ps"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F5A, 0),
-  MAKE_INST(INST_CVTPI2PD         , "cvtpi2pd"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(MM_MEM)           , 0, 0x66000F2A, 0),
+  MAKE_INST(INST_CVTDQ2PD         , "cvtdq2pd"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000FE6, 0),
+  MAKE_INST(INST_CVTDQ2PS         , "cvtdq2ps"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F5B, 0),
+  MAKE_INST(INST_CVTPD2DQ         , "cvtpd2dq"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0xF2000FE6, 0),
+  MAKE_INST(INST_CVTPD2PI         , "cvtpd2pi"         , G(MMU_RMI)       , F(MOV)           , O(MM)               , O(XMM_MEM)          , 0, 0x66000F2D, 0),
+  MAKE_INST(INST_CVTPD2PS         , "cvtpd2ps"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F5A, 0),
+  MAKE_INST(INST_CVTPI2PD         , "cvtpi2pd"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(MM_MEM)           , 0, 0x66000F2A, 0),
   MAKE_INST(INST_CVTPI2PS         , "cvtpi2ps"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(MM_MEM)           , 0, 0x00000F2A, 0),
-  MAKE_INST(INST_CVTPS2DQ         , "cvtps2dq"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F5B, 0),
-  MAKE_INST(INST_CVTPS2PD         , "cvtps2pd"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F5A, 0),
-  MAKE_INST(INST_CVTPS2PI         , "cvtps2pi"         , G(MMU_RMI)       , F(NONE)          , O(MM)               , O(XMM_MEM)          , 0, 0x00000F2D, 0),
-  MAKE_INST(INST_CVTSD2SI         , "cvtsd2si"         , G(MMU_RMI)       , F(NONE)          , O(GQD)              , O(XMM_MEM)          , 0, 0xF2000F2D, 0),
+  MAKE_INST(INST_CVTPS2DQ         , "cvtps2dq"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F5B, 0),
+  MAKE_INST(INST_CVTPS2PD         , "cvtps2pd"         , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F5A, 0),
+  MAKE_INST(INST_CVTPS2PI         , "cvtps2pi"         , G(MMU_RMI)       , F(MOV)           , O(MM)               , O(XMM_MEM)          , 0, 0x00000F2D, 0),
+  MAKE_INST(INST_CVTSD2SI         , "cvtsd2si"         , G(MMU_RMI)       , F(MOV)           , O(GQD)              , O(XMM_MEM)          , 0, 0xF2000F2D, 0),
   MAKE_INST(INST_CVTSD2SS         , "cvtsd2ss"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF2000F5A, 0),
   MAKE_INST(INST_CVTSI2SD         , "cvtsi2sd"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(GQD)|O(MEM)       , 0, 0xF2000F2A, 0),
   MAKE_INST(INST_CVTSI2SS         , "cvtsi2ss"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(GQD)|O(MEM)       , 0, 0xF3000F2A, 0),
   MAKE_INST(INST_CVTSS2SD         , "cvtss2sd"         , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F5A, 0),
   MAKE_INST(INST_CVTSS2SI         , "cvtss2si"         , G(MMU_RMI)       , F(NONE)          , O(GQD)              , O(XMM_MEM)          , 0, 0xF3000F2D, 0),
-  MAKE_INST(INST_CVTTPD2DQ        , "cvttpd2dq"        , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x66000FE6, 0),
-  MAKE_INST(INST_CVTTPD2PI        , "cvttpd2pi"        , G(MMU_RMI)       , F(NONE)          , O(MM)               , O(XMM_MEM)          , 0, 0x66000F2C, 0),
-  MAKE_INST(INST_CVTTPS2DQ        , "cvttps2dq"        , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F5B, 0),
-  MAKE_INST(INST_CVTTPS2PI        , "cvttps2pi"        , G(MMU_RMI)       , F(NONE)          , O(MM)               , O(XMM_MEM)          , 0, 0x00000F2C, 0),
+  MAKE_INST(INST_CVTTPD2DQ        , "cvttpd2dq"        , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x66000FE6, 0),
+  MAKE_INST(INST_CVTTPD2PI        , "cvttpd2pi"        , G(MMU_RMI)       , F(MOV)           , O(MM)               , O(XMM_MEM)          , 0, 0x66000F2C, 0),
+  MAKE_INST(INST_CVTTPS2DQ        , "cvttps2dq"        , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F5B, 0),
+  MAKE_INST(INST_CVTTPS2PI        , "cvttps2pi"        , G(MMU_RMI)       , F(MOV)           , O(MM)               , O(XMM_MEM)          , 0, 0x00000F2C, 0),
   MAKE_INST(INST_CVTTSD2SI        , "cvttsd2si"        , G(MMU_RMI)       , F(NONE)          , O(GQD)              , O(XMM_MEM)          , 0, 0xF2000F2C, 0),
   MAKE_INST(INST_CVTTSS2SI        , "cvttss2si"        , G(MMU_RMI)       , F(NONE)          , O(GQD)              , O(XMM_MEM)          , 0, 0xF3000F2C, 0),
   MAKE_INST(INST_CWDE             , "cwde"             , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x00000099, 0),
@@ -1519,7 +1500,7 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_JMP              , "jmp"              , G(JMP)           , F(JUMP)          , 0                   , 0                   , 0, 0         , 0),
   MAKE_INST(INST_LDDQU            , "lddqu"            , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(MEM)              , 0, 0xF2000FF0, 0),
   MAKE_INST(INST_LDMXCSR          , "ldmxcsr"          , G(M)             , F(NONE)          , O(MEM)              , 0                   , 2, 0x00000FAE, 0),
-  MAKE_INST(INST_LEA              , "lahf"             , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x0000009F, 0),
+  MAKE_INST(INST_LAHF             , "lahf"             , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x0000009F, 0),
   MAKE_INST(INST_LEA              , "lea"              , G(LEA)           , F(NONE)          , O(GQD)              , O(MEM)              , 0, 0         , 0),
   MAKE_INST(INST_LEAVE            , "leave"            , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x000000C9, 0),
   MAKE_INST(INST_LFENCE           , "lfence"           , G(EMIT)          , F(NONE)          , 0                   , 0                   , 0, 0x000FAEE8, 0),
@@ -1621,7 +1602,7 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_PEXTRB           , "pextrb"           , G(MMU_PEXTR)     , F(NONE)          , O(GD)|O(GB)|O(MEM)  , O(XMM)              , 0, 0x000F3A14, 0),
   MAKE_INST(INST_PEXTRD           , "pextrd"           , G(MMU_PEXTR)     , F(NONE)          , O(GD)      |O(MEM)  , O(XMM)              , 0, 0x000F3A16, 0),
   MAKE_INST(INST_PEXTRQ           , "pextrq"           , G(MMU_PEXTR)     , F(NONE)          , O(GQD)     |O(MEM)  , O(XMM)              , 1, 0x000F3A16, 0),
-  MAKE_INST(INST_PEXTRW           , "pextrw"           , G(MMU_PEXTR)     , F(NONE)          , O(GD)      |O(MEM)  , O(XMM) | O(MM)      , 0, 0x000F3A16, 0),
+  MAKE_INST(INST_PEXTRW           , "pextrw"           , G(MMU_PEXTR)     , F(NONE)          , O(GD)      |O(MEM)  , O(XMM) | O(MM)      , 0, 0x000F3A15, 0),
   MAKE_INST(INST_PF2ID            , "pf2id"            , G(MMU_RM_3DNOW)  , F(NONE)          , O(MM)               , O(MM_MEM)           , 0, 0x00000F0F, 0x1D),
   MAKE_INST(INST_PF2IW            , "pf2iw"            , G(MMU_RM_3DNOW)  , F(NONE)          , O(MM)               , O(MM_MEM)           , 0, 0x00000F0F, 0x1C),
   MAKE_INST(INST_PFACC            , "pfacc"            , G(MMU_RM_3DNOW)  , F(NONE)          , O(MM)               , O(MM_MEM)           , 0, 0x00000F0F, 0xAE),
@@ -1738,8 +1719,8 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_PUSHFQ           , "pushfq"           , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x0000009C, 0),
   MAKE_INST(INST_PXOR             , "pxor"             , G(MMU_RMI)       , F(NONE)          , O(MM_XMM)           , O(MM_XMM_MEM)       , 0, 0x00000FEF, 0),
   MAKE_INST(INST_RCL              , "rcl"              , G(ROT)           , F(SPECIAL)       , O(GQDWB_MEM)        , O(GB)|O(IMM)        , 2, 0         , 0),
-  MAKE_INST(INST_RCPPS            , "rcpps"            , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F53, 0),
-  MAKE_INST(INST_RCPSS            , "rcpss"            , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F53, 0),
+  MAKE_INST(INST_RCPPS            , "rcpps"            , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F53, 0),
+  MAKE_INST(INST_RCPSS            , "rcpss"            , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F53, 0),
   MAKE_INST(INST_RCR              , "rcr"              , G(ROT)           , F(SPECIAL)       , O(GQDWB_MEM)        , O(GB)|O(IMM)        , 3, 0         , 0),
   MAKE_INST(INST_RDTSC            , "rdtsc"            , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x00000F31, 0),
   MAKE_INST(INST_RDTSCP           , "rdtscp"           , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x000F01F9, 0),
@@ -1774,11 +1755,11 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_RET              , "ret"              , G(RET)           , F(SPECIAL)       , 0                   , 0                   , 0, 0         , 0),
   MAKE_INST(INST_ROL              , "rol"              , G(ROT)           , F(SPECIAL)       , O(GQDWB_MEM)        , O(GB)|O(IMM)        , 0, 0         , 0),
   MAKE_INST(INST_ROR              , "ror"              , G(ROT)           , F(SPECIAL)       , O(GQDWB_MEM)        , O(GB)|O(IMM)        , 1, 0         , 0),
-  MAKE_INST(INST_ROUNDPD          , "roundpd"          , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A09, 0),
-  MAKE_INST(INST_ROUNDPS          , "roundps"          , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A08, 0),
+  MAKE_INST(INST_ROUNDPD          , "roundpd"          , G(MMU_RM_IMM8)   , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A09, 0),
+  MAKE_INST(INST_ROUNDPS          , "roundps"          , G(MMU_RM_IMM8)   , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A08, 0),
   MAKE_INST(INST_ROUNDSD          , "roundsd"          , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A0B, 0),
   MAKE_INST(INST_ROUNDSS          , "roundss"          , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x660F3A0A, 0),
-  MAKE_INST(INST_RSQRTPS          , "rsqrtps"          , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F52, 0),
+  MAKE_INST(INST_RSQRTPS          , "rsqrtps"          , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F52, 0),
   MAKE_INST(INST_RSQRTSS          , "rsqrtss"          , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F52, 0),
   MAKE_INST(INST_SAHF             , "sahf"             , G(EMIT)          , F(SPECIAL)       , 0                   , 0                   , 0, 0x0000009E, 0),
   MAKE_INST(INST_SAL              , "sal"              , G(ROT)           , F(SPECIAL)       , O(GQDWB_MEM)        , O(GB)|O(IMM)        , 4, 0         , 0),
@@ -1821,8 +1802,8 @@ const InstructionDescription instructionDescription[] =
   MAKE_INST(INST_SHRD             , "shrd"             , G(SHLD_SHRD)     , F(SPECIAL)       , O(GQDWB_MEM)        , O(GQDWB)            , 0, 0x00000FAC, 0),
   MAKE_INST(INST_SHUFPD           , "shufpd"           , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x66000FC6, 0),
   MAKE_INST(INST_SHUFPS           , "shufps"           , G(MMU_RM_IMM8)   , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000FC6, 0),
-  MAKE_INST(INST_SQRTPD           , "sqrtpd"           , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F51, 0),
-  MAKE_INST(INST_SQRTPS           , "sqrtps"           , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F51, 0),
+  MAKE_INST(INST_SQRTPD           , "sqrtpd"           , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x66000F51, 0),
+  MAKE_INST(INST_SQRTPS           , "sqrtps"           , G(MMU_RMI)       , F(MOV)           , O(XMM)              , O(XMM_MEM)          , 0, 0x00000F51, 0),
   MAKE_INST(INST_SQRTSD           , "sqrtsd"           , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF2000F51, 0),
   MAKE_INST(INST_SQRTSS           , "sqrtss"           , G(MMU_RMI)       , F(NONE)          , O(XMM)              , O(XMM_MEM)          , 0, 0xF3000F51, 0),
   MAKE_INST(INST_STC              , "stc"              , G(EMIT)          , F(NONE)          , 0                   , 0                   , 0, 0x000000F9, 0),

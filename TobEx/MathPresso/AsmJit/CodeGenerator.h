@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Guard]
 #ifndef _ASMJIT_CODEGENERATOR_H
@@ -39,6 +20,7 @@ namespace AsmJit {
 struct Assembler;
 struct JitCodeGenerator;
 struct MemoryManager;
+struct MemoryMarker;
 
 // ============================================================================
 // [AsmJit::CodeGenerator]
@@ -80,7 +62,7 @@ struct ASMJIT_API CodeGenerator
   // [Statics]
   // --------------------------------------------------------------------------
 
-  static CodeGenerator* getGlobal();
+  static JitCodeGenerator* getGlobal();
 
 private:
   ASMJIT_DISABLE_COPY(CodeGenerator)
@@ -121,6 +103,15 @@ struct JitCodeGenerator : public CodeGenerator
   inline void setAllocType(uint32_t allocType) { _allocType = allocType; }
 
   // --------------------------------------------------------------------------
+  // [Memory Marker]
+  // --------------------------------------------------------------------------
+
+  //! @brief Get the @c MemoryMarker instance.
+  inline MemoryMarker* getMemoryMarker() const { return _memoryMarker; }
+  //! @brief Set the @c MemoryMarker instance.
+  inline void setMemoryMarker(MemoryMarker* memoryMarker) { _memoryMarker = memoryMarker; }
+
+  // --------------------------------------------------------------------------
   // [Interface]
   // --------------------------------------------------------------------------
 
@@ -133,6 +124,9 @@ struct JitCodeGenerator : public CodeGenerator
 protected:
   //! @brief Memory manager.
   MemoryManager* _memoryManager;
+  //! @brief Memory marker.
+  MemoryMarker* _memoryMarker;
+
   //! @brief Type of allocation.
   uint32_t _allocType;
 

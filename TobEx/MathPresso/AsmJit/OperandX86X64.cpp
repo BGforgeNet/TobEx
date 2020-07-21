@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Dependencies]
 #include "Defs.h"
@@ -191,6 +172,17 @@ const XMMReg xmm15(_Initialize(), REG_XMM15);
 #endif // ASMJIT_X64
 
 // ============================================================================
+// [AsmJit::Registers - Segment]
+// ============================================================================
+
+const SegmentReg cs(_Initialize(), REG_CS);
+const SegmentReg ss(_Initialize(), REG_SS);
+const SegmentReg ds(_Initialize(), REG_DS);
+const SegmentReg es(_Initialize(), REG_ES);
+const SegmentReg fs(_Initialize(), REG_FS);
+const SegmentReg gs(_Initialize(), REG_GS);
+
+// ============================================================================
 // [AsmJit::Immediate]
 // ============================================================================
 
@@ -210,20 +202,20 @@ Imm uimm(sysuint_t i) ASMJIT_NOTHROW
 // [AsmJit::BaseVar]
 // ============================================================================
 
-Mem _baseVarMem(const BaseVar& var, uint32_t ptrSize) ASMJIT_NOTHROW
+Mem _BaseVarMem(const BaseVar& var, uint32_t ptrSize) ASMJIT_NOTHROW
 {
   Mem m; //(_DontInitialize());
 
   m._mem.op = OPERAND_MEM;
-  m._mem.size = ptrSize == INVALID_VALUE ? var.getSize() : (uint8_t)ptrSize;
+  m._mem.size = (ptrSize == INVALID_VALUE) ? var.getSize() : (uint8_t)ptrSize;
   m._mem.type = OPERAND_MEM_NATIVE;
   m._mem.segmentPrefix = SEGMENT_NONE;
+  m._mem.sizePrefix = 0;
+  m._mem.shift = 0;
 
   m._mem.id = var.getId();
-
   m._mem.base = INVALID_VALUE;
   m._mem.index = INVALID_VALUE;
-  m._mem.shift = 0;
 
   m._mem.target = NULL;
   m._mem.displacement = 0;
@@ -232,20 +224,21 @@ Mem _baseVarMem(const BaseVar& var, uint32_t ptrSize) ASMJIT_NOTHROW
 }
 
 
-Mem _baseVarMem(const BaseVar& var, uint32_t ptrSize, sysint_t disp) ASMJIT_NOTHROW
+Mem _BaseVarMem(const BaseVar& var, uint32_t ptrSize, sysint_t disp) ASMJIT_NOTHROW
 {
   Mem m; //(_DontInitialize());
 
   m._mem.op = OPERAND_MEM;
-  m._mem.size = ptrSize == INVALID_VALUE ? var.getSize() : (uint8_t)ptrSize;
+  m._mem.size = (ptrSize == INVALID_VALUE) ? var.getSize() : (uint8_t)ptrSize;
   m._mem.type = OPERAND_MEM_NATIVE;
   m._mem.segmentPrefix = SEGMENT_NONE;
+  m._mem.sizePrefix = 0;
+  m._mem.shift = 0;
 
   m._mem.id = var.getId();
 
   m._mem.base = INVALID_VALUE;
   m._mem.index = INVALID_VALUE;
-  m._mem.shift = 0;
 
   m._mem.target = NULL;
   m._mem.displacement = disp;
@@ -253,20 +246,21 @@ Mem _baseVarMem(const BaseVar& var, uint32_t ptrSize, sysint_t disp) ASMJIT_NOTH
   return m;
 }
 
-Mem _baseVarMem(const BaseVar& var, uint32_t ptrSize, const GPVar& index, uint32_t shift, sysint_t disp) ASMJIT_NOTHROW
+Mem _BaseVarMem(const BaseVar& var, uint32_t ptrSize, const GPVar& index, uint32_t shift, sysint_t disp) ASMJIT_NOTHROW
 {
   Mem m; //(_DontInitialize());
 
   m._mem.op = OPERAND_MEM;
-  m._mem.size = ptrSize == INVALID_VALUE ? var.getSize() : (uint8_t)ptrSize;
+  m._mem.size = (ptrSize == INVALID_VALUE) ? var.getSize() : (uint8_t)ptrSize;
   m._mem.type = OPERAND_MEM_NATIVE;
   m._mem.segmentPrefix = SEGMENT_NONE;
+  m._mem.sizePrefix = 0;
+  m._mem.shift = shift;
 
   m._mem.id = var.getId();
 
   m._mem.base = INVALID_VALUE;
   m._mem.index = index.getId();
-  m._mem.shift = shift;
 
   m._mem.target = NULL;
   m._mem.displacement = disp;
@@ -345,11 +339,17 @@ ASMJIT_API Mem _MemPtrAbs(
   m._mem.type = OPERAND_MEM_ABSOLUTE;
   m._mem.segmentPrefix = (uint8_t)segmentPrefix;
 
-  m._mem.id = INVALID_VALUE;
+#if defined(ASMJIT_X86)
+  m._mem.sizePrefix = index.getSize() != 4;
+#else
+  m._mem.sizePrefix = index.getSize() != 8;
+#endif
 
+  m._mem.shift = shift;
+
+  m._mem.id = INVALID_VALUE;
   m._mem.base = INVALID_VALUE;
   m._mem.index = index.getRegIndex();
-  m._mem.shift = shift;
 
   m._mem.target = target;
   m._mem.displacement = disp;
@@ -370,11 +370,17 @@ ASMJIT_API Mem _MemPtrAbs(
   m._mem.type = OPERAND_MEM_ABSOLUTE;
   m._mem.segmentPrefix = (uint8_t)segmentPrefix;
 
-  m._mem.id = INVALID_VALUE;
+#if defined(ASMJIT_X86)
+  m._mem.sizePrefix = index.getSize() != 4;
+#else
+  m._mem.sizePrefix = index.getSize() != 8;
+#endif
 
+  m._mem.shift = shift;
+
+  m._mem.id = INVALID_VALUE;
   m._mem.base = INVALID_VALUE;
   m._mem.index = index.getId();
-  m._mem.shift = shift;
 
   m._mem.target = target;
   m._mem.displacement = disp;

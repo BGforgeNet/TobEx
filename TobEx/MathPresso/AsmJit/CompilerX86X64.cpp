@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // We are using sprintf() here.
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
@@ -51,7 +32,7 @@ namespace AsmJit {
 
 // Defined in AssemblerX86X64.cpp.
 ASMJIT_HIDDEN char* dumpRegister(char* buf, uint32_t type, uint32_t index) ASMJIT_NOTHROW;
-ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op) ASMJIT_NOTHROW;
+ASMJIT_HIDDEN char* dumpOperand(char* buf, const Operand* op, uint32_t memRegType) ASMJIT_NOTHROW;
 
 // ============================================================================
 // [Helpers - Variables]
@@ -740,7 +721,7 @@ Emittable* EVariableHint::translate(CompilerContext& cc) ASMJIT_NOTHROW
   switch (_hintId)
   {
     case VARIABLE_HINT_ALLOC:
-      cc.allocVar(_vdata, _hintValue, VARIABLE_ALLOC_READWRITE);
+      cc.allocVar(_vdata, _hintValue, VARIABLE_ALLOC_READ);
       break;
     case VARIABLE_HINT_SPILL:
       if (_vdata->state == VARIABLE_STATE_REGISTER)
@@ -849,7 +830,7 @@ EInstruction::EInstruction(Compiler* c, uint32_t code, Operand* operandsData, ui
           case 3:
             if (!(_operands[0].isVar() && _operands[1].isVar() && _operands[2].isVarMem()))
             {
-              // Only IMUL dst_lo, dst_hi, reg/mem is special, all others not.
+              // Only IMUL dst_hi, dst_lo, reg/mem is special, all others don't.
               _isSpecial = false;
             }
             break;
@@ -1279,15 +1260,15 @@ void EInstruction::prepare(CompilerContext& cc) ASMJIT_NOTHROW
             switch (i)
             {
               case 0:
-                vdata->registerRWCount++;
-                var->vflags |= VARIABLE_ALLOC_READWRITE | VARIABLE_ALLOC_SPECIAL;
-                var->regMask = Util::maskFromIndex(REG_INDEX_EAX);
-                gpRestrictMask &= ~var->regMask;
-                break;
-              case 1:
                 vdata->registerWriteCount++;
                 var->vflags |= VARIABLE_ALLOC_WRITE | VARIABLE_ALLOC_SPECIAL;
                 var->regMask = Util::maskFromIndex(REG_INDEX_EDX);
+                gpRestrictMask &= ~var->regMask;
+                break;
+              case 1:
+                vdata->registerRWCount++;
+                var->vflags |= VARIABLE_ALLOC_READWRITE | VARIABLE_ALLOC_SPECIAL;
+                var->regMask = Util::maskFromIndex(REG_INDEX_EAX);
                 gpRestrictMask &= ~var->regMask;
                 break;
               case 2:
@@ -1610,6 +1591,28 @@ void EInstruction::prepare(CompilerContext& cc) ASMJIT_NOTHROW
             // Read-only case.
             vdata->registerReadCount++;
             var->vflags |= VARIABLE_ALLOC_READ;
+          }
+          // CVTTSD2SI/CVTTSS2SI instructions.
+          else if (id->code == INST_CVTTSD2SI || id->code == INST_CVTTSS2SI)
+          {
+            // In 32-bit mode the whole destination is replaced. In 64-bit mode
+            // we need to check whether the destination operand size is 64-bits.
+#if defined(ASMJIT_X64)
+            if (_operands[0].isRegType(REG_TYPE_GPQ))
+            {
+#endif // ASMJIT_X64
+              // Write-only case.
+              vdata->registerWriteCount++;
+              var->vflags |= VARIABLE_ALLOC_WRITE;
+#if defined(ASMJIT_X64)
+            }
+            else
+            {
+              // Read/Write.
+              vdata->registerRWCount++;
+              var->vflags |= VARIABLE_ALLOC_READWRITE;
+            }
+#endif // ASMJIT_X64
           }
           // MOV/MOVSS/MOVSD instructions.
           //
@@ -2070,7 +2073,7 @@ void EJmp::prepare(CompilerContext& cc) ASMJIT_NOTHROW
   _offset = cc._currentOffset;
 
   // Update _isTaken to true if this is conditional backward jump. This behavior
-  // can be overriden by using HINT_NOT_TAKEN when using the instruction.
+  // can be overridden by using HINT_NOT_TAKEN when using the instruction.
   if (getCode() != INST_JMP &&
       _operandsCount == 1 &&
       _jumpTarget->getOffset() < getOffset())
@@ -2128,8 +2131,8 @@ Emittable* EJmp::translate(CompilerContext& cc) ASMJIT_NOTHROW
       _jumpTarget->_state = _state;
     }
 
-    // Mark next code as unrecheable, cleared by a next label (ETarget).
-    if (_code == INST_JMP) cc._unrecheable = 1;
+    // Mark next code as unreachable, cleared by a next label (ETarget).
+    if (_code == INST_JMP) cc._unreachable = 1;
   }
 
   // Need to traverse over all active variables and unuse them if their scope ends
@@ -2199,7 +2202,7 @@ void EJmp::_doJump(CompilerContext& cc) ASMJIT_NOTHROW
     //
     // NOTE: We can't use this technique if instruction is forward conditional
     // jump. The reason is that when generating code we can't change state here,
-    // because next instruction depends to it.
+    // because the next instruction depends on it.
     cc._restoreState(_jumpTarget->getState(), _jumpTarget->getOffset());
   }
   else
@@ -2450,7 +2453,8 @@ void EFunction::_preparePrologEpilog(CompilerContext& cc) ASMJIT_NOTHROW
   if (_hints[FUNCTION_HINT_LFENCE] != INVALID_VALUE)
     _emitLFence = (bool)_hints[FUNCTION_HINT_LFENCE];
 
-  if (!_isStackAlignedByOsTo16Bytes && !_isNaked && (cc._mem16BlocksCount > 0))
+  // Updated to respect comment from issue #47, align also when using MMX code.
+  if (!_isStackAlignedByOsTo16Bytes && !_isNaked && (cc._mem16BlocksCount + (cc._mem8BlocksCount > 0)))
   {
     // Have to align stack to 16-bytes.
     _isStackAlignedByFnTo16Bytes = true;
@@ -2553,14 +2557,14 @@ void EFunction::_dumpFunction(CompilerContext& cc) ASMJIT_NOTHROW
       if (a.registerIndex != INVALID_VALUE)
       {
         BaseReg regOp(a.registerIndex | REG_TYPE_GPN, 0);
-        dumpOperand(memHome, &regOp)[0] = '\0';
+        dumpOperand(memHome, &regOp, REG_TYPE_GPN)[0] = '\0';
       }
       else
       {
         Mem memOp;
         memOp._mem.base = REG_INDEX_ESP;
         memOp._mem.displacement = a.stackOffset;
-        dumpOperand(memHome, &memOp)[0] = '\0';
+        dumpOperand(memHome, &memOp, REG_TYPE_GPN)[0] = '\0';
       }
 
       logger->logFormat("; %-3u| %-9s| %-3u| %-15s|\n",
@@ -2624,7 +2628,7 @@ void EFunction::_dumpFunction(CompilerContext& cc) ASMJIT_NOTHROW
           memOp._mem.displacement += cc._variablesBaseOffset;
           memOp._mem.displacement += memBlock->offset;
         }
-        dumpOperand(memHome, &memOp)[0] = '\0';
+        dumpOperand(memHome, &memOp, REG_TYPE_GPN)[0] = '\0';
       }
 
       logger->logFormat("; %-3u| %-9s| %-3u| %-15s| r=%-4uw=%-4ux=%-4u| r=%-4uw=%-4ux=%-4u|\n",
@@ -4690,14 +4694,14 @@ Emittable* ERet::translate(CompilerContext& cc) ASMJIT_NOTHROW
   uint32_t retValType = getFunction()->getPrototype().getReturnValue();
   uint32_t i;
 
-  switch (retValType)
+  switch ((int)retValType)
   {
     case VARIABLE_TYPE_GPD:
     case VARIABLE_TYPE_GPQ:
       for (i = 0; i < 2; i++)
       {
-        uint32_t dsti = (i == 0) ? REG_INDEX_EAX : REG_INDEX_EDX;
-        uint32_t srci;
+        uint32_t dstIndex = (i == 0) ? REG_INDEX_EAX : REG_INDEX_EDX;
+        uint32_t srcIndex;
 
         if (_ret[i].isVar())
         {
@@ -4706,16 +4710,16 @@ Emittable* ERet::translate(CompilerContext& cc) ASMJIT_NOTHROW
             VarData* vdata = compiler->_getVarData(_ret[i].getId());
             ASMJIT_ASSERT(vdata != NULL);
 
-            srci = vdata->registerIndex;
-            if (srci == INVALID_VALUE)
-              compiler->emit(INST_MOV, gpn(dsti), cc._getVarMem(vdata));
-            else if (dsti != srci)
-              compiler->emit(INST_MOV, gpn(dsti), gpn(srci));
+            srcIndex = vdata->registerIndex;
+            if (srcIndex == INVALID_VALUE)
+              compiler->emit(INST_MOV, gpn(dstIndex), cc._getVarMem(vdata));
+            else if (dstIndex != srcIndex)
+              compiler->emit(INST_MOV, gpn(dstIndex), gpn(srcIndex));
           }
         }
         else if (_ret[i].isImm())
         {
-          compiler->emit(INST_MOV, gpn(dsti), _ret[i]);
+          compiler->emit(INST_MOV, gpn(dstIndex), _ret[i]);
         }
       }
       break;
@@ -4750,11 +4754,11 @@ Emittable* ERet::translate(CompilerContext& cc) ASMJIT_NOTHROW
             {
               case VARIABLE_TYPE_XMM_1F:
               case VARIABLE_TYPE_XMM_4F:
-                compiler->emit(INST_FLD, _baseVarMem(reinterpret_cast<BaseVar&>(_ret[i]), 4));
+                compiler->emit(INST_FLD, _BaseVarMem(reinterpret_cast<BaseVar&>(_ret[i]), 4));
                 break;
               case VARIABLE_TYPE_XMM_1D:
               case VARIABLE_TYPE_XMM_2D:
-                compiler->emit(INST_FLD, _baseVarMem(reinterpret_cast<BaseVar&>(_ret[i]), 8));
+                compiler->emit(INST_FLD, _BaseVarMem(reinterpret_cast<BaseVar&>(_ret[i]), 8));
                 break;
             }
           }
@@ -4974,7 +4978,7 @@ Emittable* ERet::translate(CompilerContext& cc) ASMJIT_NOTHROW
 
   if (shouldEmitJumpToEpilog())
   {
-    cc._unrecheable = 1;
+    cc._unreachable = 1;
   }
 
   for (i = 0; i < 2; i++)
@@ -5080,7 +5084,7 @@ void CompilerContext::_clear() ASMJIT_NOTHROW
   _forwardJumps = NULL;
 
   _currentOffset = 0;
-  _unrecheable = 0;
+  _unreachable = 0;
 
   _modifiedGPRegisters = 0;
   _modifiedMMRegisters = 0;
@@ -6898,8 +6902,8 @@ bool CompilerUtil::isStack16ByteAligned()
 // ============================================================================
 
 CompilerCore::CompilerCore(CodeGenerator* codeGenerator) ASMJIT_NOTHROW :
-  _codeGenerator(codeGenerator != NULL ? codeGenerator : CodeGenerator::getGlobal()),
   _zone(16384 - sizeof(Zone::Chunk) - 32),
+  _codeGenerator(codeGenerator != NULL ? codeGenerator : CodeGenerator::getGlobal()),
   _logger(NULL),
   _error(0),
   _properties((1 << PROPERTY_OPTIMIZE_ALIGN)),
@@ -6940,7 +6944,7 @@ void CompilerCore::setError(uint32_t error) ASMJIT_NOTHROW
   if (_logger)
   {
     _logger->logFormat("*** COMPILER ERROR: %s (%u).\n",
-      getErrorCodeAsString(error),
+      getErrorString(error),
       (unsigned int)error);
   }
 }
@@ -7441,7 +7445,7 @@ MMVar CompilerCore::argMM(uint32_t index) ASMJIT_NOTHROW
   if (f)
   {
     const FunctionPrototype& prototype = f->getPrototype();
-    if (prototype.getArgumentsCount() < index)
+    if (index < prototype.getArgumentsCount())
     {
       VarData* vdata = getFunction()->_argumentVariables[index];
 
@@ -7472,7 +7476,7 @@ XMMVar CompilerCore::argXMM(uint32_t index) ASMJIT_NOTHROW
   if (f)
   {
     const FunctionPrototype& prototype = f->getPrototype();
-    if (prototype.getArgumentsCount() < index)
+    if (index < prototype.getArgumentsCount())
     {
       VarData* vdata = getFunction()->_argumentVariables[index];
 
@@ -7488,7 +7492,8 @@ XMMVar CompilerCore::argXMM(uint32_t index) ASMJIT_NOTHROW
 
 void CompilerCore::_vhint(BaseVar& var, uint32_t hintId, uint32_t hintValue) ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return;
+  if (var.getId() == INVALID_VALUE)
+    return;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7504,12 +7509,15 @@ void CompilerCore::alloc(BaseVar& var) ASMJIT_NOTHROW
 
 void CompilerCore::alloc(BaseVar& var, uint32_t regIndex) ASMJIT_NOTHROW
 {
-  _vhint(var, VARIABLE_HINT_ALLOC, regIndex);
+  if (regIndex > 31)
+    return;
+
+  _vhint(var, VARIABLE_HINT_ALLOC, 1 << regIndex);
 }
 
 void CompilerCore::alloc(BaseVar& var, const BaseReg& reg) ASMJIT_NOTHROW
 {
-  _vhint(var, VARIABLE_HINT_ALLOC, reg.getRegIndex());
+  _vhint(var, VARIABLE_HINT_ALLOC, 1 << reg.getRegIndex());
 }
 
 void CompilerCore::save(BaseVar& var) ASMJIT_NOTHROW
@@ -7529,7 +7537,8 @@ void CompilerCore::unuse(BaseVar& var) ASMJIT_NOTHROW
 
 uint32_t CompilerCore::getPriority(BaseVar& var) const ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return INVALID_VALUE;
+  if (var.getId() == INVALID_VALUE)
+    return INVALID_VALUE;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7539,7 +7548,8 @@ uint32_t CompilerCore::getPriority(BaseVar& var) const ASMJIT_NOTHROW
 
 void CompilerCore::setPriority(BaseVar& var, uint32_t priority) ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return;
+  if (var.getId() == INVALID_VALUE)
+    return;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7550,7 +7560,8 @@ void CompilerCore::setPriority(BaseVar& var, uint32_t priority) ASMJIT_NOTHROW
 
 bool CompilerCore::getSaveOnUnuse(BaseVar& var) const ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return false;
+  if (var.getId() == INVALID_VALUE)
+    return false;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7560,7 +7571,8 @@ bool CompilerCore::getSaveOnUnuse(BaseVar& var) const ASMJIT_NOTHROW
 
 void CompilerCore::setSaveOnUnuse(BaseVar& var, bool value) ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return;
+  if (var.getId() == INVALID_VALUE)
+    return;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7570,7 +7582,8 @@ void CompilerCore::setSaveOnUnuse(BaseVar& var, bool value) ASMJIT_NOTHROW
 
 void CompilerCore::rename(BaseVar& var, const char* name) ASMJIT_NOTHROW
 {
-  if (var.getId() == INVALID_VALUE) return;
+  if (var.getId() == INVALID_VALUE)
+    return;
 
   VarData* vdata = _getVarData(var.getId());
   ASMJIT_ASSERT(vdata != NULL);
@@ -7595,6 +7608,7 @@ StateData* CompilerCore::_newStateData(uint32_t memVarsCount) ASMJIT_NOTHROW
 void* CompilerCore::make() ASMJIT_NOTHROW
 {
   Assembler a(_codeGenerator);
+
   a._properties = _properties;
   a.setLogger(_logger);
 
@@ -7612,6 +7626,7 @@ void* CompilerCore::make() ASMJIT_NOTHROW
   }
 
   void* result = a.make();
+
   if (_logger)
   {
     _logger->logFormat("*** COMPILER SUCCESS - Wrote %u bytes, code: %u, trampolines: %u.\n\n",
@@ -7619,6 +7634,7 @@ void* CompilerCore::make() ASMJIT_NOTHROW
       (unsigned int)a.getOffset(),
       (unsigned int)a.getTrampolineSize());
   }
+
   return result;
 }
 
@@ -7713,7 +7729,7 @@ void CompilerCore::serialize(Assembler& a) ASMJIT_NOTHROW
         cur = cur->translate(cc);
       } while (cur);
 
-      cc._unrecheable = true;
+      cc._unreachable = true;
 
       sysuint_t len = cc._backCode.getLength();
       while (cc._backPos < len)

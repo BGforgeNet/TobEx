@@ -1,27 +1,8 @@
-// AsmJit - Complete JIT Assembler for C++ Language.
-
-// Copyright (c) 2008-2010, Petr Kobalicek <kobalicek.petr@gmail.com>
+// [AsmJit]
+// Complete JIT Assembler for C++ Language.
 //
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use,
-// copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following
-// conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-// OTHER DEALINGS IN THE SOFTWARE.
+// [License]
+// Zlib - See COPYING file in this package.
 
 // [Guard]
 #ifndef _ASMJIT_ASSEMBLERX86X64_H
@@ -601,12 +582,11 @@ struct ASMJIT_API AssemblerCore
   // --------------------------------------------------------------------------
 
 protected:
+  //! @brief Zone memory management.
+  Zone _zone;
 
   //! @brief Code generator instance.
   CodeGenerator* _codeGenerator;
-
-  //! @brief Zone memory management.
-  Zone _zone;
 
   //! @brief Logger.
   Logger* _logger;
@@ -1602,6 +1582,34 @@ struct ASMJIT_HIDDEN AssemblerIntrinsics : public AssemblerCore
   //! @brief Move.
   //! @overload
   inline void mov(const Mem& dst, const Imm& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move from segment register.
+  //! @overload.
+  inline void mov(const GPReg& dst, const SegmentReg& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move from segment register.
+  //! @overload.
+  inline void mov(const Mem& dst, const SegmentReg& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move to segment register.
+  //! @overload.
+  inline void mov(const SegmentReg& dst, const GPReg& src)
+  {
+    _emitInstruction(INST_MOV, &dst, &src);
+  }
+
+  //! @brief Move to segment register.
+  //! @overload.
+  inline void mov(const SegmentReg& dst, const Mem& src)
   {
     _emitInstruction(INST_MOV, &dst, &src);
   }
@@ -3436,6 +3444,28 @@ struct ASMJIT_HIDDEN AssemblerIntrinsics : public AssemblerCore
     _emitInstruction(INST_MOVQ, &dst, &src);
   }
 #endif
+
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packsswb(const MMReg& dst, const MMReg& src)
+  {
+    _emitInstruction(INST_PACKSSWB, &dst, &src);
+  }
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packsswb(const MMReg& dst, const Mem& src)
+  {
+    _emitInstruction(INST_PACKSSWB, &dst, &src);
+  }
+
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packssdw(const MMReg& dst, const MMReg& src)
+  {
+    _emitInstruction(INST_PACKSSDW, &dst, &src);
+  }
+  //! @brief Pack with Signed Saturation (MMX).
+  inline void packssdw(const MMReg& dst, const Mem& src)
+  {
+    _emitInstruction(INST_PACKSSDW, &dst, &src);
+  }
 
   //! @brief Pack with Unsigned Saturation (MMX).
   inline void packuswb(const MMReg& dst, const MMReg& src)
@@ -5382,6 +5412,12 @@ struct ASMJIT_HIDDEN AssemblerIntrinsics : public AssemblerCore
   inline void movntpd(const Mem& dst, const XMMReg& src)
   {
     _emitInstruction(INST_MOVNTPD, &dst, &src);
+  }
+
+  //! @brief Move Unaligned Packed Double-Precision FP Values (SSE2).
+  inline void movupd(const XMMReg& dst, const XMMReg& src)
+  {
+    _emitInstruction(INST_MOVUPD, &dst, &src);
   }
 
   //! @brief Move Unaligned Packed Double-Precision FP Values (SSE2).
@@ -7585,7 +7621,7 @@ struct ASMJIT_HIDDEN AssemblerIntrinsics : public AssemblerCore
 //! using @c AsmJit::Assembler::make() method. This method will use memory
 //! manager to allocate virtual memory and relocates generated code to it. For
 //! memory allocation is used global memory manager by default and memory is
-//! freeable, but of course this default behavior can be overriden specifying
+//! freeable, but of course this default behavior can be overridden specifying
 //! your memory manager and allocation type. If you want to do with code
 //! something else you can always override make() method and do what you want.
 //!
