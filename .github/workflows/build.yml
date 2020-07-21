@@ -62,17 +62,14 @@ jobs:
         working-directory: ./TobEx/MathPresso/AsmJit/
         shell: cmd
       
-      - name: copy asmjit.lib file
-        uses: canastro/copy-file-action@master
+      - name: copy asmjit.lib,dll file
+        run: |
+          COPY  /Y "./TobEx/MathPresso/AsmJit/Release/AsmJit.lib" "./TobEx/AsmJit/AsmJit.lib"
+          COPY  /Y "./TobEx/MathPresso/AsmJit/Release/AsmJit.dll" "./WeiDU/TobEx/TobEx_redist/AsmJit.dll"
+        shell: cmd
         with:
-          source: "./TobEx/MathPresso/AsmJit/Release/AsmJit.lib"
-          target: "./TobEx/AsmJit/AsmJit.lib"
-
-      - name: copy asmjit.dll file
-        uses: canastro/copy-file-action@master
-        with:
-          source: "./TobEx/MathPresso/AsmJit/Release/AsmJit.dll"
-          target: "./WeiDU/TobEx/TobEx_redist/AsmJit.dll"
+          source: 
+          target: 
 
       - name: Core Build
         run: |
