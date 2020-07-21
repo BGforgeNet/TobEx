@@ -51,12 +51,15 @@ jobs:
         shell: cmd
 
       - name: Build detours
-        run: nmake
+        run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
+          nmake
         working-directory: ./detours
         shell: cmd
       
       - name: Build asmjit
         run: |
+          call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" x86
           "C:\program files\cmake\bin\cmake.exe" -G "Visual Studio 10 2010" -DCMAKE_BUILD_TYPE=Release -DASMJIT_BUILD_LIBRARY=1 ./ 
           msbuild AsmJit.sln /p:Configuration=Release 
         working-directory: ./TobEx/MathPresso/AsmJit/
