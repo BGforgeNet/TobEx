@@ -53,6 +53,11 @@ jobs:
           nmake
         working-directory: ./detours
         shell: cmd
+
+      - name: copy detours.lib file
+        run: |
+          COPY  /Y ".\detours\lib.X86\detours.lib" ".\TobEx\detours\lib.X86\detours.lib"
+        shell: cmd
       
       - name: Build asmjit
         run: |
