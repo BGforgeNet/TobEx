@@ -71,6 +71,6 @@ int __stdcall DETOUR_IElua_init() {
 	lua_pushcfunction(LUA_GetSprite);
 	lua_setglobal("getsprite");
 
-	lua_dofile("TobEx_ini/TobEx.lua");
+	lua_dofile("tobex_ini/tobex.lua");
 	return r;
 }

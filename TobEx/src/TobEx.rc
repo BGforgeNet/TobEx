@@ -27,7 +27,7 @@ FILETYPE       	VFT_DLL
 			VALUE "FileDescription",	"Throne of Bhaal Extender\0"
             VALUE "FileVersion",		VER_FILEVERSION_STR
             VALUE "InternalName",		"TobEx\0"
-            VALUE "OriginalFilename",	"TobEx.dll\0"
+            VALUE "OriginalFilename",	"tobex.dll\0"
             VALUE "ProductName",		"Throne of Bhaal Extender\0"
 			VALUE "ProductVersion",		VER_PRODUCTVERSION_STR
 		}

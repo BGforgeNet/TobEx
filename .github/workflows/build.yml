@@ -70,8 +70,8 @@ jobs:
 
       - name: copy asmjit.lib,dll file
         run: |
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\weidu\tobex\tobex_redist\asmjit.dll"
         shell: cmd
 
       - name: Core Build
@@ -90,4 +90,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: release
-          path: WeiDU
+          path: weidu

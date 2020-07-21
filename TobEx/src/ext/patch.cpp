@@ -225,7 +225,7 @@ void ApplyPatch(Data& d) {
 
 void InitUserPatches(std::vector<Patch>* pvPatchList, std::vector<Data>* pvDataList) {
 	WIN32_FIND_DATA w32fd = {0};
-	LPCSTR szRegexp = "./TobEx_ini/patch/*.patch";
+	LPCSTR szRegexp = "./tobex_ini/patch/*.patch";
 	DWORD nErrorCode;
 	HANDLE hFind;
 
@@ -241,7 +241,7 @@ void InitUserPatches(std::vector<Patch>* pvPatchList, std::vector<Data>* pvDataL
 		L.appendf(lpsz, nErrorCode);
 	} else {
 		do {
-			LPCSTR szDir = "./TobEx_ini/patch/";
+			LPCSTR szDir = "./tobex_ini/patch/";
 			char* szFile = new char[MAX_PATH];
 			int i = 0;
 			while (i < MAX_PATH) szFile[i++] = 0;

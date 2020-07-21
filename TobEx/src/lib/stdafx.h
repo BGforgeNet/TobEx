@@ -24,7 +24,7 @@
 
 #include "options.h"
 
-#define DLL_INTERNAL_NAME "TobEx.dll\0"
+#define DLL_INTERNAL_NAME "tobex.dll\0"
 
 typedef int STRREF;
 typedef unsigned int Enum; //index to CGameObjectArrayHandler element

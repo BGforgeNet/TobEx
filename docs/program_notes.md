@@ -7,11 +7,11 @@ Things to look out for when programming for TobEx
 - [Getting return addresses](#getting-return-addresses)
 
 ### Heap space
-`TobEx.dll` and `BGMain.exe` use different executable heap spaces. This means that you cannot allocate memory to objects in one heap space and free it using another heap space, and vice versa.
+`Tobex.dll` and `BGMain.exe` use different executable heap spaces. This means that you cannot allocate memory to objects in one heap space and free it using another heap space, and vice versa.
 
-`TobEx.dll` utilises `IENew` to allocate memory using `BGMain.exe` heap space, which overrides the global operator `new(size_t, int)` procedure.
+`Tobex.dll` utilises `IENew` to allocate memory using `BGMain.exe` heap space, which overrides the global operator `new(size_t, int)` procedure.
 
-While `TobEx.dll` allows freeing memory from `BGMain.exe` heap space using operator `delete(void*, int)`, where `int` is any value, this does not implicitly call the deconstructor for the object being freed. If the object contains pointers to other objects, their memory will not be freed, causing memory leaks.
+While `tobex.dll` allows freeing memory from `BGMain.exe` heap space using operator `delete(void*, int)`, where `int` is any value, this does not implicitly call the deconstructor for the object being freed. If the object contains pointers to other objects, their memory will not be freed, causing memory leaks.
 
 The only way around this is to implement object-specific operator `new(size_t)` and operator `delete(void*)`, of which their procedure bodies will call `::operator new(size_t, int)` and `::operator delete(void*, int)`, respectively. This allows the simple use of new and delete to allocate and free memory, but restricts virtual memory use to the `BGMain.exe` heap space.
 

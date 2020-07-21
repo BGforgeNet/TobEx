@@ -74,8 +74,8 @@ jobs:
 
       - name: copy asmjit.lib,dll file
         run: |
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\weidu\tobex\tobex_redist\asmjit.dll"
         shell: cmd
 
       - name: Core Build
@@ -98,12 +98,12 @@ jobs:
         run: |
           curl -Ls "https://github.com/WeiDUorg/weidu/releases/download/v246.00/WeiDU-Windows-246.zip" -o weidu.zip
           7z e weidu.zip WeiDU-Windows/bin/x86/weidu.exe
-          mv -f weidu.exe WeiDU/setup-tobex.exe
+          mv -f weidu.exe weidu/setup-tobex.exe
         shell: bash
 
       - name: Package release
         run: |
-          cd WeiDU
+          cd weidu
           7z a -r tobex_${{ env.GIT_TAG_NAME }}.zip *
 
       - name: Package debug
@@ -129,7 +129,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: WeiDU/tobex_${{ env.GIT_TAG_NAME }}.zip
+          asset_path: weidu/tobex_${{ env.GIT_TAG_NAME }}.zip
           asset_name: tobex_${{ env.GIT_TAG_NAME }}.zip
           asset_content_type: application/zip
 

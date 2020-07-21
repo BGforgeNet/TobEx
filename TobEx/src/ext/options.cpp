@@ -5,8 +5,8 @@
 static LPCTSTR s_szDefault = "0";
 static const DWORD s_nBufSize = 8;
 static char s_szBuf[s_nBufSize] = { 0 };
-static LPCTSTR s_szFileCore = "./TobEx_ini/TobExCore.ini";
-static LPCTSTR s_szFileTweak = "./TobEx_ini/TobExTweak.ini";
+static LPCTSTR s_szFileCore = "./tobex_ini/tobexcore.ini";
+static LPCTSTR s_szFileTweak = "./tobex_ini/tobextweak.ini";
 
 CGameOptionsEx* pGameOptionsEx = NULL;
 

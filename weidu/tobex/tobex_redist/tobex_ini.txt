@@ -19,7 +19,7 @@ Hack flags:
 [F] - Engine bug fix
 [M] - Adds extra functionality for modder/player use
 [O] - Code optimisation
-[T] - Tweak to engine behaviour (configured in TobEx_ini/TobExTweak.ini)
+[T] - Tweak to engine behaviour (configured in tobex_ini/tobextweak.ini)
 [X] - This hack makes use of alterations to game resources outside the executable that are implemented by TobEx
 
 /////////////////////////////////////// ACTION
@@ -206,7 +206,7 @@ Options:
 -1: enabled
 
 -----390 Externalise Logging [D]
-Duplicates the game's logging text onto the console and TobEx.log (with timestamp)
+Duplicates the game's logging text onto the console and tobex.log (with timestamp)
 Requires 'Logging On=1' under baldur.ini [Program Options]
 
 Options:
@@ -214,7 +214,7 @@ Options:
 -1: enabled
 
 -----500 Log Assertion Failures [D]
-Logs assertion failures in the game to console and TobEx.log (with timestamp)
+Logs assertion failures in the game to console and tobex.log (with timestamp)
 These are logged even when the game is unable to display them
 Assertions will display a return address to facilitate debugging
 The following are also changed:
@@ -226,7 +226,7 @@ Options:
 -1: enabled
 
 -----510 Log Assertion Warnings [D]
-Logs assertion failures that are ignored by the game to console and TobEx.log (with timestamp)
+Logs assertion failures that are ignored by the game to console and tobex.log (with timestamp)
 Display of these errors does not mean your game is unstable
 May be useful for debugging
 
@@ -236,7 +236,7 @@ Options:
 
 
 -----520 Log Dialogue Bar [D]
-Logs everything printed to the dialogue/log bar in-game into TobEx_dlg.log
+Logs everything printed to the dialogue/log bar in-game into tobex_dlg.log
 The in-game timestamp is appended in hexadecimal format before each entry
 
 Options:
@@ -245,7 +245,7 @@ Options:
 
 -----540 Log File Mode [D]
 Determines whether log files created by TobEx are overwritten or appended to each TobEx session
-This applies to both TobEx.log and TobEx_dlg.log
+This applies to both tobex.log and tobex_dlg.log
 
 Options:
 -0: overwrites log files each session
@@ -253,7 +253,7 @@ Options:
 
 -----890 Log Missing Resources [D]
 Logs when a resource is not found
-If 'Extenal Logging' is enabled, text is also printed to console and TobEx.log (with timestamp)
+If 'Extenal Logging' is enabled, text is also printed to console and tobex.log (with timestamp)
 Requires 'Logging On=1' under baldur.ini [Program Options]
 
 Note: if the game attempts to find a string reference out of bounds of dialog.tlk, spurious missing .WAV resources are logged that look like <text>.wav
@@ -264,7 +264,7 @@ Options:
 
 -----530 Log More Messages [D]
 Logs some messages suppressed by hard code into baldur.log
-If 'Extenal Logging' is enabled, text is also printed to console and TobEx.log (with timestamp)
+If 'Extenal Logging' is enabled, text is also printed to console and tobex.log (with timestamp)
 Requires 'Logging On=1' under baldur.ini [Program Options]
 
 Options:
@@ -272,7 +272,7 @@ Options:
 -1: enabled
 
 -----1080 Log Network Errors [D]
-Prints some network errors to the console and logs into TobEx.log (with timestamp)
+Prints some network errors to the console and logs into tobex.log (with timestamp)
 
 Options:
 -0: disabled
@@ -958,7 +958,8 @@ If the custom resource is invalid, standard behaviour occurs as if Mode is 0.
 The recommended format of the custom 2da resources are as follows:
 2DA V1.00
 *
-		Projectile Number		Smoke Animation
+		Projectile Number
+		Smoke Animation
 <PROJECTILE_NAME>	94			*			//for projectile only
 <PROJECTILE_NAME>	*			0X0500			//for smoke animation only
 <PROJECTILE_NAME>	186			0X0600			//for projectile and smoke animation

@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "resref.h"
 
-Log L("TobEx.log");
-Log LD("TobEx_dlg.log");
+Log L("tobex.log");
+Log LD("tobex_dlg.log");
 
 Log::Log(LPCTSTR lpsz) {
 	hFile = NULL;

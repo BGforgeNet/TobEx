@@ -13,7 +13,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int n
 	char* szFileName = "BGMain.exe";
 	char* szClassName = "ChitinClass";
 	char* szWindowName = NULL; //"Baldur's Gate II - Shadows of Amn - Throne of Bhaal";
-	char* szLibPath = "TobEx.dll";
+	char* szLibPath = "tobex.dll";
 	WIN32_FIND_DATAA FileData;
 	STARTUPINFOA si = { 0 };
 	PROCESS_INFORMATION pi = { 0 };
