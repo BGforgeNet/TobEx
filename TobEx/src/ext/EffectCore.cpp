@@ -211,7 +211,7 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 	if (!(effect.dwFlags & CEFFECT_FLAG_IGNORE_RESISTANCE) &&
 		cdsTarget.resistMagic > cRollMagicResist && //threshold > roll
 		effect.dwFlags & CEFFECT_FLAG_DISPELLABLE) {
-		if (!(cRollMagicResist & CRESAVE_USED)) {
+		if (!(rollMagicResist & CRESAVE_USED)) {
 			CMessageDisplayDialogue* pMDD = IENew CMessageDisplayDialogue();
 			pMDD->eTarget = creTarget.e;
 			pMDD->eSource = creTarget.e;
@@ -228,7 +228,6 @@ BOOL DETOUR_CEffect::DETOUR_CheckNotSaved(CCreatureObject& creTarget, char& roll
 			g_pChitin->messages.Send(*pMDD, FALSE);
 			rollMagicResist |= CRESAVE_USED;
 		}
-
 		return FALSE;
 	}
 
