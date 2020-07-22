@@ -14,10 +14,8 @@ TobExLoader/Release/*
 TobExLoader/TobExLoader.vcxproj.filters
 TobExLoader/TobExLoader.vcxproj.user
 ToDo/*
-WeiDU/Setup-TobEx.exe
+WeiDU/setup-tobex.exe
 WeiDU/TobEx/src.zip
-WeiDU/TobEx/TobEx_redist/TobEx.dll
-WeiDU/TobEx/TobEx_redist/TobExLoader.exe
 TobEx.aps
 TobEx.ncb
 TobEx.opensdf
