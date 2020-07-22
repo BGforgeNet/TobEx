@@ -61,7 +61,7 @@ jobs:
 
       - name: copy detours.lib file
         run: |
-          COPY  /Y ".\detours\lib.X86\detours.lib" ".\TobEx\detours\lib.X86\detours.lib"
+          copy /y ".\detours\lib.X86\detours.lib" ".\TobEx\detours\lib.X86\detours.lib"
         shell: cmd
 
       - name: Build asmjit
@@ -74,8 +74,8 @@ jobs:
 
       - name: copy asmjit.lib,dll file
         run: |
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
-          COPY /Y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.lib" ".\TobEx\AsmJit\AsmJit.lib"
+          copy /y ".\TobEx\MathPresso\AsmJit\Release\AsmJit.dll" ".\WeiDU\TobEx\TobEx_redist\AsmJit.dll"
         shell: cmd
 
       - name: Core Build
@@ -109,6 +109,7 @@ jobs:
       - name: Package debug
         run: |
           cd Debug
+          'This is a debug TobEx build. Do not use it unless you were specifically asked to.' | Out-File -FilePath readme.txt
           7z a -r tobex_debug_${{ env.GIT_TAG_NAME }}.zip *
 
       - name: Create release
