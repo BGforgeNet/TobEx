@@ -2,3 +2,4 @@ golem:
   mod_dir: WeiDU/TobEx
   platforms:
     - tob
+  happy: true
