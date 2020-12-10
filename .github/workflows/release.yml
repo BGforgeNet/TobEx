@@ -36,7 +36,7 @@ jobs:
         run: choco install vcexpress2010
 
       - name: Setup MSBuild.exe
-        uses: warrenbuckley/Setup-MSBuild@v1
+        uses: microsoft/setup-msbuild@v1.0.2
 
       - name: Setup Environment
         run: |
