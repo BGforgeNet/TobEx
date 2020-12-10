@@ -26,7 +26,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Checkout Detours
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           repository: microsoft/Detours
           ref: '4.0.1'
