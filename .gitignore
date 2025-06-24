@@ -1,6 +1,7 @@
 debug/*
 ipch/*
 src_dist/*
+.idea
 
 TobEx/Debug/*
 
