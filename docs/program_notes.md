@@ -18,7 +18,7 @@ The only way around this is to implement object-specific operator `new(size_t)` 
 As a general rule, local variables in a procedure should use the local heap space. If virtual memory is required for any object in the game, always use the heap space of `BGMain.exe` to allocate and free memory.
 
 ### Detouring procedures
-While detouring global procedures are straightforward, object-specific procedures are a little more tricky to detour. This is best illustrated in an example.
+While detouring global procedures is straightforward, object-specific procedures are a little more tricky to detour. This is best illustrated in an example.
 
 Let's say we wish to detour `int Stats::CalculateBonus(int a, int b)`.
 

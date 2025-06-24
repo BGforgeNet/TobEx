@@ -398,7 +398,7 @@
             <li>Opposing players' health is not shown overhead and tooltips reveal approximate health</li>
             <li>No locator feedback is displayed when opposing players are damaged</li>
             <li>Opposing players' visibility maps are not displayed</li>
-            <li>Party effects do not affected opposing players, hostile non-party effects affect opposing players</li>
+            <li>Party effects do not affect opposing players, hostile non-party effects affect opposing players</li>
             <li>Chunk death is disabled</li>
             <li>The default action when clicking on the portrait of an opposing player is to attack when in visibility range, and to move to opposing player when outside visibility range</li>
             <li>Record screen information on opposing players is not accessible</li>
@@ -406,7 +406,7 @@
           <p>The limitations of the game type are:</p>
           <ul>
             <li>Multiplayer permissions cannot be set correctly when setting up the game</li>
-            <li>The host can reform party, kicking out other players</li>
+            <li>The host can reform the party, kicking out other players</li>
             <li>The party can rest, all party members will heal, and the party cannot rest when the party is scattered (including opposing players)</li>
             <li>Any player can modify the party position of all party members</li>
             <li>Dialogue can be made to pause the game</li>
@@ -424,13 +424,13 @@
           <p><strong>Option:</strong> TobEx gives the option of making all attack animations genuine statistical attacks.</p>
           <hr />
           <a name="engine-auto-pause" id="engine-auto-pause"></a><h3>Auto-pause</h3>
-          <p><strong>Option:</strong> TobEx gives the option of allowing auto-pause to work on any screen in single player. The behavior mimics that of multiplayer. The original behaviour is that auto-pause only works in the main game screen when in single player.</p>
+          <p><strong>Option:</strong> TobEx gives the option of allowing auto-pause to work on any screen in single player mode. The behavior mimics that of multiplayer. The original behaviour is that auto-pause only works in the main game screen when in single player mode.</p>
           <hr />
           <a name="engine-bard-song" id="engine-bard-song"></a><h3>Bard Song</h3>
           <p>TobEx externalises the standard Bard Song effects to bardsong.spl. This allows modders to customise the standard set of Bard Song effects.</p>
           <hr />
           <a name="engine-casting" id="engine-casting"></a><h3>Casting Graphics and Sounds</h3>
-          <p>Normally, female gender uses a female casting sound, other and niether gender use an unvoiced casting sound, and all other genders use a male casting sound. This caused problems with spells like Project Image where illusory female creatures used male casting sounds.</p>
+          <p>Normally, female gender uses a female casting sound, other and neither gender uses an unvoiced casting sound, and all other genders use a male casting sound. This caused problems with spells like Project Image where illusory female creatures used male casting sounds.</p>
           <p>TobEx fixes this bug by modifying the way that the gender of casting sound selection is handled. Specifically, male gender uses a male casting sound, while all other genders check the Sex field (0x237) in the CRE file format. If the Sex field is male (1), a male casting sound is used. If the Sex field is female (2), a female casting sound is used. For any other value in the Sex field, an unvoiced casting sound is used. In order to do this, TobEx also ensures that the Sex field is correctly set during character generation, and patches some characters and creatures (a la BG2 Fixpack) so that their Sex field is correct.</p>
           <p>TobEx also fixes a bug where the Mental Speed stat is not considered when determining whether to play a casting sound at all, whether to play a gendered or unvoiced casting sound, and whether to play a casting animation.</p>
           <hr />
@@ -465,7 +465,7 @@
           <a name="engine-effect-stacking" id="engine-effect-stacking"></a><h3>Effect Stacking Behaviour</h3>
           <p>TobEx allows modmakers to configure when effects can stack. This is achieved by implementing bit 25 (Limit Effect Stacking) of the EFF V2.0 Header offset 0x0040 (Save Type), ITM V1.0 Feature Block offset 0x0024 (Save Type), and SPL V1.0 Feature Block offset 0x0024 (Save Type).</p>
           <p>When set, TobEx checks EFF V2.0 Header offset 0x0048 (Special), ITM V1.0 Feature Block offset 0x002c (Special), and SPL V1.0 Feature Block offset 0x002c (Special) for a unique stacking ID. If two effects of the same opcode are applied, both have Limit Effect Stacking Set, and both have the same stacking ID, then the latter applied effect is suspended in application until the former effect expires. Regardless of whether it is applied, the latter effect will expire at the same time that it would expire if it was applied. In other words, the total duration of some non-stacking effect opcode is not extended because more than one copy of the effect was applied.</p>
-          <p>Stacking IDs are unique to the opcode being applied. To maintain uniqueness of stacking IDs between different mods, one recommendation is to use the higher word of Special as the modder's Infinity Engine Community Prefix, then use the lower word as an identifying ID. For example, 0x41360001 ('A6' 0x0001).</p>
+          <p>Stacking IDs are unique to the opcode being applied. To maintain the uniqueness of stacking IDs between different mods, one recommendation is to use the higher word of Special as the modder's Infinity Engine Community Prefix, then use the lower word as an identifying ID. For example, 0x41360001 ('A6' 0x0001).</p>
           <p>TobEx also implements bit 26 (Internal: Suspend Effect Application) of the EFF V2.0 Header offset 0x0040 (Save Type), ITM V1.0 Feature Block offset 0x0024 (Save Type), and SPL V1.0 Feature Block offset 0x0024 (Save Type) to prevent effects with limited stacking from being applied.</p>
           <hr />
           <a name="engine-fake-talk-exploit" id="engine-fake-talk-exploit"></a><h3>Fake Talk Exploit</h3>
@@ -507,7 +507,7 @@
           <p>TobEx extends the limit of rows in all the random treasure 2DA files from 10 to 99.</p>
           <hr />
           <a name="engine-rest-spawns" id="engine-rest-spawns"></a><h3>Rest Spawns</h3>
-          <p><strong>Option:</strong> TobEx gives the option of advancing a random time up to, but not including, eight hours if resting is interrupted by spawns. All resting times of one hour or greater will display in the dialogue bar. Resting times less than one hour will not display in the dialogue bar.</p>
+          <p><strong>Option:</strong> TobEx gives the option of advancing a random time up to, but not including, eight hours if resting is interrupted by spawns. All resting times of one hour or greater will be displayed in the dialogue bar. Resting times less than one hour will not display in the dialogue bar.</p>
           <hr />
           <a name="engine-spell-turning" id="engine-spell-turning"></a><h3>Spell Turning</h3>
           <p>TobEx fixes a bug where on occasions, certain creatures with spell turning absorb spells rather than bouncing them back to the original caster.</p>
@@ -774,7 +774,7 @@
             <li><strong>Scope:</strong> TobExObject tag method</li>
             <li><strong>Parameters:</strong> address - number or hexadecimal string (beginning with "0x")</li>
             <li><strong>Returns:</strong> Table</li>
-            <li><strong>Behaviour:</strong> Pushes a table derived from the CPtrList object at 'address' relative to the TobExObject reference address. The index of each table element is the index from the head of a MFC CList object {0,1,2,...}, and the value is its corresponding value.</li>
+            <li><strong>Behaviour:</strong> Pushes a table derived from the CPtrList object at 'address' relative to the TobExObject reference address. The index of each table element is the index from the head of an MFC CList object {0,1,2,...}, and the value is its corresponding value.</li>
           </ul>
           <hr />
           <a name="lua-getpointer" id="lua-getpointer"></a><h4>getpointer(address)</h4>
@@ -792,7 +792,7 @@
             <li><strong>Scope:</strong> Global</li>
             <li><strong>Parameters:</strong> enum - number or hexadecimal string (beginning with "0x"); scriptname - string</li>
             <li><strong>Returns:</strong> Userdata</li>
-            <li><strong>Behaviour:</strong> Gets a reference to a game sprite by by enum (instance index) or scriptname as type userdata.</li>
+            <li><strong>Behaviour:</strong> Gets a reference to a game sprite by enum (instance index) or scriptname as type userdata.</li>
           </ul>
           <hr />
           <a name="lua-getstring" id="lua-getstring"></a><h4>getstring(address, [length])</h4>
@@ -909,7 +909,7 @@
             <li><strong>Scope:</strong> Global</li>
             <li><strong>Parameters:</strong> u - userdata</li>
             <li><strong>Returns:</strong> Number</li>
-            <li><strong>Behaviour:</strong> Converts a userdata to number.</li>
+            <li><strong>Behaviour:</strong> Converts an userdata to number.</li>
           </ul>
           <address>
             <span class="footer">TobEx &gt; Lua</span> &#8226;<a href="#top">BACK TO TOP</a>
@@ -1108,7 +1108,7 @@
           <p>TobEx enables the option to give all classes the same number of weapon slots as fighters, who have four weapon slots. This currently only changes the inventory display and not the quick bar at the bottom of the screen.</p>
           <hr />
           <a name="ruleset-weapon-spec" id="ruleset-weapon-spec"></a><h3>Weapon Specialisation-associated Number of Attacks</h3>
-          <p><strong>Option:</strong> TobEx gives the option of modifying the application of weapon specialisation-associated number of attacks bonuses described by WSPATCK.2DA. Specifically, all non-monk classes receive such a bonus based on their average level. Originally, ranger, paladin, and fighter classes received such a bonus based on their fighter level, while other non-monk classes received no bonus. Calculation of such a bonus for the monk class is unchanged.</p>
+          <p><strong>Option:</strong> TobEx gives the option of modifying the application of weapon specialisation-associated number of attacks bonuses described by WSPATCK.2DA. Specifically, all non-monk classes receive such a bonus based on their average level. Originally, ranger, paladin, and fighter classes received such a bonus based on their fighter level, while other non-monk classes received no bonus. The calculation of such a bonus for the monk class is unchanged.</p>
           <hr />
           <a name="ruleset-weight-allowance" id="ruleset-weight-allowance"></a><h3>Weight Allowance</h3>
           <p>TobEx allows modmakers to customise the percentage weight that defines low and high encumbrance through ENCUMBER.2DA. Additionally, TobEx allows additive modification of weight allowance by using a custom scripting stat #400. Also refer to the <a href="#stats">Scripting Stats</a> section.</p>
@@ -1248,7 +1248,7 @@
           <hr />
           <a name="triggers-4112" id="triggers-4112"></a><p><strong>0x4112 TimeStopObject(O:Object*)</strong><br />
           <i>New</i><br />
-          Returns true if the the target sprite specified by Object is the caster of time stop (and is exempt from the effect).</p>
+          Returns true if the target sprite specified by Object is the caster of time stop (and is exempt from the effect).</p>
           <hr />
           <a name="triggers-4113" id="triggers-4113"></a><p><strong>0x4113 NumTrappingSpellLevel(O:Object*,I:Level*,I:Amount*)<br />
           0x4114 NumTrappingSpellLevelGT(O:Object*,I:Level*,I:Amount*)<br />
@@ -1292,7 +1292,7 @@
               </tr>
               <tr>
                 <td>id</td>
-                <td>assigns the index of a IDS file value</td>
+                <td>assigns the index of an IDS file value</td>
                 <td>file.value</td>
                 <td>id[EA.CHARMED]</td>
               </tr>
@@ -1495,7 +1495,7 @@
               </tr>
               <tr>
                 <td>id</td>
-                <td>assigns the index of a IDS file value</td>
+                <td>assigns the index of an IDS file value</td>
                 <td>file.value</td>
                 <td>id[EA.CHARMED]</td>
               </tr>
@@ -1535,7 +1535,7 @@
           <hr />
           <a name="actions-357" id="actions-357"></a><p><strong>357 Eval(S:Expression*,I:Type*ArgType,I:Loc*)</strong><br />
           <i>New</i><br />
-          Overwrites the (Loc)th argument of type Type from ARGTYPE.IDS (INT integer, or STR string) in the next action with the value returned by Expression. To replace point X and point Y, use a Loc value of 4 and 5, respectively. This action skips subsequent Assign() and Eval() actions when determining in which action to overwrite a value. This action does not overwrite values of actions beyond ClearBlockVariables() actions.</p>
+          Overwrites the (Loc)th argument of type Type from ARGTYPE.IDS (INT integer, or STR string) in the next action with the value returned by Expression. To replace point X and point Y, use a Loc value of 4 and 5, respectively. This action skips subsequent Assign() and Eval() actions when determining in which action to overwrite a value. This action does not overwrite the values of actions beyond ClearBlockVariables() actions.</p>
           <ul>
             <li>Expression is a math expression that can use the following symbols:</li>
               <p>= + - * / % ^ ( )</p>
@@ -1564,10 +1564,10 @@
           <h2>Scripting Stats</h2>
           <p>TobEx expands the use of STATS.IDS to support new hard-coded stats and custom stats for modmaker use. The features of new stats are:<br />
           <ul>
-            <li>New stats can be set using effect opcode 318 (0x13E) with description below</li>
+            <li>New stats can be set using effect opcode 318 (0x13E) with the description below</li>
             <li>New stats 202-400 are reserved for hard-coded stats</li>
             <li>New stats can be checked correctly using CheckStat(), CheckStatLT(), and CheckStatGT() script triggers</li>
-            <li>New stats are not permanent, they require an ongoing effect opcode 318 in order to keep their values</li>
+            <li>New stats are not permanent, they require an ongoing effect with opcode 318 in order to keep their values</li>
             <li>New stats will only be saved in saved games if stored as an effect opcode 318</li>
             <li>Actions cannot directly set the value of new stats (they will not keep); use an action to trigger effect opcode 318 if actions are required</li>
             <li>New stats have no effect on the game unless you specifically script in; for example, use scripts to CheckStat() and apply appropriate actions</li>
@@ -1778,7 +1778,7 @@
           </ul>
           <hr />
           <a name="audio-animation-soundsets" id="audio-animation-soundsets"></a><h3>Animation and Creature Soundsets</h3>
-          <p>TobEx fixes a bug that prevented the sounds in the middle of animation soundset 2DA files from playing. TobEx also fixes a bug where PICKED_POCKET sounds were played when EXISTANCE sounds were called for in the creature soundset. This was corrected to EXISTANCE5.</p>
+          <p>TobEx fixes a bug that prevented the sounds in the middle of animation soundset 2DA files from playing. TobEx also fixes a bug where PICKED_POCKET sounds were played when EXISTENCE sounds were called for in the creature soundset. This was corrected to EXISTANCE5.</p>
           <p><strong>Option:</strong> TobEx gives the option to enable the use of SLASH, BACKSLASH, and JAB sounds in animation soundset 2DA files. These sounds play when the appropriate attack animation is played. They are played in addition to the ATTACK sound.</p>
           <hr />
           <a name="audio-animation-walking" id="audio-animation-walking"></a><h3>Animation Walking Sounds</h3>
@@ -1878,7 +1878,7 @@
           </div>
           <hr />
           <a name="animations-iwd" id="animations-iwd"></a><h3>Icewind Dale-style Animations</h3>
-          <p>TobEx fixed Icewind Dale-style animations (of IDs 0xE***) that use the 3rd attack animation (A3). These would otherwise have display the 2nd attack animation in northeast and east orientations if 'Sprite Mirror' is disabled in baldur.ini.</p>
+          <p>TobEx fixed Icewind Dale-style animations (of IDs 0xE***) that use the 3rd attack animation (A3). These would otherwise have displayed the 2nd attack animation in northeast and east orientations if 'Sprite Mirror' is disabled in baldur.ini.</p>
           <hr />
           <a name="animations-paper-dolls" id="animations-paper-dolls"></a><h3>Paper Dolls</h3>
           <p>TobEx enables paperdolls to be shown in the inventory and character customisation screens for animation IDs 0x12XX, 0x2XXX, 0x3XXX, and modification-added 0x7XXX (except 0x73XX, which is already shown in vanilla), which would otherwise not show at all. Note that paperdolls for the 0x7XXX group of animation must have to be named &lt;prefix&gt;INV.BAM.</p>
@@ -2079,7 +2079,7 @@
             <li>memory leak when fist damage would make the target unconscious</li>
           </ul>
           <p>TobEx allows the scaling of damage type by percentage by using custom scripting stats #387 to #399. Also refer to the <a href="#stats">Scripting Stats</a> section.</p>
-          <p>TobEx implements bit 24 (Bypass Mirror Images) of the EFF V2.0 Header offset 0x0040 (Save Type), ITM V1.0 Feature Block offset 0x0024 (Save Type), and SPL V1.0 Feature Block offset 0x0024 (Save Type). When set the mirror image check is skipped on the target creature when checking saving throw.</p>
+          <p>TobEx implements bit 24 (Bypass Mirror Images) of the EFF V2.0 Header offset 0x0040 (Save Type), ITM V1.0 Feature Block offset 0x0024 (Save Type), and SPL V1.0 Feature Block offset 0x0024 (Save Type). When set, the mirror image check is skipped on the target creature when checking saving throw.</p>
           <p><i><strong>Option:</strong> TobEx gives the option of implementing a concentration check affecting spellcasters being hit. Instead of always being interrupted when hit, spellcasters have a chance of their spells being interrupted. In the current implementation, a spellcaster passes the concentration check if:</i></p>
           <p class="important">(1D20 + luck) > (spell level + damage taken)</p>
           <p><i><strong>Option:</strong> TobEx gives the option of not interrupting a creature's spellcasting if a creature takes zero damage (i.e. immune)</i></p>
@@ -2271,7 +2271,7 @@
           Each level below target gives a -10% chance, each level above target gives a +5% chance. There is always a 1% chance of success or failure.</p>
           <hr />
           <a name="effects-59" id="effects-59"></a><p><strong>#59 (0x03B) Stat: Stealth Modifier [59]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds move silently skill will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds move silently skill will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-62" id="effects-62"></a><p><strong>#62 (0x03E)  Spell: Priest Spell Slots Modifier [62]</strong><br />
           <i>Added parameter 2 value 3</i><br />
@@ -2302,13 +2302,13 @@
           <i>TobEx fixes a bug with the disease effect opcode for parameter 2 values 0-3 where a creature with multiple instances of disease, poison, wing buffet, regeneration and/or repeating effect opcodes would only have the highest frequency instance applied</i></p>
           <hr />
           <a name="effects-90" id="effects-90"></a><p><strong>#90 (0x05A) Stat: Open Locks Modifier [90]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds open locks skill will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds open locks skill will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-91" id="effects-91"></a><p><strong>#91 (0x05B) Stat: Find Traps Modifier [91]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds find traps skill will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds find traps skill will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-92" id="effects-92"></a><p><strong>#92 (0x05C) Stat: Pick Pockets Modifier [92]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds pick pockets skill will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds pick pockets skill will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-93" id="effects-93"></a><p><strong>#93 (0x05D) Stat: Fatigue Modifier [93]</strong><br />
           <i>TobEx fixes a bug so that a net negative fatigue limit value will limit to 0 rather than wrap to 100</i></p>
@@ -2317,7 +2317,7 @@
           <i>TobEx fixes a bug so that a net negative intoxication value will limit to 0 rather than wrap to 100</i></p>
           <hr />
           <a name="effects-95" id="effects-95"></a><p><strong>#95 (0x05F) Stat: Tracking Skill Modifier [95]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds tracking skill will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds tracking skill will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-96" id="effects-96"></a><p><strong>#96 (0x060) Stat: Level Change [96]</strong><br />
           <i>TobEx fixes a bug so that a net negative level will limit to 0 rather than wrap to 100</i></p>
@@ -2329,10 +2329,10 @@
           <i>TobEx fixes a bug with the regeneration opcode where a creature with multiple instances of disease, poison, wing buffet, regeneration and/or repeating effect opcodes would only have the highest frequency instance applied</i></p>
           <hr />
           <a name="effects-106" id="effects-106"></a><p><strong>#106 (0x06A) Stat: Morale Break Modifier [106]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds morale break value will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds morale break value will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-108" id="effects-108"></a><p><strong>#108 (0x06C) Stat: Reputation [108]</strong><br />
-          <i>TobEx fixes a bug so that an out of bounds reputation value will limit to 0 or 255 rather than wrap around</i></p>
+          <i>TobEx fixes a bug so that an out-of-bounds reputation value will limit to 0 or 255 rather than wrap around</i></p>
           <hr />
           <a name="effects-119" id="effects-119"></a><p><strong>#119 (0x077) Spell Effect: Mirror Image [119]</strong><br />
           <i><strong>Option:</strong> TobEx gives the option of modifying the mirror image effect opcode to keep caster level, so that dispel magic will work on it</i></p>
@@ -2416,7 +2416,7 @@
           <p>Note that the 'Percentage Modifier' type (2) is applied before the 'Cumulative Modifier' types (1) are applied.</p>
           <hr />
           <a name="effects-177" id="effects-177"></a><p><strong>#177 (0x0B1)  Use EFF File [177]</strong><br />
-          <i>TobEx fixes this effect opcode so that adjustments to child effect parameters 1 to 4 are saved in unused internal structures of this opcode and restored to the child effect on next application. This fixes stutter issues associated with the <a href="#effects-135">Polymorph</a> (parameter 2 value 1) opcode and is required for the changes to the <a href="#effects-15">Dexterity Modifier</a> (parameter 2 value 3), <a href="#effects-25">Poison</a>, <a href="#effects-44">Strength Modifier</a> (parameter 2 value 3), <a href="#effects-78">Disease</a>, <a href="#effects-98">Regeneration</a>, and <a href="#effects-272">Apply Repeating EFF</a> opcodes to work correctly when used as child effects of this effect.<br />
+          <i>TobEx fixes this effect opcode so that adjustments to child effect parameters 1 to 4 are saved in unused internal structures of this opcode and restored to the child effect on the next application. This fixes stutter issues associated with the <a href="#effects-135">Polymorph</a> (parameter 2 value 1) opcode and is required for the changes to the <a href="#effects-15">Dexterity Modifier</a> (parameter 2 value 3), <a href="#effects-25">Poison</a>, <a href="#effects-44">Strength Modifier</a> (parameter 2 value 3), <a href="#effects-78">Disease</a>, <a href="#effects-98">Regeneration</a>, and <a href="#effects-272">Apply Repeating EFF</a> opcodes to work correctly when used as child effects of this effect.<br />
           TobEx also fixes memory deallocation issues associated with containers and doors that use this effect opcode in their trap scripts</i></p>
           <hr />
           <a name="effects-181" id="effects-181"></a><p><strong>#181 (0x0B5)  Item: Can't Use Itemtype [181]</strong><br />
@@ -2679,7 +2679,7 @@
           <p>Standard Throne of Bhaal proficiencies are limited to a maximum of 5 stars.</p>
           <hr />
           <a name="effects-238" id="effects-238"></a><p><strong>#238 (0x0EE)  Death: Disintegrate [238]</strong><br />
-          <i>TobEx fixes a memory leak associated this effect opcode</i></p>
+          <i>TobEx fixes a memory leak associated with this effect opcode</i></p>
           <hr />
           <a name="effects-272" id="effects-272"></a><p><strong>#272 (0x110)  Spell: Apply Repeating EFF [272]</strong><br />
           <i>TobEx fixes a bug with the repeating effect opcode where a creature with multiple instances of disease, poison, wing buffet, regeneration and/or repeating effect opcodes would only have the highest frequency instance applied</i></p>

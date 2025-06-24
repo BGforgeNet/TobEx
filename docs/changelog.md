@@ -141,12 +141,12 @@
 - Blindness As Spell Description: Fixed a typo that prevented this hack from working
 - Blindness As Spell Description: Should now overwrite the Blindness Fix hack as intended
 - Contingency Detects Select Spell: Fixed memorised spells in lowercase not displaying correctly
-- Disease Fix: Fixed a bug where a creature slowed on death remained alive and untargettable
+- Disease Fix: Fixed a bug where a creature slowed on death remained alive and untargetable
 - Kit Trigger Fix: Fixed breaking of vanilla behaviour when `Kit(*, 0)` was specifically used to detect Barbarian and Wild Mage kits
 - Log Assertion Failures: Missing spell icons for spells in the spell selection screen correctly display an assertion failure
 - Log Missing Resources: Fixed an issue that prevented this hack from working
 - Optimise Bag Search Code: (?) Hopefully now fixed occasional client-side crash when accessing bags or stores
-- Poison Fix: Fixed a bug where a creature poisoned on death remained alive and untargettable
+- Poison Fix: Fixed a bug where a creature poisoned on death remained alive and untargetable
 
 ### Beta 0021
 - Included French translation (by Isaya)
@@ -162,11 +162,11 @@
 - Removed: Correct Experience Reporting
 - Removed: Instantly Set Dialogue Variables
 - Disable Experience Boost: Merged with hack that corrects experience reporting in dialogue bar
-- Disintegrate Fix: Fixed a bug where IDS targetting was ignored
+- Disintegrate Fix: Fixed a bug where IDS targeting was ignored
 - Expanded Actions: Added `DialogueSetGlobal()`, `DialogueIncrementGlobal()`, `DialogueSG()`
 - Expanded Stats: Fixed loss of character animations on network players on saving multiplayer game
 - Expanded Stats: Fixed network communication of new stats
-- Externalise Mage Spell Hiding: Fixed a bug where Lightning (`SPWI938`) was selectable in Sorceror level-up mage spell selection (added `SPWI927-949` to `HIDESPL.2DA` to preserve vanilla behaviour)
+- Externalise Mage Spell Hiding: Fixed a bug where Lightning (`SPWI938`) was selectable in Sorcerer level-up mage spell selection (added `SPWI927-949` to `HIDESPL.2DA` to preserve vanilla behaviour)
 - Magic Resistance Mod Fix: Swapped implementation of parameter 2 values 0 and 3 to preserve vanilla behaviour
 - Optimise Bag Search Code: (?) Fixed occasional client-side crash when accessing bags or stores
 - Poison Fix: Fixed a typo that caused crashes with effect opcode `#41` (Sparkle) and prevented this hack from working
@@ -265,7 +265,7 @@
 - Expanded Stats: Added stat `300 WEIGHTALLOWANCEMOD`
 - Externalise Animation Walking Sounds: Fixed a bug where the `0xE***` animations still used vanilla walking sound code
 - Externalise Class-Race Restrictions: Fixed a bug where players could select a true class mage using the Enter hotkey even if not allowed by `MGSRCREQ.2DA`
-- Externalise Race Selection StrRef: Fixed a bug where basilisk, bear, fairy, mist, mimic, and giant races could display nonsense text in the record screen
+- Externalise Race Selection StrRef: Fixed a bug where basilisk, bear, fairy, mist, mimic, and giant races could display nonsense text on the record screen
 - Soundset Subtitles: Removed external resource changes
 - Use Animation Percentages for Throwing Weapons: Fixed a bug with non-ammo ranged weapons causing crashes/warnings
 - Updated TobEx_ini.txt with compatibility information for tob_hacks version 0.6
@@ -291,7 +291,7 @@
 - Added: Externalise HP Tables
 - Added: Log Missing Resources
 - Added: No Spell Interruption On Zero Damage
-- Added: Targetting Dead Animations Fix
+- Added: Targeting Dead Animations Fix
 - Core: Fixed a bug with incorrect patching of `SPELLS.2DA`
 - Externalise Encumbrance Restrictions: Fixed a bug with encumbrance calculation
 - Externalise Logging: Moved to debug `QUICK_MENU`
